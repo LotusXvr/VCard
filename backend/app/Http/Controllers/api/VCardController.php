@@ -8,7 +8,7 @@ use App\Models\VCard;
 
 class VCardController extends Controller
 {
-    public function getVCards(VCard $vcard)
+    public function getVCard(VCard $vcard)
     {
         return $vcard;
     }

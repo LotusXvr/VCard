@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\VCardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('vcard', [VCardController::class, 'index']);
+Route::get('vcards', [VCardController::class, 'index']);
 
 
-Route::get('vcard/{vcard}', [VCardController::class, 'getVCards']);
+Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
+
+
+Route::get('users', [UserController::class, 'index']);
+
+Route::get('users/{user}', [UserController::class, 'getUser']);
