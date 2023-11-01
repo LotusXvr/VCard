@@ -1,2 +1,2 @@
 # VCard
- Projeto de DAD 💪🏽
+ Projeto de DAD 😜✌🏽
