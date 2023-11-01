@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue"
 import axios from "axios"
 import config from "./utils/config"
 
+import createVCard from "./components/createVCard.vue";
+
 const vcards = ref([])
 const users = ref([])
 const showingUsers = ref(false)
@@ -36,6 +38,15 @@ const fetchUsers = async () => {
     users.value = response.data
 }
 
+const newVCard = async (newVCard) => {
+    if (newVCard){
+        // Create a new vCard
+        newVCard.balance = 0
+        newVCard.max_debit = 5000
+        const response = await axios.post(`${config.baseAPI}/vcards`, newVCard)
+    }
+}
+
 onMounted(() => {
     // Fetch the vCards and users when the component is mounted
     fetchVCards()
@@ -58,6 +69,8 @@ onMounted(() => {
             <button @click="showVCards" class="btn btn-primary">Show vCards</button>
             <button @click="clearView" class="btn btn-primary">Clear View</button>
         </div>
+
+        <createVCard @createVCard="newVCard"></createVCard>
 
         <!-- Display Users -->
         <div v-if="showingUsers">
