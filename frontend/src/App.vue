@@ -1,6 +1,59 @@
+<script setup>
+import { ref, onMounted } from "vue"
+import axios from "axios"
+import config from "./utils/config"
+
+const vcards = ref([])
+const users = ref([])
+const showingUsers = ref(false)
+const showingVCards = ref(false)
+
+const showUsers = () => {
+    // Set the flag to show users and hide vCards
+    showingUsers.value = true
+    showingVCards.value = false
+}
+const showVCards = () => {
+    // Set the flag to show vCards and hide users
+    showingUsers.value = false
+    showingVCards.value = true
+}
+const clearView = () => {
+    // Set the flag to hide both users and vCards
+    showingUsers.value = false
+    showingVCards.value = false
+}
+
+const fetchVCards = async () => {
+    // Fetch the vCards from the API
+    const response = await axios.get(`${config.baseAPI}/vcards`)
+    vcards.value = response.data
+}
+
+const fetchUsers = async () => {
+    // Fetch the users from the API
+    const response = await axios.get(`${config.baseAPI}/users`)
+    users.value = response.data
+}
+
+onMounted(() => {
+    // Fetch the vCards and users when the component is mounted
+    fetchVCards()
+    fetchUsers()
+})
+</script>
+
 <template>
     <div>
-        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; margin-top: 5%;">
+        <div
+            style="
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                margin-top: 5%;
+            "
+        >
             <button @click="showUsers" class="btn btn-primary">Show Users</button>
             <button @click="showVCards" class="btn btn-primary">Show vCards</button>
             <button @click="clearView" class="btn btn-primary">Clear View</button>
@@ -43,65 +96,5 @@
                 </tbody>
             </table>
         </div>
-
-        
     </div>
 </template>
-
-<script>
-import axios from "../plugins/axios"
-
-export default {
-    data() {
-        return {
-            users: [], // Store the fetched users
-            vcards: [], // Store the fetched vCards
-            showingUsers: false, // Control whether to show users
-            showingVCards: false, // Control whether to show vCards
-        }
-    },
-    methods: {
-        showUsers() {
-            // Set the flag to show users and hide vCards
-            this.showingUsers = true
-            this.showingVCards = false
-        },
-        showVCards() {
-            // Set the flag to show vCards and hide users
-            this.showingUsers = false
-            this.showingVCards = true
-        },
-        clearView(){
-            // Set the flag to hide both users and vCards
-            this.showingUsers = false
-            this.showingVCards = false
-        },
-        fetchUsers() {
-            axios
-                .get("users")
-                .then((response) => {
-                    this.users = response.data
-                })
-                .catch((error) => {
-                    console.error("Error fetching Users data:", error)
-                })
-        },
-        fetchVCards() {
-            axios
-                .get("vcards")
-                .then((response) => {
-                    console.log("vCards response:", response.data)
-                    this.vcards = response.data
-                })
-                .catch((error) => {
-                    console.error("Error fetching vCards data:", error)
-                })
-        },
-    },
-    mounted() {
-        // Fetch users and vCards when the component is mounted
-        this.fetchUsers()
-        this.fetchVCards()
-    },
-}
-</script>
