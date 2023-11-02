@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue"
 import axios from "axios"
 import config from "./utils/config"
 
-import createVCard from "./components/createVCard.vue";
+import createVCard from "./components/createVCard.vue"
 
 const vcards = ref([])
 const users = ref([])
@@ -39,11 +39,11 @@ const fetchUsers = async () => {
 }
 
 const addVCard = async (newVCard) => {
-    console.log("AAA",newVCard.phone_number)
-    if (newVCard){
-        console.log("AAA",newVCard.value)
+    console.log("AAA", newVCard.phone_number)
+    if (newVCard) {
+        console.log("AAA", newVCard.value)
         await axios.post(`${config.baseAPI}/vcards`, newVCard)
-        fetchVCards();
+        fetchVCards()
     }
 }
 
