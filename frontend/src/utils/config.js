@@ -1,4 +1,4 @@
 export default {
-    baseAPI: "http://backend.test/api",
+    baseAPI: "http://localhost/api",
     userId: 1,
 }

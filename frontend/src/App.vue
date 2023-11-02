@@ -38,12 +38,12 @@ const fetchUsers = async () => {
     users.value = response.data
 }
 
-const newVCard = async (newVCard) => {
+const addVCard = async (newVCard) => {
+    console.log("AAA",newVCard.phone_number)
     if (newVCard){
-        // Create a new vCard
-        newVCard.balance = 0
-        newVCard.max_debit = 5000
-        const response = await axios.post(`${config.baseAPI}/vcards`, newVCard)
+        console.log("AAA",newVCard.value)
+        await axios.post(`${config.baseAPI}/vcards`, newVCard)
+        fetchVCards();
     }
 }
 
@@ -70,7 +70,7 @@ onMounted(() => {
             <button @click="clearView" class="btn btn-primary">Clear View</button>
         </div>
 
-        <createVCard @createVCard="newVCard"></createVCard>
+        <createVCard @AddVCard="addVCard"></createVCard>
 
         <!-- Display Users -->
         <div v-if="showingUsers">

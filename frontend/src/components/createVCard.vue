@@ -2,13 +2,13 @@
 import { ref, onMounted } from "vue"
 
 const newVCard = ref({
-  phone_number: "",
-  password: "",
-  name: "",
-  email: "",
-  confirmation_code: "",
+  phone_number: '',
+  password: '',
+  name: '',
+  email: '',
+  confirmation_code: '',
 })
-const vcardInput = ref(null)
+//const vcardInput = ref(null)
 
 const emit = defineEmits(["addVCard"])
 
@@ -20,6 +20,9 @@ const createVCard = () => {
         name: newVCard.value.name,
         email: newVCard.value.email,
         confirmation_code: newVCard.value.confirmation_code,
+        balance: "0.00",
+        blocked: 0,
+        max_debit: "5000.00"
     })
     // Clear the input
     newVCard.value = ""
