@@ -39,10 +39,8 @@ const fetchUsers = async () => {
 }
 
 const addVCard = async (newVCard) => {
-    console.log("AAA",newVCard.phone_number)
     if (newVCard){
         console.log("AAA",newVCard.value)
-        await axios.post(`${config.baseAPI}/vcards`, newVCard)
         fetchVCards();
     }
 }
