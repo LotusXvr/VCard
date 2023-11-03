@@ -9,6 +9,7 @@ const vcards = ref([])
 const users = ref([])
 const showingUsers = ref(false)
 const showingVCards = ref(false)
+const error = ref(null);
 
 const showUsers = () => {
     // Set the flag to show users and hide vCards
@@ -39,11 +40,14 @@ const fetchUsers = async () => {
 }
 
 const addVCard = async (newVCard) => {
-    console.log("AAA", newVCard.phone_number)
     if (newVCard) {
-        console.log("AAA", newVCard.value)
-        await axios.post(`${config.baseAPI}/vcards`, newVCard)
-        fetchVCards()
+        try {
+            await axios.post(`${config.baseAPI}/vcards`, newVCard);
+            fetchVCards();
+            error.value = null; // Clear any previous errors on success
+        } catch (e) {
+            error.value = e.response.data.errors; // Capture and display API validation errors
+        }
     }
 }
 
@@ -72,6 +76,17 @@ onMounted(() => {
 
         <createVCard @AddVCard="addVCard"></createVCard>
 
+        <!-- Display error messages, if any -->
+        <div v-if="error">
+            <div class="alert alert-danger">
+                <ul>
+                    <li v-for="(message, field) in error" :key="field">
+                        {{ field }}: {{ message[0] }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Display Users -->
         <div v-if="showingUsers">
             <h2>Users</h2>
@@ -99,12 +114,14 @@ onMounted(() => {
                     <tr>
                         <th>Name</th>
                         <th>Phone Number</th>
+                        <th>Email</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(vcard, index) in vcards" :key="index">
                         <td>{{ vcard.name }}</td>
                         <td>{{ vcard.phone_number }}</td>
+                        <td>{{ vcard.email }}</td>
                     </tr>
                 </tbody>
             </table>

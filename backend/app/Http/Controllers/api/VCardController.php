@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateVCardRequest;
 use App\Http\Resources\VCardResource;
 use Illuminate\Http\Request;
 use App\Models\VCard;
@@ -20,7 +21,7 @@ class VCardController extends Controller
         return VCard::all();
     }
 
-    public function store(Request $request)
+    public function store(CreateVCardRequest $request)
     {
         $vcard = VCard::create($request->all());
         return new VCardResource($vcard);
