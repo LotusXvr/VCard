@@ -21,15 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-// VCards
-Route::get('vcards', [VCardController::class, 'index']);
-Route::get('vcards/{vcard}', [VCardController::class, 'getVCard']);
-
-// Users
-Route::get('users', [UserController::class, 'index']);
-Route::get('users/{user}', [UserController::class, 'getUser']);
-
-
 /*
  * Globais
 */

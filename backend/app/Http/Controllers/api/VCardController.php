@@ -11,14 +11,15 @@ use Illuminate\Support\Facades\DB;
 
 class VCardController extends Controller
 {
-    public function getVCard(VCard $vcard)
-    {
-        return $vcard;
-    }
 
     public function index()
     {
         return VCard::all();
+    }
+
+    public function show(VCard $vcard)
+    {
+        return $vcard;
     }
 
     public function store(CreateVCardRequest $request)
