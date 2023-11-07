@@ -9,7 +9,8 @@ const vcards = ref([])
 const users = ref([])
 const showingUsers = ref(false)
 const showingVCards = ref(false)
-const error = ref(null);
+const error = ref(null)
+const success = ref(null)
 
 const showUsers = () => {
     // Set the flag to show users and hide vCards
@@ -42,11 +43,13 @@ const fetchUsers = async () => {
 const addVCard = async (newVCard) => {
     if (newVCard) {
         try {
-            await axios.post(`${config.baseAPI}/vcards`, newVCard);
-            fetchVCards();
-            error.value = null; // Clear any previous errors on success
+            await axios.post(`${config.baseAPI}/vcards`, newVCard)
+            fetchVCards() 
+            success.value = "VCard created successfully" // show success error
+            error.value = null
         } catch (e) {
-            error.value = e.response.data.errors; // Capture and display API validation errors
+            success.value = null // clear success message
+            error.value = e.response.data.errors // Capture and display API validation errors
         }
     }
 }
@@ -83,6 +86,15 @@ onMounted(() => {
                     <li v-for="(message, field) in error" :key="field">
                         {{ field }}: {{ message[0] }}
                     </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Display success messages, if any -->
+        <div v-if="success">
+            <div class="alert alert-success">
+                <ul>
+                    <li>{{ success }}</li>
                 </ul>
             </div>
         </div>

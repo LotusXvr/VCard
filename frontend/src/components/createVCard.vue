@@ -25,7 +25,13 @@ const createVCard = () => {
         max_debit: "5000.00",
     })
     // Clear the input
-    newVCard.value = ""
+    newVCard.value = {
+        phone_number: "",
+        password: "",
+        name: "",
+        email: "",
+        confirmation_code: "",
+    }
 }
 
 onMounted(() => {
