@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue"
 
 const newVCard = ref({
+    id: "",
     phone_number: "",
     password: "",
     name: "",

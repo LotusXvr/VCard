@@ -28,4 +28,18 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
+    public function update(CreateVCardRequest $request, VCard $vcard)
+    {
+        $vcard->fill($request->all());
+        $vcard->save();
+        return new VCardResource($vcard);
+    }
+
+    public function destroy(VCard $vcard)
+    {
+        $vcard->delete();
+        return new VCardResource($vcard);
+    }
+
+
 }

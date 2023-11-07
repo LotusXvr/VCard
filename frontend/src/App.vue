@@ -3,8 +3,8 @@ import { ref, onMounted } from "vue"
 import axios from "axios"
 import config from "./utils/config"
 
-import createVCard from "./components/createVCard.vue"
-import createUser from "./components/createUser.vue"
+import createVCard from "./components/VCardCreate.vue"
+import createUser from "./components/UserCreate.vue"
 
 const vcards = ref([])
 const users = ref([])
@@ -63,6 +63,21 @@ const addUser = async (newUser) => {
             success.value = "User created successfully" // show success error
             error.value = null
         } catch (e) {
+            success.value = null // clear success message
+            error.value = e.response.data.errors // Capture and display API validation errors
+        }
+    }
+}
+
+const deleteVCard = async (vcard) => {
+    if (vcard) {
+        try {
+            await axios.delete(`${config.baseAPI}/vcards/${vcard}`)
+            fetchVCards()
+            success.value = "VCard deleted successfully" // show success error
+            error.value = null
+        }
+        catch (e) {
             success.value = null // clear success message
             error.value = e.response.data.errors // Capture and display API validation errors
         }
@@ -134,25 +149,6 @@ onMounted(() => {
             </table>
         </div>
 
-        <!-- Display vCards -->
-        <div v-if="showingVCards">
-            <h2>vCards</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Phone Number</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(vcard, index) in vcards" :key="index">
-                        <td>{{ vcard.name }}</td>
-                        <td>{{ vcard.phone_number }}</td>
-                        <td>{{ vcard.email }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        
     </div>
 </template>
