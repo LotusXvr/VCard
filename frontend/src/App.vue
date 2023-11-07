@@ -4,6 +4,7 @@ import axios from "axios"
 import config from "./utils/config"
 
 import createVCard from "./components/createVCard.vue"
+import createUser from "./components/createUser.vue"
 
 const vcards = ref([])
 const users = ref([])
@@ -44,8 +45,22 @@ const addVCard = async (newVCard) => {
     if (newVCard) {
         try {
             await axios.post(`${config.baseAPI}/vcards`, newVCard)
-            fetchVCards() 
+            fetchVCards()
             success.value = "VCard created successfully" // show success error
+            error.value = null
+        } catch (e) {
+            success.value = null // clear success message
+            error.value = e.response.data.errors // Capture and display API validation errors
+        }
+    }
+}
+
+const addUser = async (newUser) => {
+    if (newUser) {
+        try {
+            await axios.post(`${config.baseAPI}/users`, newUser)
+            fetchUsers()
+            success.value = "User created successfully" // show success error
             error.value = null
         } catch (e) {
             success.value = null // clear success message
@@ -78,6 +93,7 @@ onMounted(() => {
         </div>
 
         <createVCard @AddVCard="addVCard"></createVCard>
+        <createUser @AddUser="addUser"></createUser>
 
         <!-- Display error messages, if any -->
         <div v-if="error">

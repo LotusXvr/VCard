@@ -48,7 +48,7 @@ onMounted(() => {
                 <input
                     v-model="newVCard.phone_number"
                     type="text"
-                    id="phone_number"
+                    id="VCardPhoneNumber"
                     class="form-control"
                     required
                 />
@@ -59,7 +59,7 @@ onMounted(() => {
                 <input
                     v-model="newVCard.password"
                     type="password"
-                    id="password"
+                    id="VCardPassword"
                     class="form-control"
                     required
                 />
@@ -70,7 +70,7 @@ onMounted(() => {
                 <input
                     v-model="newVCard.name"
                     type="text"
-                    id="name"
+                    id="VCardName"
                     class="form-control"
                     required
                 />
@@ -81,7 +81,7 @@ onMounted(() => {
                 <input
                     v-model="newVCard.email"
                     type="email"
-                    id="email"
+                    id="VCardEmail"
                     class="form-control"
                     required
                 />
@@ -92,7 +92,7 @@ onMounted(() => {
                 <input
                     v-model="newVCard.confirmation_code"
                     type="text"
-                    id="confirmation_code"
+                    id="VCard_confirmation_code"
                     class="form-control"
                     required
                 />
