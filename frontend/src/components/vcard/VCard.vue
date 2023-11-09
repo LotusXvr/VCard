@@ -11,6 +11,20 @@ const props = defineProps({
     readonly: Boolean,
 })
 
+// const newVCard = () => {
+//       return {
+//         phone_number: '',
+//         name: '',
+//         email: '',
+//         photo_url: null,
+//         password: '',
+//         confirmation_code: '',
+//         blocked: 0,
+//         balance: 0,
+//         max_debit: 5000,
+//       }
+//     }
+
 const emit = defineEmits(["requestRemoveVCardFromList", "requestUpdateVCard"])
 
 const clickToDeleteVCard = (vcard) => {
@@ -33,7 +47,7 @@ const detailRequestedUpdateVCard = (vcard) => {
 
 <template>
     <li class="list-group-item" :class="{ 'bg-light': readonly }">
-        <span>{{ vcard.name + " || " + vcard.email + " || " + vcard.balance + "€" }}</span>
+        <span>{{ props.vcard.name + " || " + props.vcard.email + " || " + props.vcard.balance + "€" }}</span>
         <div class="float-end" v-show="!readonly">
             <button class="btn btn-danger btn-xs" @click="clickToDeleteVCard(vcard)">
                 <i class="bi-trash" aria-hidden="true"></i>

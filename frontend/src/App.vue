@@ -1,12 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import axios from "axios"
-import config from "./utils/config"
 
-import createVCard from "./components/VCardCreate.vue"
-import createUser from "./components/UserCreate.vue"
+import createVCard from "./components/vcard/VCardCreate.vue"
+import createUser from "./components/user/UserCreate.vue"
 
-import VCardList from "./components/VCardList.vue"
+import VCardList from "./components/vcard/VCardList.vue"
 
 const vcards = ref([])
 const users = ref([])
@@ -28,20 +27,20 @@ const showVCards = () => {
 
 const fetchVCards = async () => {
     // Fetch the vCards from the API
-    const response = await axios.get(`${config.baseAPI}/vcards`)
+    const response = await axios.get("vcards")
     vcards.value = response.data
 }
 
 const fetchUsers = async () => {
     // Fetch the users from the API
-    const response = await axios.get(`${config.baseAPI}/users`)
+    const response = await axios.get("users")
     users.value = response.data
 }
 
 const addVCard = async (newVCard) => {
     if (newVCard) {
         try {
-            await axios.post(`${config.baseAPI}/vcards`, newVCard)
+            await axios.post(`$vcards`, newVCard)
             fetchVCards()
             success.value = "VCard created successfully" // show success error
             error.value = null
@@ -55,7 +54,7 @@ const addVCard = async (newVCard) => {
 const addUser = async (newUser) => {
     if (newUser) {
         try {
-            await axios.post(`${config.baseAPI}/users`, newUser)
+            await axios.post(`users`, newUser)
             fetchUsers()
             success.value = "User created successfully" // show success error
             error.value = null
@@ -69,7 +68,7 @@ const addUser = async (newUser) => {
 const deleteVCard = async (vcard) => {
     if (vcard) {
         try {
-            await axios.delete(`${config.baseAPI}/vcards/${vcard.id}`)
+            await axios.delete(`vcards/${vcard.phone_number}`)
             fetchVCards()
             success.value = "VCard deleted successfully" // show success error
             error.value = null
