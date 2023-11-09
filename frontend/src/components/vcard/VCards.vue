@@ -62,22 +62,6 @@ onMounted(() => {
     <hr />
     <div v-if="!onlyCurrentVCards" class="mb-3 d-flex justify-content-between flex-wrap">
         <div class="mx-2 mt-2 flex-grow-1 filter-div">
-            <label for="selectCompleted" class="form-label">Filter by completed:</label>
-            <select class="form-select" id="selectCompleted" v-model="filterByCompleted">
-                <option value="-1">Any</option>
-                <option value="0">Pending Tasks</option>
-                <option value="1">Completed Tasks</option>
-            </select>
-        </div>
-        <div class="mx-2 mt-2 flex-grow-1 filter-div">
-            <label for="selectProject" class="form-label">Filter by project:</label>
-            <select class="form-select" id="selectProject" v-model="filterByProjectId">
-                <option value="-1">Any</option>
-                <option :value="null">-- No project --</option>
-                <option v-for="prj in projects" :key="prj.id" :value="prj.id">
-                    {{ prj.name }}
-                </option>
-            </select>
         </div>
         <div class="mx-2 mt-2">
             <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">

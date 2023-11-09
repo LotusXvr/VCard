@@ -218,6 +218,19 @@ onMounted(() => {
                             </a>
                         </li>
                         <li class="nav-item d-flex justify-content-between align-items-center pe-3">
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'VCards' }"
+                                :to="{ name: 'VCards' }"
+                            >
+                                <i class="bi bi-list-check"></i>
+                                VCards router
+                            </router-link>
+                            <a class="link-secondary" href="#" aria-label="Add a new task">
+                                <i class="bi bi-xs bi-plus-circle"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item d-flex justify-content-between align-items-center pe-3">
                             <a @click="showUsers" class="nav-link w-100 me-3" href="#">
                                 <i class="bi bi-list-check"></i>
                                 Users

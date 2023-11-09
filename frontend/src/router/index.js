@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import VCards from '../components/vcard/VCards.vue'
+import Dashboard from "../components/Dashboard.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +19,17 @@ const router = createRouter({
     //   // which is lazy-loaded when the route is visited.
     //   component: () => import('../views/AboutView.vue')
     // }
+    {
+        path: "/dashboard",
+        name: "Dashboard",
+        component: Dashboard,
+    },
+    {
+        path: "/vcards",
+        name: "VCards",
+        component: VCards,
+        props: { onlyCurrentTasks: true, tasksTitle: "Current Tasks" },
+    },
   ]
 })
 
