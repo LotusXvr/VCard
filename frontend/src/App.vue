@@ -6,6 +6,8 @@ import config from "./utils/config"
 import createVCard from "./components/VCardCreate.vue"
 import createUser from "./components/UserCreate.vue"
 
+import VCardList from "./components/VCardList.vue"
+
 const vcards = ref([])
 const users = ref([])
 const showingUsers = ref(false)
@@ -72,7 +74,7 @@ const addUser = async (newUser) => {
 const deleteVCard = async (vcard) => {
     if (vcard) {
         try {
-            await axios.delete(`${config.baseAPI}/vcards/${vcard}`)
+            await axios.delete(`${config.baseAPI}/vcards/${vcard.id}`)
             fetchVCards()
             success.value = "VCard deleted successfully" // show success error
             error.value = null

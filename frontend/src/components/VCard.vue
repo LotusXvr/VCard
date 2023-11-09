@@ -1,58 +1,62 @@
 <script setup>
-import { ref } from "vue"
-import TaskDetail from "./TaskDetail.vue"
+import { ref, computed } from "vue"
+import VCardDetail from "./VCardDetail.vue"
 // import axios from "axios"
 // import config from "../utils/config"
 
 const vcardEdit = ref(null)
 
-// const props = defineProps({
-//     vcard: Object,
-//     readonly: Boolean,
-// })
+const props = defineProps({
+    vcard: Object,
+    readonly: Boolean,
+})
+
+const fullDescription = computed(() =>
+    props.vcard.phone_number + " " + props.vcard.email + " " + props.vcard.balance
+)
 
 const emit = defineEmits(["requestRemoveVCardFromList", "requestUpdateVCard"])
 
-const clickToDeleteTask = (vcard) => {
+const clickToDeleteVCard = (vcard) => {
     emit("requestRemoveVCardFromList", vcard)
 }
 
-const editTask = (task) => {
-    vcardEdit.value = task
+const editVCard = (vcard) => {
+    vcardEdit.value = vcard
 }
 
 const closeEdit = () => {
     vcardEdit.value = null
 }
 
-const detailRequestedUpdateTask = (task) => {
+const detailRequestedUpdateVCard = (vcard) => {
     vcardEdit.value = null
-    emit("requestUpdateTask", task)
+    emit("requestUpdateVCard", vcard)
 }
 </script>
 
 <template>
     <li class="list-group-item" :class="{ 'bg-light': readonly }">
-        <span>{{ fullDescription }}</span>
+        <span >{{ fullDescription }}</span>
         <div class="float-end" v-show="!readonly">
-            <button class="btn btn-danger btn-xs" @click="clickToDeleteTask(task)">
+            <button class="btn btn-danger btn-xs" @click="clickToDeleteVCard(vcard)">
                 <i class="bi-trash" aria-hidden="true"></i>
             </button>
 
-            <button class="btn btn-info btn-xs" @click="editTask(task)" v-if="!taskEdit">
+            <button class="btn btn-info btn-xs" @click="editVCard(vcard)" v-if="!vcardEdit">
                 <i class="bi-pencil" aria-hidden="true"></i>
             </button>
             <button class="btn btn-warning btn-xs" @click="closeEdit" v-else>
                 <i class="bi-arrow-up" aria-hidden="true"></i>
             </button>
         </div>
-        <div v-if="taskEdit">
+        <div v-if="vcardEdit">
             <hr />
-            <TaskDetail
-                :task="taskEdit"
-                @requestUpdateTask="detailRequestedUpdateTask"
+            <VCardDetail
+                :vcard="vcardEdit"
+                @requestUpdateVCard="detailRequestedUpdateVCard"
                 @hide="closeEdit"
-            ></TaskDetail>
+            ></VCardDetail>
         </div>
     </li>
 </template>
