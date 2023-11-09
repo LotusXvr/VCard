@@ -25,11 +25,6 @@ const showVCards = () => {
     showingUsers.value = false
     showingVCards.value = true
 }
-const clearView = () => {
-    // Set the flag to hide both users and vCards
-    showingUsers.value = false
-    showingVCards.value = false
-}
 
 const fetchVCards = async () => {
     // Fetch the vCards from the API
@@ -99,11 +94,7 @@ onMounted(() => {
         <createVCard @AddVCard="addVCard"></createVCard>
         <createUser @AddUser="addUser"></createUser>
 
-        
-
-        
-
-        
+    
     </div>
 </template> -->
 
@@ -222,7 +213,7 @@ onMounted(() => {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a @click="showVCards" class="nav-link" href="#">
                                 <i class="bi bi-list-stars"></i>
                                 VCards
                             </a>
@@ -337,6 +328,7 @@ onMounted(() => {
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <dashboard>
+                    <!-- USERS -> CODIGO SEM ESTRUTURAÇÃO DE COMPONENTES -->
                     <div v-if="showingUsers">
                         <h2>Users</h2>
                         <table class="table">
@@ -353,6 +345,16 @@ onMounted(() => {
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <!-- VCARDS -> CODIGO !!COM!! ESTRUTURAÇÃO DE COMPONENTES -->
+                    <div v-if="showingVCards">
+                        <VCardList
+                            :vcards="vcards"
+                            :readonly="false"
+                            @requestRemoveVCardFromList="deleteVCard"
+                            @requestUpdateVCard="updateVCard"
+                        >
+                        </VCardList>
                     </div>
                 </dashboard>
             </main>

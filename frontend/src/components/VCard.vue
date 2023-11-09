@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref } from "vue"
 import VCardDetail from "./VCardDetail.vue"
 // import axios from "axios"
 // import config from "../utils/config"
@@ -10,10 +10,6 @@ const props = defineProps({
     vcard: Object,
     readonly: Boolean,
 })
-
-const fullDescription = computed(() =>
-    props.vcard.phone_number + " " + props.vcard.email + " " + props.vcard.balance
-)
 
 const emit = defineEmits(["requestRemoveVCardFromList", "requestUpdateVCard"])
 
@@ -37,7 +33,7 @@ const detailRequestedUpdateVCard = (vcard) => {
 
 <template>
     <li class="list-group-item" :class="{ 'bg-light': readonly }">
-        <span >{{ fullDescription }}</span>
+        <span>{{ vcard.name + " || " + vcard.email + " || " + vcard.balance + "€" }}</span>
         <div class="float-end" v-show="!readonly">
             <button class="btn btn-danger btn-xs" @click="clickToDeleteVCard(vcard)">
                 <i class="bi-trash" aria-hidden="true"></i>
