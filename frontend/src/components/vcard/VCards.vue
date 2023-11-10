@@ -3,6 +3,9 @@ import axios from "axios"
 import { ref, onMounted } from "vue"
 import VCardTable from "./VCardTable.vue"
 
+const success = ref(null)
+const error = ref(null)
+
 const props = defineProps({
     vcardsTitle: {
         type: String,
@@ -29,23 +32,35 @@ const loadVCards = () => {
         })
 }
 
-const addVCard = () => {
-    console.log("Navigate to New Task")
-}
+// const addVCard = () => {
+//     console.log("Navigate to New Task")
+// }
 
 const editVCard = (vcard) => {
     console.log("Navigate to VCard with ID = " + vcard.phone_number)
 }
 
-  const deletedVCard = (deletedVCard) => {
-      let idx = vcards.value.findIndex((t) => t.id === deletedVCard.id)
-      if (idx >= 0) {
+const deletedVCard = (deletedVCard) => {
+    let idx = vcards.value.findIndex((t) => t.id === deletedVCard.id)
+    if (idx >= 0) {
         vcards.value.splice(idx, 1)
-      }
-      loadVCards()
-  }
+    }
+    loadVCards()
+}
 
-
+const addVCard = async (newVCard) => {
+    if (newVCard) {
+        try {
+            await axios.post(`$vcards`, newVCard)
+            loadVCards()
+            success.value = "VCard created successfully" // show success error
+            error.value = null
+        } catch (e) {
+            success.value = null // clear success message
+            error.value = e.response.data.errors // Capture and display API validation errors
+        }
+    }
+}
 
 onMounted(() => {
     loadVCards()
@@ -63,12 +78,17 @@ onMounted(() => {
     </div>
     <hr />
     <div v-if="!onlyCurrentVCards" class="mb-3 d-flex justify-content-between flex-wrap">
-        <div class="mx-2 mt-2 flex-grow-1 filter-div">
-        </div>
+        <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
         <div class="mx-2 mt-2">
-            <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">
-                <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
-            </button>
+            <router-link
+                class="nav-link w-100 me-3"
+                :class="{ active: $route.name === 'VCardCreate' }"
+                :to="{ name: 'VCardCreate' }"
+            >
+                <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">
+                    <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
+                </button>
+            </router-link>
         </div>
     </div>
     <VCardTable

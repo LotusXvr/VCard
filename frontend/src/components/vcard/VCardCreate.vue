@@ -15,7 +15,7 @@ const emit = defineEmits(["addVCard"])
 
 const createVCard = () => {
     // Create a new vCard
-    emit("addVCard", {
+    emit("newVCard", {
         phone_number: newVCard.value.phone_number,
         password: newVCard.value.password,
         name: newVCard.value.name,
