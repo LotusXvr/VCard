@@ -33,8 +33,8 @@ const addVCard = () => {
     console.log("Navigate to New Task")
 }
 
-const editVCard = (task) => {
-    console.log("Navigate to Edit Task with ID = " + task.id)
+const editVCard = (vcard) => {
+    console.log("Navigate to VCard with ID = " + vcard.phone_number)
 }
 
   const deletedVCard = (deletedVCard) => {

@@ -34,8 +34,8 @@ watch(
 //   editingTasks.value = props.tasks
 // })
 
-const editClick = (task) => {
-    emit("edit", task)
+const editClick = (vcard) => {
+    emit("edit", vcard)
 }
 const deleteClick = (vcard) => {
     axios

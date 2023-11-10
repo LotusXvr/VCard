@@ -26,11 +26,6 @@ const showVCards = () => {
     showingVCards.value = true
 }
 
-const fetchVCards = async () => {
-    // Fetch the vCards from the API
-    const response = await axios.get("vcards")
-    vcards.value = response.data
-}
 
 const fetchUsers = async () => {
     // Fetch the users from the API
@@ -38,19 +33,19 @@ const fetchUsers = async () => {
     users.value = response.data
 }
 
-const addVCard = async (newVCard) => {
-    if (newVCard) {
-        try {
-            await axios.post(`$vcards`, newVCard)
-            fetchVCards()
-            success.value = "VCard created successfully" // show success error
-            error.value = null
-        } catch (e) {
-            success.value = null // clear success message
-            error.value = e.response.data.errors // Capture and display API validation errors
-        }
-    }
-}
+// const addVCard = async (newVCard) => {
+//     if (newVCard) {
+//         try {
+//             await axios.post(`$vcards`, newVCard)
+//             fetchVCards()
+//             success.value = "VCard created successfully" // show success error
+//             error.value = null
+//         } catch (e) {
+//             success.value = null // clear success message
+//             error.value = e.response.data.errors // Capture and display API validation errors
+//         }
+//     }
+// }
 
 const addUser = async (newUser) => {
     if (newUser) {
@@ -66,23 +61,9 @@ const addUser = async (newUser) => {
     }
 }
 
-const deleteVCard = async (vcard) => {
-    if (vcard) {
-        try {
-            await axios.delete(`vcards/${vcard.phone_number}`)
-            fetchVCards()
-            success.value = "VCard deleted successfully" // show success error
-            error.value = null
-        } catch (e) {
-            success.value = null // clear success message
-            error.value = e.response.data.errors // Capture and display API validation errors
-        }
-    }
-}
 
 onMounted(() => {
     // Fetch the vCards and users when the component is mounted
-    fetchVCards()
     fetchUsers()
 })
 </script>
