@@ -28,7 +28,7 @@ const router = createRouter({
         path: "/vcards",
         name: "VCards",
         component: VCards,
-        props: { onlyCurrentTasks: true, tasksTitle: "Current Tasks" },
+        props: { onlyCurrentVCards: false, vcardsTitle: "VCards" },
     },
   ]
 })

@@ -17,6 +17,7 @@ const props = defineProps({
     },
 })
 
+console.log(props.vcards)
 const emit = defineEmits(["completeToggled", "edit", "deleted"])
 
 const editingVCards = ref(props.vcards)
@@ -36,12 +37,12 @@ watch(
 const editClick = (task) => {
     emit("edit", task)
 }
-const deleteClick = (task) => {
+const deleteClick = (vcard) => {
     axios
-        .delete("tasks/" + task.id)
+        .delete("vcards/" + vcard.phone_number)
         .then((response) => {
-            let deletedTask = response.data.data
-            emit("deleted", deletedTask)
+            let deletedVCard = response.data.data
+            emit("deleted", deletedVCard)
         })
         .catch((error) => {
             console.log(error)
@@ -54,15 +55,15 @@ const deleteClick = (task) => {
         <thead>
             <tr>
                 <th>Phone Number</th>
-                <th class="text-center">Name</th>
+                <th>Name</th>
                 <th>Balance</th>
                 <th v-if="showEditButton || showDeleteButton"></th>
             </tr>
         </thead>
         <tbody>
-            <tr v-for="vcard in editingVCards" :key="vcard.phone_number">
+            <tr v-for="vcard in vcards" :key="vcard.phone_number">
                 <td>{{ vcard.phone_number }}</td>
-                <td class="text-center">
+                <td>
                     {{ vcard.name }}
                 </td>
                 <td>

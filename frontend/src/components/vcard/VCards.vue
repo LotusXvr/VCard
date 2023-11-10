@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios"
-import { ref, computed, onMounted } from "vue"
+import { ref, onMounted } from "vue"
 import VCardTable from "./VCardTable.vue"
 
 const props = defineProps({
@@ -21,7 +21,8 @@ const loadVCards = () => {
     axios
         .get("vcards")
         .then((response) => {
-            vcards.value = response.data.data
+            vcards.value = response.data
+            console.log(response.data)
         })
         .catch((error) => {
             console.log(error)
@@ -36,12 +37,13 @@ const editVCard = (task) => {
     console.log("Navigate to Edit Task with ID = " + task.id)
 }
 
-//   const deletedVCard = (deletedTask) => {
-//       let idx = tasks.value.findIndex((t) => t.id === deletedTask.id)
-//       if (idx >= 0) {
-//         tasks.value.splice(idx, 1)
-//       }
-//   }
+  const deletedVCard = (deletedVCard) => {
+      let idx = vcards.value.findIndex((t) => t.id === deletedVCard.id)
+      if (idx >= 0) {
+        vcards.value.splice(idx, 1)
+      }
+      loadVCards()
+  }
 
 
 
@@ -69,12 +71,12 @@ onMounted(() => {
             </button>
         </div>
     </div>
-    <vcard-table
+    <VCardTable
         :vcards="vcards"
         :showPhoneNumber="true"
         @edit="editVCard"
         @deleted="deletedVCard"
-    ></vcard-table>
+    ></VCardTable>
 </template>
 
 <style scoped>

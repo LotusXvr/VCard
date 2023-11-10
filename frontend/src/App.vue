@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink, RouterView } from "vue-router"
 import { ref, onMounted } from "vue"
 import axios from "axios"
 
@@ -337,6 +338,10 @@ onMounted(() => {
                     </div>
                 </div>
             </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <router-view />
+            </main>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <dashboard>
