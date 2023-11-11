@@ -1,44 +1,48 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, defineEmits } from "vue"
+import axios from "axios"
 
 const newVCard = ref({
-    id: "",
     phone_number: "",
     password: "",
     name: "",
     email: "",
     confirmation_code: "",
 })
-//const vcardInput = ref(null)
 
-const emit = defineEmits(["addVCard"])
-
-const createVCard = () => {
-    // Create a new vCard
-    emit("addVCard", {
-        phone_number: newVCard.value.phone_number,
-        password: newVCard.value.password,
-        name: newVCard.value.name,
-        email: newVCard.value.email,
-        confirmation_code: newVCard.value.confirmation_code,
-        balance: "0.00",
-        blocked: 0,
-        max_debit: "5000.00",
-    })
-    console.log("Calling addVCard()")
-    // Clear the input
-    newVCard.value = {
-        phone_number: "",
-        password: "",
-        name: "",
-        email: "",
-        confirmation_code: "",
+const createVCard = async () => {
+    console.log("addVCard() called with:", newVCard.value);
+    try {
+        await axios.post("vcards", newVCard.value);
+        console.log("VCard created successfully");
+        // success.value = "VCard created successfully"; 
+        // error.value = null;
+    } catch (e) {
+        console.error("Error creating VCard:", e);
+        // success.value = null;
+        // error.value = e.response.data.errors;
     }
-}
+};
 
-onMounted(() => {
-    // Focus the input when the component is mounted
-})
+// const emit = defineEmits(["addVCard"]) // Fix the case here
+
+// const addVCard = () => {
+//     console.log("createVCard() called");
+
+//     // Emitir o evento para adicionar o VCard
+//     emit("addVCard", newVCard.value); // Fix the case here
+
+//     console.log("VCard created successfully: ", newVCard.value);
+
+//     // Limpar os inputs
+//     newVCard.value = {
+//         phone_number: "",
+//         password: "",
+//         name: "",
+//         email: "",
+//         confirmation_code: "",
+//     }
+// }
 </script>
 
 <template>
@@ -100,7 +104,7 @@ onMounted(() => {
                 />
             </div>
 
-            <button type="submit" class="btn btn-primary" @click="addVCard">Create VCard</button>
+            <button type="submit" class="btn btn-primary">Create VCard</button>
         </form>
     </div>
 </template>

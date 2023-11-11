@@ -18,7 +18,7 @@ const props = defineProps({
 })
 
 console.log(props.vcards)
-const emit = defineEmits(["completeToggled", "edit", "deleted"])
+const emit = defineEmits(["completeToggled", "edit", "delete"])
 
 const editingVCards = ref(props.vcards)
 
@@ -38,16 +38,9 @@ const editClick = (vcard) => {
     emit("edit", vcard)
 }
 const deleteClick = (vcard) => {
-    axios
-        .delete("vcards/" + vcard.phone_number)
-        .then((response) => {
-            let deletedVCard = response.data.data
-            emit("deleted", deletedVCard)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
+    emit("delete", vcard)
 }
+
 </script>
 
 <template>

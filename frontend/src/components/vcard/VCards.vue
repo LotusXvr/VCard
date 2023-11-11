@@ -15,6 +15,7 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+
 })
 
 const vcards = ref([])
@@ -32,36 +33,36 @@ const loadVCards = () => {
         })
 }
 
-// const addVCard = () => {
-//     console.log("Navigate to New Task")
-// }
 
 const editVCard = (vcard) => {
     console.log("Navigate to VCard with ID = " + vcard.phone_number)
 }
 
-const deletedVCard = (deletedVCard) => {
-    let idx = vcards.value.findIndex((t) => t.id === deletedVCard.id)
-    if (idx >= 0) {
-        vcards.value.splice(idx, 1)
-    }
-    loadVCards()
+const deleteVCard = (vcard) => {
+    axios
+        .delete("vcards/" + vcard.phone_number)
+        .then((response) => {
+            let deleteVCard = response.data.data
+            loadVCards()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
-const addVCard = async (newVCard) => {
-    console.log("addVCard() called")
-    if (newVCard) {
-        try {
-            await axios.post(`$vcards`, newVCard)
-            loadVCards()
-            success.value = "VCard created successfully" // show success error
-            error.value = null
-        } catch (e) {
-            success.value = null // clear success message
-            error.value = e.response.data.errors // Capture and display API validation errors
-        }
-    }
-}
+// const createVCard = async (newVCard) => {
+//     console.log("addVCard() called with:", newVCard);
+//     try {
+//         await axios.post("vcards", newVCard);
+//         console.log("VCard created successfully");
+//         success.value = "VCard created successfully"; 
+//         error.value = null;
+//     } catch (e) {
+//         console.error("Error creating VCard:", e);
+//         success.value = null;
+//         error.value = e.response.data.errors;
+//     }
+// };
 
 onMounted(() => {
     loadVCards()
@@ -82,21 +83,23 @@ onMounted(() => {
         <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
         <div class="mx-2 mt-2">
             <router-link
-                class="nav-link w-100 me-3"
-                :class="{ active: $route.name === 'VCardCreate' }"
-                :to="{ name: 'VCardCreate' }"
-            >
-                <button type="button" class="btn btn-success px-4 btn-addtask">
-                    <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
-                </button>
-            </router-link>
+    class="nav-link w-100 me-3"
+    :class="{ active: $route.name === 'VCardCreate' }"
+    :to="{ name: 'VCardCreate' }"
+>
+    <button type="button" class="btn btn-success px-4 btn-addtask">
+        <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
+    </button>
+</router-link>
+
+
         </div>
     </div>
     <VCardTable
         :vcards="vcards"
         :showPhoneNumber="true"
         @edit="editVCard"
-        @deleted="deletedVCard"
+        @delete="deleteVCard"
     ></VCardTable>
 </template>
 
