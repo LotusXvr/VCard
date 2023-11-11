@@ -49,6 +49,7 @@ const deletedVCard = (deletedVCard) => {
 }
 
 const addVCard = async (newVCard) => {
+    console.log("addVCard() called")
     if (newVCard) {
         try {
             await axios.post(`$vcards`, newVCard)
@@ -85,7 +86,7 @@ onMounted(() => {
                 :class="{ active: $route.name === 'VCardCreate' }"
                 :to="{ name: 'VCardCreate' }"
             >
-                <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">
+                <button type="button" class="btn btn-success px-4 btn-addtask">
                     <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
                 </button>
             </router-link>

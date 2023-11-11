@@ -15,7 +15,7 @@ const emit = defineEmits(["addVCard"])
 
 const createVCard = () => {
     // Create a new vCard
-    emit("newVCard", {
+    emit("addVCard", {
         phone_number: newVCard.value.phone_number,
         password: newVCard.value.password,
         name: newVCard.value.name,
@@ -25,6 +25,7 @@ const createVCard = () => {
         blocked: 0,
         max_debit: "5000.00",
     })
+    console.log("Calling addVCard()")
     // Clear the input
     newVCard.value = {
         phone_number: "",
@@ -99,7 +100,7 @@ onMounted(() => {
                 />
             </div>
 
-            <button type="submit" class="btn btn-primary">Create VCard</button>
+            <button type="submit" class="btn btn-primary" @click="addVCard">Create VCard</button>
         </form>
     </div>
 </template>
