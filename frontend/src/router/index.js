@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import VCards from '../components/vcard/VCards.vue'
 import Dashboard from "../components/Dashboard.vue"
 import VCardCreate from "../components/vcard/VCardCreate.vue"
+import Transaction from "../components/transaction/Transaction.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,6 +37,11 @@ const router = createRouter({
         name: "VCardCreate",
         component: VCardCreate,
     },
+    {
+        path: "/transaction",
+        name: "Transaction",
+        component: Transaction
+    }
   ]
 })
 

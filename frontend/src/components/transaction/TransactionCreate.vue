@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue"
 
-const newVCard = ref({
+const newTransaction = ref({
     id: "",
     phone_number: "",
     password: "",
@@ -9,26 +9,25 @@ const newVCard = ref({
     email: "",
     confirmation_code: "",
 })
-//const vcardInput = ref(null)
+//const transactionInput = ref(null)
 
-const emit = defineEmits(["addVCard"])
+const emit = defineEmits(["addTransaction"])
 
-const createVCard = () => {
-    // Create a new vCard
-    emit("addVCard", {
-        phone_number: newVCard.value.phone_number,
-        password: newVCard.value.password,
-        name: newVCard.value.name,
-        email: newVCard.value.email,
-        confirmation_code: newVCard.value.confirmation_code,
+const createTransaction = () => {
+    // Create a new transaction
+    emit("addtransaction", {
+        phone_number: newTransaction.value.phone_number,
+        password: newTransaction.value.password,
+        name: newTransaction.value.name,
+        email: newTransaction.value.email,
+        confirmation_code: newTransaction.value.confirmation_code,
         balance: "0.00",
         blocked: 0,
         max_debit: "5000.00",
     })
-
-    console.log("Calling addVCard()")
+    console.log("Calling addtransaction()")
     // Clear the input
-    newVCard.value = {
+    newTransaction.value = {
         phone_number: "",
         password: "",
         name: "",
@@ -44,14 +43,14 @@ onMounted(() => {
 
 <template>
     <div>
-        <h2>Create a New VCard</h2>
-        <form @submit.prevent="createVCard">
+        <h2>Transaction</h2>
+        <form @submit.prevent="createTransaction">
             <div class="form-group">
                 <label for="phone_number">Phone Number:</label>
                 <input
-                    v-model="newVCard.phone_number"
+                    v-model="newTransaction.phone_number"
                     type="text"
-                    id="VCardPhoneNumber"
+                    id="transactionPhoneNumber"
                     class="form-control"
                     required
                 />
@@ -60,9 +59,9 @@ onMounted(() => {
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input
-                    v-model="newVCard.password"
+                    v-model="newTransaction.password"
                     type="password"
-                    id="VCardPassword"
+                    id="transactionPassword"
                     class="form-control"
                     required
                 />
@@ -71,9 +70,9 @@ onMounted(() => {
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input
-                    v-model="newVCard.name"
+                    v-model="newTransaction.name"
                     type="text"
-                    id="VCardName"
+                    id="transactionName"
                     class="form-control"
                     required
                 />
@@ -82,9 +81,9 @@ onMounted(() => {
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input
-                    v-model="newVCard.email"
+                    v-model="newTransaction.email"
                     type="email"
-                    id="VCardEmail"
+                    id="transactionEmail"
                     class="form-control"
                     required
                 />
@@ -93,15 +92,15 @@ onMounted(() => {
             <div class="form-group">
                 <label for="confirmation_code">Confirmation Code:</label>
                 <input
-                    v-model="newVCard.confirmation_code"
+                    v-model="newTransaction.confirmation_code"
                     type="text"
-                    id="VCard_confirmation_code"
+                    id="transaction_confirmation_code"
                     class="form-control"
                     required
                 />
             </div>
 
-            <button type="submit" class="btn btn-primary" @click="addVCard">Create VCard</button>
+            <button type="submit" class="btn btn-primary" @click="addTransaction">Create transaction</button>
         </form>
     </div>
 </template>

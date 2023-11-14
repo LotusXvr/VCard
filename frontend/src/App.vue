@@ -26,7 +26,6 @@ const showVCards = () => {
     showingVCards.value = true
 }
 
-
 const fetchUsers = async () => {
     // Fetch the users from the API
     const response = await axios.get("users")
@@ -60,7 +59,6 @@ const addUser = async (newUser) => {
         }
     }
 }
-
 
 onMounted(() => {
     // Fetch the vCards and users when the component is mounted
@@ -188,16 +186,14 @@ onMounted(() => {
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'Dashboard' }"
+                                :to="{ name: 'Dashboard' }"
+                            >
                                 <i class="bi bi-house"></i>
                                 Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a @click="showVCards" class="nav-link" href="#">
-                                <i class="bi bi-list-stars"></i>
-                                VCards
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item d-flex justify-content-between align-items-center pe-3">
                             <router-link
@@ -206,11 +202,8 @@ onMounted(() => {
                                 :to="{ name: 'VCards' }"
                             >
                                 <i class="bi bi-list-check"></i>
-                                VCards router
+                                VCards
                             </router-link>
-                            <a class="link-secondary" href="#" aria-label="Add a new task">
-                                <i class="bi bi-xs bi-plus-circle"></i>
-                            </a>
                         </li>
                         <li class="nav-item d-flex justify-content-between align-items-center pe-3">
                             <a @click="showUsers" class="nav-link w-100 me-3" href="#">
@@ -222,10 +215,14 @@ onMounted(() => {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'Transaction' }"
+                                :to="{ name: 'Transaction' }"
+                            >
                                 <i class="bi bi-files"></i>
-                                Transações
-                            </a>
+                                Transaction
+                            </router-link>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">
