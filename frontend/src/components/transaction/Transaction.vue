@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue"
+import CreateTransaction from "./TransactionCreate.vue"
 
 import axios from "axios"
 
@@ -18,5 +19,5 @@ const addTransaction = async (newVCard) => {
 </script>
 
 <template>
-    <createVCard @AddVCard="addVCard"></createVCard>
+    <create-transaction @AddTransaction="addTransaction"></create-transaction>
 </template>
