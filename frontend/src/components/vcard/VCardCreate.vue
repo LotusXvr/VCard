@@ -1,15 +1,14 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, defineEmits } from "vue"
+import axios from "axios"
 
 const newVCard = ref({
-    id: "",
     phone_number: "",
     password: "",
     name: "",
     email: "",
     confirmation_code: "",
 })
-//const vcardInput = ref(null)
 
 const emit = defineEmits(["addVCard"])
 
@@ -35,11 +34,8 @@ const createVCard = () => {
         email: "",
         confirmation_code: "",
     }
-}
+};
 
-onMounted(() => {
-    // Focus the input when the component is mounted
-})
 </script>
 
 <template>
@@ -101,7 +97,7 @@ onMounted(() => {
                 />
             </div>
 
-            <button type="submit" class="btn btn-primary" @click="addVCard">Create VCard</button>
+            <button type="submit" class="btn btn-primary">Create VCard</button>
         </form>
     </div>
 </template>
