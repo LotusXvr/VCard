@@ -19,6 +19,7 @@ const props = defineProps({
 })
 
 const vcards = ref([])
+const deletedVCard = ref(null)
 
 const loadVCards = () => {
     // Change later when authentication is implemented
@@ -42,7 +43,7 @@ const deleteVCard = (vcard) => {
     axios
         .delete("vcards/" + vcard.phone_number)
         .then((response) => {
-            let deleteVCard = response.data.data
+            let deletedVCard = response.data.data
             loadVCards()
         })
         .catch((error) => {
@@ -50,19 +51,19 @@ const deleteVCard = (vcard) => {
         })
 }
 
-// const createVCard = async (newVCard) => {
-//     console.log("addVCard() called with:", newVCard);
-//     try {
-//         await axios.post("vcards", newVCard);
-//         console.log("VCard created successfully");
-//         success.value = "VCard created successfully"; 
-//         error.value = null;
-//     } catch (e) {
-//         console.error("Error creating VCard:", e);
-//         success.value = null;
-//         error.value = e.response.data.errors;
-//     }
-// };
+const addVCard = async (newVCard) => {
+    console.log("addVCard() called with:", newVCard);
+    try {
+        await axios.post("vcards", newVCard);
+        console.log("VCard created successfully");
+        success.value = "VCard created successfully"; 
+        error.value = null;
+    } catch (e) {
+        console.error("Error creating VCard:", e);
+        success.value = null;
+        error.value = e.response.data.errors;
+    }
+};
 
 onMounted(() => {
     loadVCards()
