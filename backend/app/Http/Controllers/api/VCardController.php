@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateVCardRequest;
 use App\Http\Resources\VCardResource;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\VCard;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,16 @@ class VCardController extends Controller
     {
         $vcard->delete();
         return new VCardResource($vcard);
+    }
+
+    public function isPhoneNumberAlreadyUsed(Request $request){
+        $existingVCard = VCard::where('phone_number', $request->phone)->first();
+
+        if ($existingVCard) {
+            return response()->json(['message' => 'Phone number is already in use'], 422);
+        }
+
+        return response()->json(['message' => 'Phone number is available']);
     }
 
 
