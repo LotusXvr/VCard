@@ -1,82 +1,76 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import VCardDetail from "./VCardDetail.vue"
-// import axios from "axios"
+import axios from "axios"
 // import config from "../utils/config"
+import { useToast } from "vue-toastification"
 
-const vcardEdit = ref(null)
+const toast = useToast()
+
 
 const props = defineProps({
-    vcard: Object,
-    readonly: Boolean,
+    id: {
+        type: Number,
+        default: null,
+    },
 })
 
-// const newVCard = () => {
-//       return {
-//         phone_number: '',
-//         name: '',
-//         email: '',
-//         photo_url: null,
-//         password: '',
-//         confirmation_code: '',
-//         blocked: 0,
-//         balance: 0,
-//         max_debit: 5000,
-//       }
-//     }
-
-const emit = defineEmits(["requestRemoveVCardFromList", "requestUpdateVCard"])
-
-const clickToDeleteVCard = (vcard) => {
-    emit("requestRemoveVCardFromList", vcard)
+const newVCard = () => {
+    return {
+        phone_number: "",
+        name: "",
+        email: "",
+        photo_url: null,
+        password: "",
+        confirmation_code: "",
+        blocked: 0,
+        balance: 0,
+        max_debit: 5000,
+    }
 }
 
-const editVCard = (vcard) => {
-    vcardEdit.value = vcard
-}
+const vcard = ref(newVCard())
+const errors = ref({})
 
-const closeEdit = () => {
-    vcardEdit.value = null
-}
+const operation = computed(() => (!props.id || props.id < 0 ? "insert" : "update"))
 
-const detailRequestedUpdateVCard = (vcard) => {
-    vcardEdit.value = null
-    emit("requestUpdateVCard", vcard)
+const save = () => {
+    if (operation.value == "insert") {
+        axios
+            .post("vcards", vcard.value)
+            .then((response) => {
+                console.log("VCard Created")
+                console.dir(response.data.data)
+                toast.success("VCard Created")
+            })
+            .catch((error) => {
+                console.dir(error)
+
+                if (error.response.status == 422) {
+                    errors.value = error.response.data.errors
+                    toast.error("Validation Error")
+                }
+            })
+    } else {
+        axios
+            .put("vcards/" + props.id, vcard.value)
+            .then((response) => {
+                console.log("VCard Updated")
+                console.dir(response.data.data)
+                toast.success("VCard Updated")
+            })
+            .catch((error) => {
+                console.dir(error)
+            })
+    }
 }
 </script>
 
 <template>
-    <li class="list-group-item" :class="{ 'bg-light': readonly }">
-        <span>{{ props.vcard.name + " || " + props.vcard.email + " || " + props.vcard.balance + "€" }}</span>
-        <div class="float-end" v-show="!readonly">
-            <button class="btn btn-danger btn-xs" @click="clickToDeleteVCard(vcard)">
-                <i class="bi-trash" aria-hidden="true"></i>
-            </button>
-
-            <button class="btn btn-info btn-xs" @click="editVCard(vcard)" v-if="!vcardEdit">
-                <i class="bi-pencil" aria-hidden="true"></i>
-            </button>
-            <button class="btn btn-warning btn-xs" @click="closeEdit" v-else>
-                <i class="bi-arrow-up" aria-hidden="true"></i>
-            </button>
-        </div>
-        <div v-if="vcardEdit">
-            <hr />
-            <VCardDetail
-                :vcard="vcardEdit"
-                @requestUpdateVCard="detailRequestedUpdateVCard"
-                @hide="closeEdit"
-            ></VCardDetail>
-        </div>
-    </li>
+    <VCardDetail
+        :vcard="vcard"
+        @requestUpdateVCard="detailRequestedUpdateVCard"
+        @hide="closeEdit"
+        @save="save"
+    ></VCardDetail>
 </template>
-
-<style scoped>
-.completed {
-    text-decoration: line-through;
-}
-
-button.btn {
-    margin-left: 5px;
-}
-</style>

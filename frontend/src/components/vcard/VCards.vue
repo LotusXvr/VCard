@@ -2,9 +2,7 @@
 import axios from "axios"
 import { ref, onMounted } from "vue"
 import VCardTable from "./VCardTable.vue"
-
-const success = ref(null)
-const error = ref(null)
+import router from "../../router"
 
 const props = defineProps({
     vcardsTitle: {
@@ -15,11 +13,9 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-
 })
 
 const vcards = ref([])
-const deletedVCard = ref(null)
 
 const loadVCards = () => {
     // Change later when authentication is implemented
@@ -34,7 +30,6 @@ const loadVCards = () => {
         })
 }
 
-
 const editVCard = (vcard) => {
     console.log("Navigate to VCard with ID = " + vcard.phone_number)
 }
@@ -42,8 +37,7 @@ const editVCard = (vcard) => {
 const deleteVCard = (vcard) => {
     axios
         .delete("vcards/" + vcard.phone_number)
-        .then((response) => {
-            let deletedVCard = response.data.data
+        .then(() => {
             loadVCards()
         })
         .catch((error) => {
@@ -51,19 +45,10 @@ const deleteVCard = (vcard) => {
         })
 }
 
-const addVCard = async (newVCard) => {
-    console.log("addVCard() called with:", newVCard);
-    try {
-        await axios.post("vcards", newVCard);
-        console.log("VCard created successfully");
-        success.value = "VCard created successfully"; 
-        error.value = null;
-    } catch (e) {
-        console.error("Error creating VCard:", e);
-        success.value = null;
-        error.value = e.response.data.errors;
-    }
-};
+
+const addVCard = () => {
+    router.push({ name: "newVCard" })
+}
 
 onMounted(() => {
     loadVCards()
@@ -75,25 +60,16 @@ onMounted(() => {
         <div class="mx-2">
             <h3 class="mt-4">{{ vcardsTitle }}</h3>
         </div>
-        <!-- <div class="mx-2 total-filtro">
-            <h5 class="mt-4">Total: {{ totalTasks }}</h5>
-        </div> -->
     </div>
     <hr />
     <div v-if="!onlyCurrentVCards" class="mb-3 d-flex justify-content-between flex-wrap">
         <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
         <div class="mx-2 mt-2">
-            <router-link
-    class="nav-link w-100 me-3"
-    :class="{ active: $route.name === 'VCardCreate' }"
-    :to="{ name: 'VCardCreate' }"
->
-    <button type="button" class="btn btn-success px-4 btn-addtask">
-        <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
-    </button>
-</router-link>
-
-
+            <router-link class="nav-link w-100 me-3" :to="{ name: 'NewVCard' }">
+                <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">
+                    <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
+                </button>
+            </router-link>
         </div>
     </div>
     <VCardTable
@@ -103,15 +79,3 @@ onMounted(() => {
         @delete="deleteVCard"
     ></VCardTable>
 </template>
-
-<style scoped>
-.filter-div {
-    min-width: 12rem;
-}
-.total-filtro {
-    margin-top: 0.35rem;
-}
-.btn-addtask {
-    margin-top: 1.85rem;
-}
-</style>

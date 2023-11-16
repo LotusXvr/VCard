@@ -1,18 +1,34 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, watch } from "vue"
 
 const props = defineProps({
-    vcard: Object,
+    vcard: {
+        type: Object,
+        required: true,
+    },
+    operationType: {
+      type: String,
+      default: 'insert'  // insert / update
+    },
+
 })
 
 
-const emit = defineEmits(["hide", "requestUpdateVCard"])
+const emit = defineEmits(["hide", "save"])
 
-const editVCard = ref(Object.assign({}, props.vcard))
+const editingVCard = ref(props.vcard)
+
+
+watch(
+    () => props.vcard,
+    (newVCard) => {
+      editingVCard.value = newVCard
+    }
+  )
 
 const save = () => {
     // Instead of updating the data (task) here, we request to update it by emiting an event
-    emit("requestUpdateVCard", editVCard.value)
+    emit("save", editingVCard.value)
 
     // after saving we also want to hide the component
     emit("hide")
@@ -29,17 +45,69 @@ onMounted(() => {
 </script>
 
 <template>
-    <form action="#" class="d-flex">
-
-        <div class="me-0">
-            <div class="d-flex flex-column">
-                <button type="submit" class="btn btn-primary" @click.prevent="save">
-                    <i class="bi-check-lg" aria-hidden="true"></i> Save
-                </button>
-                <button type="button" class="btn btn-secondary mt-2" @click="cancel">
-                    <i class="bi-x-lg" aria-hidden="true"></i> Cancel
-                </button>
+    <div>
+        <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
+        <hr />
+        <form @submit.prevent="save">
+            <div class="form-group">
+                <label for="phone_number">Phone Number:</label>
+                <input
+                    v-model="editingVCard.phone_number"
+                    type="text"
+                    id="VCardPhoneNumber"
+                    class="form-control"
+                    required
+                />
             </div>
-        </div>
-    </form>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input
+                    v-model="editingVCard.password"
+                    type="password"
+                    id="VCardPassword"
+                    class="form-control"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input
+                    v-model="editingVCard.name"
+                    type="text"
+                    id="VCardName"
+                    class="form-control"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input
+                    v-model="editingVCard.email"
+                    type="email"
+                    id="VCardEmail"
+                    class="form-control"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="confirmation_code">Confirmation Code:</label>
+                <input
+                    v-model="editingVCard.confirmation_code"
+                    type="text"
+                    id="VCard_confirmation_code"
+                    class="form-control"
+                    required
+                />
+            </div>
+
+            <div class="mb-3 d-flex justify-content-end">
+                <button type="button" class="btn btn-primary px-5" @click="save">Save</button>
+                <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
+            </div>
+        </form>
+    </div>
 </template>

@@ -3,10 +3,8 @@ import { RouterLink, RouterView } from "vue-router"
 import { ref, onMounted } from "vue"
 import axios from "axios"
 
-import createVCard from "./components/vcard/VCardCreate.vue"
 import createUser from "./components/user/UserCreate.vue"
 
-import VCardList from "./components/vcard/VCardList.vue"
 
 const vcards = ref([])
 const users = ref([])

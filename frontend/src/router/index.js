@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import VCards from '../components/vcard/VCards.vue'
 import Dashboard from "../components/Dashboard.vue"
-import VCardCreate from "../components/vcard/VCardCreate.vue"
 import Transaction from "../components/transaction/Transaction.vue"
+import VCard from "../components/vcard/VCard.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,15 +33,16 @@ const router = createRouter({
         props: { onlyCurrentVCards: false, vcardsTitle: "VCards" },
     },
     {
-        path: "/vcards/create",
-        name: "VCardCreate",
-        component: VCardCreate,
-    },
-    {
         path: "/transaction",
         name: "Transaction",
         component: Transaction
-    }
+    },
+    {
+        path: "/vcard/new",
+        name: "NewVCard",
+        component: VCard,
+        props: { id: -1 },
+    },
   ]
 })
 
