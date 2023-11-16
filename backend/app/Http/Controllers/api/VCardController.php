@@ -20,7 +20,7 @@ class VCardController extends Controller
 
     public function show(VCard $vcard)
     {
-        return $vcard;
+        return new VCardResource($vcard);
     }
 
     public function store(CreateVCardRequest $request)
@@ -48,7 +48,8 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
-    public function isPhoneNumberAlreadyUsed(Request $request){
+    public function isPhoneNumberAlreadyUsed(Request $request)
+    {
         $existingVCard = VCard::where('phone_number', $request->phone)->first();
 
         if ($existingVCard) {

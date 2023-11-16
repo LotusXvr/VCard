@@ -43,6 +43,12 @@ const router = createRouter({
         component: VCard,
         props: { id: -1 },
     },
+    {
+        path: "/vcards/:id",
+        name: "VCard",
+        component: VCard,
+        props: (route) => ({ phone_number: parseInt(route.params.id)}),
+    },
   ]
 })
 

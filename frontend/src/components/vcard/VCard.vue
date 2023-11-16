@@ -1,19 +1,11 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import VCardDetail from "./VCardDetail.vue"
 import axios from "axios"
 // import config from "../utils/config"
 import { useToast } from "vue-toastification"
 
 const toast = useToast()
-
-
-const props = defineProps({
-    id: {
-        type: Number,
-        default: null,
-    },
-})
 
 const newVCard = () => {
     return {
@@ -29,10 +21,32 @@ const newVCard = () => {
     }
 }
 
+const props = defineProps({
+    phone_number: {
+        type: Number,
+        default: null,
+    },
+})
+
 const vcard = ref(newVCard())
 const errors = ref({})
 
-const operation = computed(() => (!props.id || props.id < 0 ? "insert" : "update"))
+const operation = computed(() => (!props.phone_number || props.phone_number < 0 ? "insert" : "update"))
+
+const loadVCard = (phone_number) => {
+    if (!phone_number || phone_number < 0) {
+        vcard.value = newVCard()
+    } else {
+        axios
+            .get("vcards/" + phone_number)
+            .then((response) => {
+                vcard.value = response.data.data
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+}
 
 const save = () => {
     if (operation.value == "insert") {
@@ -48,12 +62,12 @@ const save = () => {
 
                 if (error.response.status == 422) {
                     errors.value = error.response.data.errors
-                    toast.error("Validation Error")
+                    toast.error("Valphone_numberation Error")
                 }
             })
     } else {
         axios
-            .put("vcards/" + props.id, vcard.value)
+            .put("vcards/" + props.phone_number, vcard.value)
             .then((response) => {
                 console.log("VCard Updated")
                 console.dir(response.data.data)
@@ -64,12 +78,20 @@ const save = () => {
             })
     }
 }
+
+watch(
+    () => props.phone_number,
+    (newValue) => {
+        loadVCard(newValue)
+    },
+    { immediate: true },
+)
 </script>
 
 <template>
     <VCardDetail
         :vcard="vcard"
-        @requestUpdateVCard="detailRequestedUpdateVCard"
+        :operationType="operation"
         @hide="closeEdit"
         @save="save"
     ></VCardDetail>

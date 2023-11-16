@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, watch } from "vue"
+import { ref, onMounted, watch, computed } from "vue"
+import router from "../../router"
 
 const props = defineProps({
     vcard: {
@@ -7,40 +8,40 @@ const props = defineProps({
         required: true,
     },
     operationType: {
-      type: String,
-      default: 'insert'  // insert / update
+        type: String,
+        default: "insert", // insert / update
     },
-
 })
-
 
 const emit = defineEmits(["hide", "save"])
 
 const editingVCard = ref(props.vcard)
 
-
 watch(
     () => props.vcard,
     (newVCard) => {
-      editingVCard.value = newVCard
+        editingVCard.value = newVCard
+    },
+)
+
+const vcardTitle = computed(() => {
+    if (!editingVCard.value) {
+        return ""
     }
-  )
+    return props.operationType == "insert" ? "New VCard" : "VCard #" + editingVCard.value.id
+})
 
 const save = () => {
     // Instead of updating the data (task) here, we request to update it by emiting an event
     emit("save", editingVCard.value)
-
-    // after saving we also want to hide the component
-    emit("hide")
 }
 
 const cancel = () => {
-    emit("hide")
+    router.back()
 }
 
 onMounted(() => {
     // Initializing with the focus on the input
-
 })
 </script>
 
@@ -48,7 +49,7 @@ onMounted(() => {
     <div>
         <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
         <hr />
-        <form @submit.prevent="save">
+        <form class="row g-3 needs-validation" novalidate @submit.prevent="save">
             <div class="form-group">
                 <label for="phone_number">Phone Number:</label>
                 <input

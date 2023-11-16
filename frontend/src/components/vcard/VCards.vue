@@ -2,7 +2,9 @@
 import axios from "axios"
 import { ref, onMounted } from "vue"
 import VCardTable from "./VCardTable.vue"
-import router from "../../router"
+import { useRouter } from "vue-router"
+
+const router = useRouter()
 
 const props = defineProps({
     vcardsTitle: {
@@ -31,7 +33,7 @@ const loadVCards = () => {
 }
 
 const editVCard = (vcard) => {
-    console.log("Navigate to VCard with ID = " + vcard.phone_number)
+    router.push({ name: "VCard", params: { id: vcard.phone_number }})
 }
 
 const deleteVCard = (vcard) => {

@@ -53,7 +53,7 @@ const deleteClick = (vcard) => {
             </tr>
         </thead>
         <tbody>
-            <tr v-for="vcard in vcards" :key="vcard.phone_number">
+            <tr v-for="vcard in editingVCards" :key="vcard.phone_number">
                 <td>{{ vcard.phone_number }}</td>
                 <td>
                     {{ vcard.name }}
