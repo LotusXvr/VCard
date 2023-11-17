@@ -28,7 +28,9 @@ const props = defineProps({
 const vcard = ref(newVCard())
 const errors = ref({})
 
-const operation = computed(() => (!props.phone_number || props.phone_number < 0 ? "insert" : "update"))
+const operation = computed(() =>
+    !props.phone_number || props.phone_number < 0 ? "insert" : "update",
+)
 
 const loadVCard = (phone_number) => {
     if (!phone_number || phone_number < 0) {
@@ -52,14 +54,18 @@ const save = () => {
             .then((response) => {
                 console.log("VCard Created")
                 console.dir(response.data.data)
-                toast.success("VCard Created")
+                toast.success(
+                    "VCard with phone number " +
+                        response.data.data.phone_number +
+                        " created successfully",
+                )
             })
             .catch((error) => {
                 console.dir(error)
 
                 if (error.response.status == 422) {
                     errors.value = error.response.data.errors
-                    toast.error("Valphone_numberation Error")
+                    toast.error("Validation error")
                 }
             })
     } else {
