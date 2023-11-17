@@ -28,8 +28,16 @@ const vcardTitle = computed(() => {
     if (!editingVCard.value) {
         return ""
     }
-    return props.operationType == "insert" ? "New VCard" : "VCard #" + editingVCard.value.id
+    return props.operationType == "insert"
+        ? "New VCard"
+        : "VCard #" + editingVCard.value.phone_number
 })
+
+const confirmPassword = ref("") // New variable for Confirm Password
+
+const validatePasswordMatch = () => {
+    return confirmPassword.value === editingVCard.value.password
+}
 
 const save = () => {
     // Instead of updating the data (task) here, we request to update it by emiting an event
@@ -62,17 +70,6 @@ onMounted(() => {
             </div>
 
             <div class="form-group">
-                <label for="password">Password:</label>
-                <input
-                    v-model="editingVCard.password"
-                    type="password"
-                    id="VCardPassword"
-                    class="form-control"
-                    required
-                />
-            </div>
-
-            <div class="form-group">
                 <label for="name">Name:</label>
                 <input
                     v-model="editingVCard.name"
@@ -94,15 +91,44 @@ onMounted(() => {
                 />
             </div>
 
-            <div class="form-group">
-                <label for="confirmation_code">Confirmation Code:</label>
-                <input
-                    v-model="editingVCard.confirmation_code"
-                    type="text"
-                    id="VCard_confirmation_code"
-                    class="form-control"
-                    required
-                />
+            <div v-if="props.operationType === 'insert'">
+                <hr />
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input
+                        v-model="editingVCard.password"
+                        type="password"
+                        id="VCardPassword"
+                        class="form-control"
+                        required
+                    />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input
+                        v-model="confirmPassword"
+                        type="password"
+                        id="VCardConfirmPassword"
+                        class="form-control"
+                        :class="{ 'is-invalid': !validatePasswordMatch() }"
+                        required
+                    />
+                    <div class="invalid-feedback">Passwords do not match.</div>
+                </div>
+            </div>
+
+            <div v-if="props.operationType === 'insert'">
+                <div class="form-group">
+                    <label for="confirmation_code">Confirmation Code:</label>
+                    <input
+                        v-model="editingVCard.confirmation_code"
+                        type="text"
+                        id="VCard_confirmation_code"
+                        class="form-control"
+                        required
+                    />
+                </div>
             </div>
 
             <div class="mb-3 d-flex justify-content-end">

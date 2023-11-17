@@ -44,5 +44,9 @@ class VCard extends Model
         return $this->hasMany(Category::class, 'pair_vcard');
     }
 
+    protected $casts = [
+        'password' => 'hashed',
+        'confirmation_code' => 'hashed',
+    ];
 }
 

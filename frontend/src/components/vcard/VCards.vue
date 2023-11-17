@@ -32,8 +32,13 @@ const loadVCards = () => {
         })
 }
 
+
+const addVCard = () => {
+    router.push({ name: "newVCard" })
+}
+
 const editVCard = (vcard) => {
-    router.push({ name: "VCard", params: { id: vcard.phone_number }})
+    router.push({ name: "VCard", params: { id: vcard.phone_number}})
 }
 
 const deleteVCard = (vcard) => {
@@ -48,9 +53,6 @@ const deleteVCard = (vcard) => {
 }
 
 
-const addVCard = () => {
-    router.push({ name: "newVCard" })
-}
 
 onMounted(() => {
     loadVCards()

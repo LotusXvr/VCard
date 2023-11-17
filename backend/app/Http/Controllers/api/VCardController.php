@@ -25,11 +25,10 @@ class VCardController extends Controller
 
     public function store(CreateVCardRequest $request)
     {
-        $data = $request->all();
-        $data['blocked'] = false; // ou qualquer outro valor padrão desejado
+        $data = $request->validated();
+        $data['blocked'] = 0; // Set blocked to 0
         $data['max_debit'] = 5000;
         $data['balance'] = 0;
-
         $vcard = VCard::create($data);
         return new VCardResource($vcard);
     }

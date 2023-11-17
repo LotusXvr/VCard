@@ -22,11 +22,11 @@ class CreateVCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone_number' => 'required|int|unique:vcards,phone_number|digits:9',
+            'phone_number' => 'required|string|unique:vcards,phone_number|digits:9',
             'password' => 'required|string|min:4|max:30',
             'name' => 'required|string|max:30',
             'email' => 'required|email|unique:vcards,email',
-            'confirmation_code' => 'required|int|digits:4',
+            'confirmation_code' => 'required|integer|digits:4',
         ];
     }
 

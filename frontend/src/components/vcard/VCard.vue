@@ -15,9 +15,6 @@ const newVCard = () => {
         photo_url: null,
         password: "",
         confirmation_code: "",
-        blocked: 0,
-        balance: 0,
-        max_debit: 5000,
     }
 }
 
