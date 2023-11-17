@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue"
-import router from "../../router"
+import { useRouter } from "vue-router"
+
+const router = useRouter()
 
 const props = defineProps({
     vcard: {
@@ -131,7 +133,7 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div class="mb-3 d-flex justify-content-end">
+            <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px;">
                 <button type="button" class="btn btn-primary px-5" @click="save">Save</button>
                 <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
             </div>

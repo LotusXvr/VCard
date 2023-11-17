@@ -4,7 +4,9 @@ import VCardDetail from "./VCardDetail.vue"
 import axios from "axios"
 // import config from "../utils/config"
 import { useToast } from "vue-toastification"
+import { useRouter } from "vue-router"
 
+const router = useRouter()
 const toast = useToast()
 
 const newVCard = () => {
@@ -58,6 +60,7 @@ const save = () => {
                     "VCard with phone number " +
                         response.data.data.phone_number +
                         " created successfully",
+                router.back()
                 )
             })
             .catch((error) => {
@@ -75,6 +78,7 @@ const save = () => {
                 console.log("VCard Updated")
                 console.dir(response.data.data)
                 toast.success("VCard Updated")
+                router.back()
             })
             .catch((error) => {
                 console.dir(error)
