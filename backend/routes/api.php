@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\VCardController;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
 /*
  * Globais
-*/
+ */
 Route::apiResource('vcards', VCardController::class);
 Route::apiResource('users', UserController::class);
+Route::apiResource('transactions', TransactionController::class);
