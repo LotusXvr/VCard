@@ -66,7 +66,7 @@ class TransactionController extends Controller
                 ->whereNull('deleted_at')
                 ->first();
             if (!$destinVCardExists) {
-                return response()->json(['message' => 'VCard não existe'], 404);
+                return response()->json(['message' => 'VCard de destino não existe'], 404);
             }
 
             try {

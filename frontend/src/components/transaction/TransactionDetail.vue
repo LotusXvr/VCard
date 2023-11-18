@@ -1,33 +1,60 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import axios from "axios"
+import { ref, onMounted, watch } from "vue"
+
+const accountBalance = ref(null)
 
 const newTransaction = ref({
-    phone_number: "",
+    payment_type: "VCARD",
+    vcard: "",
     confirmation_code: "",
-    destination_phone_number: "",
-    amount: "",
+    payment_reference: "",
+    value: "",
 })
-//const transactionInput = ref(null)
 
-const emit = defineEmits(["addTransaction"])
+const emit = defineEmits(["createTransaction"])
+
+const createTransaction = () => {
+    emit("createTransaction", newTransaction.value)
+}
+
+const fetchAccountBalance = (vcard) => {
+    axios.get("vcards/" + vcard).then((response) => {
+        accountBalance.value = response.data.data.balance
+    })
+}
+
+// Watch for changes in vcard and fetch account balance when it is filled
+watch(
+    () => newTransaction.value.vcard,
+    (vcard) => {
+        if (vcard.trim() !== "") {
+            fetchAccountBalance(vcard)
+        } else {
+            accountBalance.value = null // Clear the balance if vcard is empty
+        }
+    },
+)
 
 onMounted(() => {
     // Focus the input when the component is mounted
-    newTransaction.value.focus()
 })
 </script>
 
 <template>
     <div>
         <h3 class="mt-5 mb-3">Transaction</h3>
-        <hr>
+        <div v-if="accountBalance !== null">
+            <p>Account Balance: {{ accountBalance }}</p>
+        </div>
+        <hr />
         <form @submit.prevent="createTransaction">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="phone_number">Your phone number:</label>
+                        <label for="vcard">Your phone number:</label>
                         <input
-                            v-model="newTransaction.phone_number"
+                            v-model="newTransaction.vcard"
                             type="text"
                             id="transactionPhoneNumber"
                             class="form-control"
@@ -37,11 +64,11 @@ onMounted(() => {
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="email">Send money to...</label>
+                        <label for="payment_reference">Send money to...</label>
                         <input
-                            v-model="newTransaction.destination_phone_number"
-                            type="email"
-                            id="transactionEmail"
+                            v-model="newTransaction.payment_reference"
+                            type="text"
+                            id="transactionPaymentReferenec"
                             class="form-control"
                             required
                         />
@@ -52,11 +79,11 @@ onMounted(() => {
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="name">Amount:</label>
+                        <label for="value">Amount:</label>
                         <input
-                            v-model="newTransaction.amount"
+                            v-model="newTransaction.value"
                             type="text"
-                            id="transactionName"
+                            id="transactionValue"
                             class="form-control"
                             required
                         />
@@ -76,11 +103,11 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px;">
+            <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px">
                 <button type="button" class="btn btn-primary px-5" @click="createTransaction">
                     Send money
                 </button>
-                <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
+                <!-- <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button> -->
             </div>
         </form>
     </div>
