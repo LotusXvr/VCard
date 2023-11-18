@@ -122,7 +122,7 @@ class TransactionController extends Controller
 
                 });
 
-                return response()->json(['message' => 'Transação efetuada com sucesso'], 200);
+                return response()->json(['message' => $request->value . '€ sent to ' . $request->payment_reference . ' successfully'], 200);
 
             } catch (\Exception $e) {
                 return response()->json([
