@@ -3,77 +3,8 @@ import { RouterLink, RouterView } from "vue-router"
 import { ref, onMounted } from "vue"
 import axios from "axios"
 
-import createUser from "./components/user/UserCreate.vue"
 
-
-const vcards = ref([])
-const users = ref([])
-const showingUsers = ref(false)
-const showingVCards = ref(false)
-const error = ref(null)
-const success = ref(null)
-
-const showUsers = () => {
-    // Set the flag to show users and hide vCards
-    showingUsers.value = true
-    showingVCards.value = false
-}
-const showVCards = () => {
-    // Set the flag to show vCards and hide users
-    showingUsers.value = false
-    showingVCards.value = true
-}
-
-const fetchUsers = async () => {
-    // Fetch the users from the API
-    const response = await axios.get("users")
-    users.value = response.data
-}
-
-// const addVCard = async (newVCard) => {
-//     if (newVCard) {
-//         try {
-//             await axios.post(`$vcards`, newVCard)
-//             fetchVCards()
-//             success.value = "VCard created successfully" // show success error
-//             error.value = null
-//         } catch (e) {
-//             success.value = null // clear success message
-//             error.value = e.response.data.errors // Capture and display API validation errors
-//         }
-//     }
-// }
-
-const addUser = async (newUser) => {
-    if (newUser) {
-        try {
-            await axios.post(`users`, newUser)
-            fetchUsers()
-            success.value = "User created successfully" // show success error
-            error.value = null
-        } catch (e) {
-            success.value = null // clear success message
-            error.value = e.response.data.errors // Capture and display API validation errors
-        }
-    }
-}
-
-onMounted(() => {
-    // Fetch the vCards and users when the component is mounted
-    fetchUsers()
-})
 </script>
-
-<!-- <template>
-    <div>
-        
-
-        <createVCard @AddVCard="addVCard"></createVCard>
-        <createUser @AddUser="addUser"></createUser>
-
-    
-    </div>
-</template> -->
 
 <template>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
@@ -100,24 +31,6 @@ onMounted(() => {
             >
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div v-if="error">
-                <div class="alert alert-danger">
-                    <ul>
-                        <li v-for="(message, field) in error" :key="field">
-                            {{ field }}: {{ message[0] }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div v-if="success">
-                <div class="alert alert-success">
-                    <ul>
-                        <li>{{ success }}</li>
-                    </ul>
-                </div>
-            </div>
 
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
@@ -321,34 +234,7 @@ onMounted(() => {
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <dashboard>
-                    <!-- USERS -> CODIGO SEM ESTRUTURAÇÃO DE COMPONENTES -->
-                    <div v-if="showingUsers">
-                        <h2>Users</h2>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(user, index) in users" :key="index">
-                                    <td>{{ user.name }}</td>
-                                    <td>{{ user.email }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- VCARDS -> CODIGO !!COM!! ESTRUTURAÇÃO DE COMPONENTES -->
-                    <div v-if="showingVCards">
-                        <VCardList
-                            :vcards="vcards"
-                            :readonly="false"
-                            @requestRemoveVCardFromList="deleteVCard"
-                            @requestUpdateVCard="updateVCard"
-                        >
-                        </VCardList>
-                    </div>
+                
                 </dashboard>
             </main>
         </div>
