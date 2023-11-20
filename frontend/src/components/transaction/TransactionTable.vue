@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, onMounted } from "vue"
 
 const props = defineProps({
     transactions: {
@@ -8,9 +8,11 @@ const props = defineProps({
     },
 })
 
-const transactionsRef = ref(props.transactions)
+const transactionsRef = ref([])
 
-console.log("Transactions in TransactionTable:", transactionsRef.value)
+onMounted(() => {
+    transactionsRef.value = props.transactions
+})
 
 const wasSent = (transaction) => {
     console.log("Checking if transaction was sent:", transaction)
@@ -46,7 +48,6 @@ const wasSent = (transaction) => {
         </tbody>
     </table>
 </template>
-
 
 <style scoped>
 button {
