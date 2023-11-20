@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use App\Models\VCard;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        return $transaction;
+        return new TransactionResource($transaction);
     }
 
     /**

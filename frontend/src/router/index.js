@@ -4,6 +4,7 @@ import VCards from '../components/vcard/VCards.vue'
 import Dashboard from "../components/Dashboard.vue"
 import Transaction from "../components/transaction/Transaction.vue"
 import VCard from "../components/vcard/VCard.vue"
+import Transactions from "../components/transaction/Transactions.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,6 +50,13 @@ const router = createRouter({
         component: VCard,
         props: (route) => ({ phone_number: parseInt(route.params.id)}),
     },
+    {
+        path: "/vcard/:id/transactions",
+        name: "Transactions",
+        component: Transactions,
+        props: (route) => ({ phone_number: parseInt(route.params.id)}),
+    },
+
   ]
 })
 

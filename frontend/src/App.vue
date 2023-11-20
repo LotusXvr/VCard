@@ -1,7 +1,10 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router"
-import { ref, onMounted } from "vue"
-import axios from "axios"
+import { ref } from "vue"
+
+
+const staticPhoneNumber = ref(900000010)
+
 
 
 </script>
@@ -131,14 +134,14 @@ import axios from "axios"
                                 :class="{ active: $route.name === 'Transaction' }"
                                 :to="{ name: 'Transaction' }"
                             >
-                                <i class="bi bi-files"></i>
-                                Transaction
+                                <i class="bi bi-people"></i>
+                                Enviar dinheiro
                             </router-link>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">
-                                <i class="bi bi-people"></i>
-                                Enviar dinheiro
+                                <i class="bi bi-files"></i>
+                                Pagar serviço
                             </a>
                         </li>
                     </ul>
@@ -146,7 +149,7 @@ import axios from "axios"
                     <h6
                         class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"
                     >
-                        <span>Histórico</span>
+                        <span>My VCard</span>
                         <a class="link-secondary" href="#" aria-label="Add a new project">
                             <i class="bi bi-xs bi-plus-circle"></i>
                         </a>
@@ -155,16 +158,20 @@ import axios from "axios"
                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="bi bi-file-ruled"></i>
-                                Meu cartão
+                                Details
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#"
-                                ><i class="bi bi-file-ruled"></i>
-                                Minhas transações
-                            </a>
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'Transactions' }"
+                                :to="{ name: 'Transactions', params: { id: staticPhoneNumber } }"
+                            >
+                                <i class="bi bi-bank"></i>
+                                Transactions
+                            </router-link>
                         </li>
-                    </ul>
+                    </ul>   
 
                     <div class="d-block d-md-none">
                         <h6

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateVCardRequest;
+use App\Http\Resources\TransactionResource;
 use App\Http\Resources\VCardResource;
+use App\Models\Transaction;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\VCard;
@@ -58,5 +60,14 @@ class VCardController extends Controller
         return response()->json(['message' => 'Phone number is available']);
     }
 
+    public function getTransactionsByPhoneNumber(Request $request){
+        $phoneNumber = $request->phone_number;
+
+        $transactions = Transaction::where('vcard', $phoneNumber)
+        ->orWhere('payment_reference', $phoneNumber)
+        ->get();
+
+        return TransactionResource::collection($transactions);
+    }
 
 }

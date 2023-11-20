@@ -22,6 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
+
+
+// List transactions of a specific phone number
+Route::get('vcard/{phone_number}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber']);
+
 /*
  * Globais
  */
