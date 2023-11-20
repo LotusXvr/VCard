@@ -36,7 +36,7 @@ class VCardController extends Controller
     }
 
 
-    public function update(CreateVCardRequest $request, VCard $vcard)
+    public function update(Request $request, VCard $vcard)
     {
         $vcard->fill($request->all());
         $vcard->save();
@@ -60,12 +60,13 @@ class VCardController extends Controller
         return response()->json(['message' => 'Phone number is available']);
     }
 
-    public function getTransactionsByPhoneNumber(Request $request){
+    public function getTransactionsByPhoneNumber(Request $request)
+    {
         $phoneNumber = $request->phone_number;
 
         $transactions = Transaction::where('vcard', $phoneNumber)
-        ->orWhere('payment_reference', $phoneNumber)
-        ->get();
+            ->orderBy('date', 'desc')
+            ->get();
 
         return TransactionResource::collection($transactions);
     }

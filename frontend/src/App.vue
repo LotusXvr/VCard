@@ -2,11 +2,7 @@
 import { RouterLink, RouterView } from "vue-router"
 import { ref } from "vue"
 
-
 const staticPhoneNumber = ref(900000010)
-
-
-
 </script>
 
 <template>
@@ -156,10 +152,14 @@ const staticPhoneNumber = ref(900000010)
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-file-ruled"></i>
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'VCard' }"
+                                :to="{ name: 'VCard', params: { id: staticPhoneNumber } }"
+                            >
+                                <i class="bi bi-credit-card"></i>
                                 Details
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
                             <router-link
@@ -171,7 +171,7 @@ const staticPhoneNumber = ref(900000010)
                                 Transactions
                             </router-link>
                         </li>
-                    </ul>   
+                    </ul>
 
                     <div class="d-block d-md-none">
                         <h6
@@ -240,9 +240,7 @@ const staticPhoneNumber = ref(900000010)
             </main>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <dashboard>
-                
-                </dashboard>
+                <dashboard> </dashboard>
             </main>
         </div>
     </div>

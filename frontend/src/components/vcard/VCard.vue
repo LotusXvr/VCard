@@ -60,7 +60,7 @@ const save = () => {
                     "VCard with phone number " +
                         response.data.data.phone_number +
                         " created successfully",
-                router.back()
+                    router.back(),
                 )
             })
             .catch((error) => {
@@ -81,7 +81,8 @@ const save = () => {
                 router.back()
             })
             .catch((error) => {
-                console.dir(error)
+                errors.value = error.response.data.errors
+                toast.error("Error updating VCard")
             })
     }
 }

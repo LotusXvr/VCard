@@ -18,23 +18,24 @@ const props = defineProps({
 const emit = defineEmits(["hide", "save"])
 
 const editingVCard = ref(props.vcard)
+const vcardTitle = ref(getVCardTitle())
 
 watch(
     () => props.vcard,
     (newVCard) => {
         editingVCard.value = newVCard
+        vcardTitle.value = getVCardTitle()
     },
 )
 
-const vcardTitle = computed(() => {
+function getVCardTitle() {
     if (!editingVCard.value) {
         return ""
     }
     return props.operationType == "insert"
         ? "New VCard"
         : "VCard #" + editingVCard.value.phone_number
-})
-
+}
 const confirmPassword = ref("") // New variable for Confirm Password
 
 const validatePasswordMatch = () => {
@@ -59,6 +60,8 @@ onMounted(() => {
     <div>
         <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
         <hr />
+        <h5 class="fw-bold mb-2">Account Balance:</h5>
+        <p class="fs-4 text-success fw-bold">{{ vcard.balance + "€" }}</p>
         <form class="row g-3 needs-validation" novalidate @submit.prevent="save">
             <div class="form-group">
                 <label for="phone_number">Phone Number:</label>
@@ -68,6 +71,7 @@ onMounted(() => {
                     id="VCardPhoneNumber"
                     class="form-control"
                     required
+                    :readonly="props.operationType !== 'insert'"
                 />
             </div>
 
@@ -133,7 +137,7 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px;">
+            <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px">
                 <button type="button" class="btn btn-primary px-5" @click="save">Save</button>
                 <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
             </div>
