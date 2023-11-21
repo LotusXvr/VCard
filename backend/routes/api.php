@@ -24,6 +24,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
 
 
+
+// Get all transactions of last month of a vcard
+Route::get('vcard/{phone_number}/transactions/lastmonth', [VCardController::class, 'getTransactionsByPhoneNumberLastMonth']);
+
 // List transactions of a specific phone number
 Route::get('vcard/{phone_number}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber']);
 

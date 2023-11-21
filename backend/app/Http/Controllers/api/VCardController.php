@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\VCard;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class VCardController extends Controller
@@ -69,6 +70,18 @@ class VCardController extends Controller
             ->get();
 
         return TransactionResource::collection($transactions);
+    }
+
+    public function getTransactionsByPhoneNumberLastMonth(Request $request)
+    {
+        $phone_number = $request->phone_number;
+
+        // get last month
+        $transaction = Transaction::where('vcard', $phone_number)
+            ->orderBy('date', 'desc')
+            ->first();
+
+        return TransactionResource::collection($transaction);
     }
 
 }
