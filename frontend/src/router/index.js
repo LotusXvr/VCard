@@ -23,9 +23,10 @@ const router = createRouter({
     //   component: () => import('../views/AboutView.vue')
     // }
     {
-        path: "/dashboard",
+        path: "/dashboard/:id",
         name: "Dashboard",
         component: Dashboard,
+        props: (route) => ({ phone_number: parseInt(route.params.id)}),
     },
     {
         path: "/vcards",

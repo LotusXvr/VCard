@@ -99,7 +99,7 @@ const staticPhoneNumber = ref(900000010)
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'Dashboard' }"
-                                :to="{ name: 'Dashboard' }"
+                                :to="{ name: 'Dashboard', params: { id: staticPhoneNumber } }"
                             >
                                 <i class="bi bi-house"></i>
                                 Dashboard
@@ -238,10 +238,7 @@ const staticPhoneNumber = ref(900000010)
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <router-view />
             </main>
-
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <dashboard> </dashboard>
-            </main>
+            >
         </div>
     </div>
 </template>
