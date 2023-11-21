@@ -1,15 +1,36 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router"
 import { ref } from "vue"
+import axios from "axios"
+import { useToast } from "vue-toastification"
+import { useUserStore } from "./stores/user"
+
+const userStore = useUserStore()
+const toast = useToast()
+
 //color: #17f672 Verde Logo
 //color: #0bbad6 Azul Logo
 const staticPhoneNumber = ref(900000011)
+
+const logout = async () => {
+    try {
+        await axios.post("logout")
+        toast.success("User has logged out of the application.")
+        delete axios.defaults.headers.common.Authorization
+        userStore.clearUser()
+    } catch (error) {
+        toast.error("There was a problem logging out of the application!")
+    }
+}
 </script>
 
 <template>
     <nav class="navbar navbar-expand-md navbar-light bg-dark sticky-top flex-md-nowrap p-0 shadow">
         <div class="container-fluid">
-            <a class="col-md-3 col-lg-2 me-0 d-flex align-items-center justify-content-center" href="#">
+            <a
+                class="col-md-3 col-lg-2 me-0 d-flex align-items-center justify-content-center"
+                href="#"
+            >
                 <img
                     src="@/assets/vcard.png"
                     alt=""
@@ -33,8 +54,8 @@ const staticPhoneNumber = ref(900000011)
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#" 
-                        ><i class="bi bi-person-check-fill"></i>
+                        <a class="nav-link" href="#"
+                            ><i class="bi bi-person-check-fill"></i>
                             Register
                         </a>
                     </li>
@@ -54,11 +75,11 @@ const staticPhoneNumber = ref(900000011)
                             aria-expanded="false"
                         >
                             <img
-                                src="@/assets/avatar-exemplo-1.jpg"
+                                :src="userStore.userPhotoUrl"
                                 class="rounded-circle z-depth-0 avatar-img"
                                 alt="avatar image"
                             />
-                            <span class="avatar-text">User Name</span>
+                            <span class="avatar-text">{{ userStore.userName }}</span>
                         </a>
                         <ul
                             class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
@@ -78,9 +99,9 @@ const staticPhoneNumber = ref(900000011)
                                 <hr class="dropdown-divider" />
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#"
-                                    ><i class="bi bi-arrow-right"></i>Logout</a
-                                >
+                                <a class="dropdown-item" @click.prevent="logout">
+                                    <i class="bi bi-arrow-right"></i>Logout
+                                </a>
                             </li>
                         </ul>
                     </li>
@@ -144,7 +165,7 @@ const staticPhoneNumber = ref(900000011)
                     <h6
                         class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"
                     >
-                        <span style="color: #17f672;">My VCard</span>
+                        <span style="color: #17f672">My VCard</span>
                         <a class="link-secondary" href="#" aria-label="Add a new project">
                             <i class="bi bi-xs bi-plus-circle"></i>
                         </a>
@@ -172,13 +193,8 @@ const staticPhoneNumber = ref(900000011)
                         </li>
                     </ul>
 
-                    <div class="d-block d-md-none">
-                        <h6
-                            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"
-                        >
-                            <span>User</span>
-                        </h6>
-                        <ul class="nav flex-column mb-2">
+                    <div class="collapse navbar-collapse justify-content-end">
+                        <ul class="navbar-nav">
                             <li class="nav-item">
                                 <a class="nav-link" href="#"
                                     ><i class="bi bi-person-check-fill"></i>
@@ -186,46 +202,65 @@ const staticPhoneNumber = ref(900000011)
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <router-link
+                                    class="nav-link"
+                                    :class="{ active: $route.name === 'Login' }"
+                                    :to="{ name: 'Login' }"
+                                >
                                     <i class="bi bi-box-arrow-in-right"></i>
                                     Login
-                                </a>
+                                </router-link>
                             </li>
                             <li class="nav-item dropdown">
                                 <a
-                                    class="nav-link dropdown-toggle "
+                                    class="nav-link dropdown-toggle"
                                     href="#"
-                                    id="navbarDropdownMenuLink2"
+                                    id="navbarDropdownMenuLink"
                                     role="button"
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                 >
                                     <img
-                                        src="@/assets/avatar-exemplo-1.jpg"
+                                        :src="userStore.userPhotoUrl"
                                         class="rounded-circle z-depth-0 avatar-img"
                                         alt="avatar image"
                                     />
-                                    <span class="avatar-text">User Name</span>
+                                    <span class="avatar-text">{{ userStore.userName }}</span>
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                <ul
+                                    class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
+                                    aria-labelledby="navbarDropdownMenuLink"
+                                >
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bi bi-person-square"></i>Profile</a
+                                        <router-link
+                                            class="dropdown-item"
+                                            :class="{
+                                                active:
+                                                    $route.name == 'User' && $route.params.id == 1,
+                                            }"
+                                            :to="{ name: 'User', params: { id: 1 } }"
                                         >
+                                            <i class="bi bi-person-square"></i>
+                                            Profile
+                                        </router-link>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <router-link
+                                            class="dropdown-item"
+                                            :class="{ active: $route.name === 'ChangePassword' }"
+                                            :to="{ name: 'ChangePassword' }"
+                                        >
                                             <i class="bi bi-key-fill"></i>
                                             Change password
-                                        </a>
+                                        </router-link>
                                     </li>
                                     <li>
                                         <hr class="dropdown-divider" />
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bi bi-arrow-right"></i>Logout
-                                        </a>
+                                        <a class="dropdown-item" href="#"
+                                            ><i class="bi bi-arrow-right"></i>Logout</a
+                                        >
                                     </li>
                                 </ul>
                             </li>
@@ -237,7 +272,6 @@ const staticPhoneNumber = ref(900000011)
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <router-view />
             </main>
-
         </div>
     </div>
 </template>
@@ -276,7 +310,7 @@ const staticPhoneNumber = ref(900000011)
 #sidebarMenu.collapse i {
     color: #17f672;
 }
-#sidebarMenu.collapse li.nav-item a{
+#sidebarMenu.collapse li.nav-item a {
     color: #0bbad6;
 }
 </style>

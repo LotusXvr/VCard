@@ -25,4 +25,9 @@ class UserController extends Controller
         $user = User::create($request->all());
         return new UserResource($user);
     }
+
+    public function show_me(Request $request)
+    {
+        return new UserResource($request->user());
+    }
 }

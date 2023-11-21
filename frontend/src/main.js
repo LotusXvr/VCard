@@ -6,7 +6,7 @@ import Toast from "vue-toastification"
 import "vue-toastification/dist/index.css"
 
 import { createApp } from "vue"
-// import { createPinia } from 'pinia'
+import { createPinia } from 'pinia'
 
 import App from "./App.vue"
 import router from "./router"
@@ -14,8 +14,7 @@ import axios from "axios"
 
 const app = createApp(App)
 
-// app.use(createPinia())
-app.use(router)
+
 
 let serverBaseUrl
 const userAgent = navigator.userAgent
@@ -34,6 +33,8 @@ app.provide("serverBaseUrl", serverBaseUrl)
 axios.defaults.baseURL = serverBaseUrl + "/api"
 axios.defaults.headers.common["Content-type"] = "application/json"
 
+app.use(createPinia())
+app.use(router)
 app.use(Toast, {
     position: "top-center",
     timeout: 3000,
