@@ -1,27 +1,40 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router"
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "./stores/user"
+import { useRouter } from "vue-router"
 
 const userStore = useUserStore()
 const toast = useToast()
+const router = useRouter()
 
 //color: #17f672 Verde Logo
 //color: #0bbad6 Azul Logo
 const staticPhoneNumber = ref(900000011)
 
 const logout = async () => {
-    try {
-        await axios.post("logout")
+    if (await userStore.logout()) {
         toast.success("User has logged out of the application.")
-        delete axios.defaults.headers.common.Authorization
-        userStore.clearUser()
-    } catch (error) {
+        router.push({ name: "home" })
+    } else {
         toast.error("There was a problem logging out of the application!")
     }
 }
+
+onMounted(async () => {
+    try {
+        const token = sessionStorage.getItem("token")
+        if (token) {
+            axios.defaults.headers.common.Authorization = "Bearer " + token
+            userStore.loadUser()
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+})
 </script>
 
 <template>
@@ -60,10 +73,14 @@ const logout = async () => {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"
-                            ><i class="bi bi-box-arrow-in-right"></i>
+                        <router-link
+                            class="nav-link"
+                            :class="{ active: $route.name === 'Login' }"
+                            :to="{ name: 'Login' }"
+                        >
+                            <i class="bi bi-box-arrow-in-right"></i>
                             Login
-                        </a>
+                        </router-link>
                     </li>
                     <li class="nav-item dropdown">
                         <a
@@ -86,22 +103,34 @@ const logout = async () => {
                             aria-labelledby="navbarDropdownMenuLink"
                         >
                             <li>
-                                <a class="dropdown-item" href="#"
-                                    ><i class="bi bi-person-square"></i>Profile</a
+                                <router-link
+                                    class="dropdown-item"
+                                    :class="{
+                                        active: $route.name == 'User' && $route.params.id == 1,
+                                    }"
+                                    :to="{ name: 'User', params: { id: 1 } }"
                                 >
+                                    <i class="bi bi-person-square"></i>
+                                    Profile
+                                </router-link>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#"
-                                    ><i class="bi bi-key-fill"></i>Change password</a
+                                <router-link
+                                    class="dropdown-item"
+                                    :class="{ active: $route.name === 'ChangePassword' }"
+                                    :to="{ name: 'ChangePassword' }"
                                 >
+                                    <i class="bi bi-key-fill"></i>
+                                    Change password
+                                </router-link>
                             </li>
                             <li>
                                 <hr class="dropdown-divider" />
                             </li>
                             <li>
-                                <a class="dropdown-item" @click.prevent="logout">
-                                    <i class="bi bi-arrow-right"></i>Logout
-                                </a>
+                                <a class="dropdown-item" href="#"
+                                    ><i class="bi bi-arrow-right" @click="logout"></i>Logout</a
+                                >
                             </li>
                         </ul>
                     </li>
