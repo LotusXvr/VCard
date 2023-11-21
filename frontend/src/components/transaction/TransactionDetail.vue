@@ -12,9 +12,17 @@ const newTransaction = ref({
     value: "",
 })
 
+const props = defineProps({
+    phone_number: {
+        type: Number,
+        default: null,
+    },
+})
+
 const emit = defineEmits(["createTransaction"])
 
 const createTransaction = () => {
+    newTransaction.value.vcard = props.phone_number
     emit("createTransaction", newTransaction.value)
 }
 
@@ -50,18 +58,6 @@ onMounted(() => {
         <hr />
         <form @submit.prevent="createTransaction">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="vcard">Your phone number:</label>
-                        <input
-                            v-model="newTransaction.vcard"
-                            type="text"
-                            id="transactionPhoneNumber"
-                            class="form-control"
-                            required
-                        />
-                    </div>
-                </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_reference">Send money to...</label>

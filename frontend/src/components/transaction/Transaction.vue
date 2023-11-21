@@ -11,6 +11,13 @@ import axios from "axios"
 
 const error = ref(null)
 
+const props = defineProps ({
+    phone_number: {
+        type: Number,
+        default: null,
+    },
+})
+
 
 
 const createTransaction = async (newTransaction) => {
@@ -32,6 +39,7 @@ const createTransaction = async (newTransaction) => {
 
 <template>
     <transaction-detail
+        :phone_number="phone_number"
         @createTransaction="createTransaction"
     ></transaction-detail>
 </template>

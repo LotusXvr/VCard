@@ -127,7 +127,7 @@ const staticPhoneNumber = ref(900000011)
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'Transaction' }"
-                                :to="{ name: 'Transaction' }"
+                                :to="{ name: 'Transaction', params: { id: staticPhoneNumber } }"
                             >
                                 <i class="bi bi-people"></i>
                                 Enviar dinheiro
