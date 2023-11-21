@@ -1,22 +1,21 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router"
 import { ref } from "vue"
-
-const staticPhoneNumber = ref(900000010)
+//color: #17f672 Verde Logo
+//color: #0bbad6 Azul Logo
+const staticPhoneNumber = ref(900000011)
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
+    <nav class="navbar navbar-expand-md navbar-light bg-dark sticky-top flex-md-nowrap p-0 shadow">
         <div class="container-fluid">
-            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
+            <a class="col-md-3 col-lg-2 me-0 d-flex align-items-center justify-content-center" href="#">
                 <img
-                    src="@/assets/logo.svg"
+                    src="@/assets/vcard.png"
                     alt=""
-                    width="30"
-                    height="24"
                     class="d-inline-block align-text-top"
+                    style="max-height: 30px; max-width: 100px"
                 />
-                VCard
             </a>
             <button
                 id="buttonSidebarExpandId"
@@ -34,8 +33,8 @@ const staticPhoneNumber = ref(900000010)
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"
-                            ><i class="bi bi-person-check-fill"></i>
+                        <a class="nav-link" href="#" 
+                        ><i class="bi bi-person-check-fill"></i>
                             Register
                         </a>
                     </li>
@@ -92,7 +91,7 @@ const staticPhoneNumber = ref(900000010)
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -145,7 +144,7 @@ const staticPhoneNumber = ref(900000010)
                     <h6
                         class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"
                     >
-                        <span>My VCard</span>
+                        <span style="color: #17f672;">My VCard</span>
                         <a class="link-secondary" href="#" aria-label="Add a new project">
                             <i class="bi bi-xs bi-plus-circle"></i>
                         </a>
@@ -194,7 +193,7 @@ const staticPhoneNumber = ref(900000010)
                             </li>
                             <li class="nav-item dropdown">
                                 <a
-                                    class="nav-link dropdown-toggle"
+                                    class="nav-link dropdown-toggle "
                                     href="#"
                                     id="navbarDropdownMenuLink2"
                                     role="button"
@@ -238,7 +237,7 @@ const staticPhoneNumber = ref(900000010)
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <router-view />
             </main>
-            >
+
         </div>
     </div>
 </template>
@@ -269,5 +268,15 @@ const staticPhoneNumber = ref(900000010)
 
 #sidebarMenu {
     overflow-y: auto;
+}
+
+.collapse.navbar-collapse.justify-content-end a {
+    color: #0bbad6;
+}
+#sidebarMenu.collapse i {
+    color: #17f672;
+}
+#sidebarMenu.collapse li.nav-item a{
+    color: #0bbad6;
 }
 </style>
