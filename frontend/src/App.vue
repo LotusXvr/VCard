@@ -128,8 +128,8 @@ onMounted(async () => {
                                 <hr class="dropdown-divider" />
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#"
-                                    ><i class="bi bi-arrow-right" @click="logout"></i>Logout</a
+                                <a class="dropdown-item" @click="logout" href="#"
+                                    ><i class="bi bi-arrow-right"></i>Logout</a
                                 >
                             </li>
                         </ul>
