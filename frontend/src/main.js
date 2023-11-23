@@ -6,15 +6,14 @@ import Toast from "vue-toastification"
 import "vue-toastification/dist/index.css"
 
 import { createApp } from "vue"
-import { createPinia } from 'pinia'
+import { createPinia } from "pinia"
 
 import App from "./App.vue"
 import router from "./router"
 import axios from "axios"
+import { io } from "socket.io-client"
 
 const app = createApp(App)
-
-
 
 let serverBaseUrl
 const userAgent = navigator.userAgent
@@ -29,7 +28,7 @@ if (/Win/i.test(userAgent)) {
 }
 
 app.provide("serverBaseUrl", serverBaseUrl)
-// Default Axios configuration
+app.provide("socket", io("http://localhost:8080"))
 axios.defaults.baseURL = serverBaseUrl + "/api"
 axios.defaults.headers.common["Content-type"] = "application/json"
 
