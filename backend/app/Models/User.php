@@ -19,6 +19,13 @@ class User extends Authenticatable
      */
     public $timestamps = true;
 
+    protected $table = 'view_auth_users';
+
+    public function findForPassport(string $username): User
+    {
+        return $this->where('username', $username)->first();
+    }
+
     protected $fillable = [
         'name',
         'email',
