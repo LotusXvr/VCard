@@ -25,26 +25,25 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users/me', [UserController::class, 'show_me']);
 
-    // posteriormente adicionar todas as restantes rotas aqui
+    Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
+
+    // Get all transactions of last month of a vcard
+    Route::get('vcard/{phone_number}/transactions/lastmonth', [VCardController::class, 'getTransactionsByPhoneNumberLastMonth']);
+
+    // List transactions of a specific phone number
+    Route::get('vcard/{phone_number}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber']);
+
+    /*
+     * Globais
+     */
+    Route::apiResource('vcards', VCardController::class);
+    Route::apiResource('users', UserController::class);
+    Route::apiResource('transactions', TransactionController::class);
+
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 
-
-// Get all transactions of last month of a vcard
-Route::get('vcard/{phone_number}/transactions/lastmonth', [VCardController::class, 'getTransactionsByPhoneNumberLastMonth']);
-
-// List transactions of a specific phone number
-Route::get('vcard/{phone_number}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber']);
-
-/*
- * Globais
- */
-Route::apiResource('vcards', VCardController::class);
-Route::apiResource('users', UserController::class);
-Route::apiResource('transactions', TransactionController::class);
