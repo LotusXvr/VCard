@@ -125,7 +125,5 @@ onMounted(() => {
 
 
 
-    <WebSocket></WebSocket>
-
 
 </template>
