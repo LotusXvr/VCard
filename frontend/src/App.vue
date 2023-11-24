@@ -30,7 +30,6 @@ onMounted(async () => {
             axios.defaults.headers.common.Authorization = "Bearer " + token
             userStore.loadUser()
         }
-
     } catch (error) {
         console.log(error)
     }
@@ -40,9 +39,9 @@ onMounted(async () => {
 <template>
     <nav class="navbar navbar-expand-md navbar-light bg-dark sticky-top flex-md-nowrap p-0 shadow">
         <div class="container-fluid">
-            <a
+            <router-link
                 class="col-md-3 col-lg-2 me-0 d-flex align-items-center justify-content-center"
-                href="#"
+                :to="{ name: 'Home' }"
             >
                 <img
                     src="@/assets/vcard.png"
@@ -50,7 +49,7 @@ onMounted(async () => {
                     class="d-inline-block align-text-top"
                     style="max-height: 30px; max-width: 100px"
                 />
-            </a>
+            </router-link>
             <button
                 id="buttonSidebarExpandId"
                 class="navbar-toggler"
