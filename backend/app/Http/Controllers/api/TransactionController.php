@@ -61,7 +61,7 @@ class TransactionController extends Controller
 
         // verify if value being sent is at least 0.01€
         if ($request->value < 0.01) {
-            return response()->json(['message' => 'Valor mínimo de 0.01€'], 401);
+            return response()->json(['message' => 'Valor mínimo de transferência é de 0.01€'], 401);
         }
 
         // verify if value being sent is less than max_debit
@@ -92,7 +92,7 @@ class TransactionController extends Controller
                     $vcardBalance = VCard::where('phone_number', $request->vcard)->first()->balance;
                     $transaction1->old_balance = $vcardBalance;
                     $transaction1->new_balance = $vcardBalance - $request->value;
-                    $transaction1->payment_type = 'VCARD';
+                    $transaction1->payment_type = $request->payment_type;
                     $transaction1->payment_reference = $request->payment_reference;
                     $transaction1->pair_vcard = $request->payment_reference;
                     $transaction1->category_id = null;
@@ -108,7 +108,7 @@ class TransactionController extends Controller
                     $payment_referenceBalance = VCard::where('phone_number', $request->payment_reference)->first()->balance;
                     $transaction2->old_balance = $payment_referenceBalance;
                     $transaction2->new_balance = $payment_referenceBalance + $request->value;
-                    $transaction2->payment_type = 'VCARD';
+                    $transaction2->payment_type = $request->payment_type;
                     $transaction2->payment_reference = $request->vcard;
                     $transaction2->pair_transaction = $transaction1->id;
                     $transaction2->pair_vcard = $request->vcard;
@@ -142,6 +142,46 @@ class TransactionController extends Controller
                 ], 500);
             }
         }
+
+        // ANY OTHER PAYMENT TYPE
+        elseif ($request->payment_type == 'IBAN'  || $request->payment_type == 'PAYPAL' || $request->payment_type == 'VISA' || $request->payment_type == 'MB') {
+            try {
+                DB::transaction(function () use ($request) {
+                    // Money sending transaction
+                    $transaction = new Transaction();
+                    $transaction->vcard = $request->vcard;
+                    $transaction->date = date('Y-m-d');
+                    $transaction->datetime = date('Y-m-d H:i:s');
+                    $transaction->type = 'D'; // como o utilizador está a enviar dinheiro, a primeira operação é sempre Debito
+                    $transaction->value = $request->value;
+                    $vcardBalance = VCard::where('phone_number', $request->vcard)->first()->balance;
+                    $transaction->old_balance = $vcardBalance;
+                    $transaction->new_balance = $vcardBalance - $request->value;
+                    $transaction->payment_type = $request->payment_type;
+                    $transaction->payment_reference = $request->payment_reference;
+                    $transaction->pair_vcard = null;
+                    $transaction->category_id = null;
+                    $transaction->description = null;
+                    $transaction->pair_transaction = null;
+
+                    $transaction->save();
+
+                    VCard::where('phone_number', $request->vcard)->update(['balance' => $transaction->new_balance]);
+                });
+
+                return response()->json(['message' => $request->value . '€ sent to ' . $request->payment_reference . ' successfully'], 200);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Erro ao criar transação',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+
+        }
+
+        else {
+            return response()->json(['message' => 'Tipo de pagamento inválido'], 401);}
     }
 
 
