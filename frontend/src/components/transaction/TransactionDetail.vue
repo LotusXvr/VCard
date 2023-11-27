@@ -15,7 +15,7 @@ const newTransaction = ref({
     value: "",
 })
 
-const verifyIntegrityOfTransaction = ref({
+const transactionVerifier = ref({
     type: "",
     reference: "",
     value: "",
@@ -32,12 +32,12 @@ const emit = defineEmits(["createTransaction"])
 
 const createTransaction = async () => {
     try {
-        verifyIntegrityOfTransaction.value.type = newTransaction.value.payment_type
-        verifyIntegrityOfTransaction.value.reference = newTransaction.value.payment_reference
-        verifyIntegrityOfTransaction.value.value = parseFloat(newTransaction.value.value)
+        transactionVerifier.value.type = newTransaction.value.payment_type
+        transactionVerifier.value.reference = newTransaction.value.payment_reference
+        transactionVerifier.value.value = parseFloat(newTransaction.value.value)
         const response = await axios.post(
             "https://dad-202324-payments-api.vercel.app/api/credit",
-            verifyIntegrityOfTransaction.value,
+            transactionVerifier.value,
         )
         console.log(response.data)
         toast.success(response.data.message)
