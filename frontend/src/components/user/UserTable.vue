@@ -16,7 +16,6 @@ const props = defineProps({
   }
 })
 
-console.log('TESTE: ' + props.users)
 const emit = defineEmits(['edit', 'delete'])
 
 const editingUsers = ref(props.users)

@@ -32,15 +32,18 @@ class VCard extends Model
 
     protected $dates = ['created_at', 'deleted_at', 'updated_at'];
 
-    public function categories (){
+    public function categories()
+    {
         return $this->hasMany(Category::class, 'phone_number');
     }
 
-    public function transactions (){
+    public function transactions()
+    {
         return $this->hasMany(Transaction::class, 'v_card');
     }
 
-    public function transactionsPairVcard (){
+    public function transactionsPairVcard()
+    {
         return $this->hasMany(Category::class, 'pair_vcard');
     }
 
