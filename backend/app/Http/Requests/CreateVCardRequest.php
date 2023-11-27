@@ -22,7 +22,7 @@ class CreateVCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone_number' => 'required|string|unique:vcards,phone_number|digits:9',
+            'phone_number' => 'required|string|unique:vcards,phone_number|digits:9|regex:/^9/',
             'password' => 'required|string|min:4|max:30',
             'name' => 'required|string|max:30',
             'email' => 'required|email|unique:vcards,email',
@@ -41,6 +41,7 @@ class CreateVCardRequest extends FormRequest
             'phone_number.required' => 'Phone number is required',
             'phone_number.unique' => 'Phone number already exists',
             'phone_number.digits' => 'Phone number must be 9 digits',
+            'phone_number.regex' => 'Phone number must start with 9', // portuguese rules
             'password.required' => 'Password is required',
             'password.min' => 'Password must be at least 4 characters',
             'password.max' => 'Password must be at most 30 characters',
