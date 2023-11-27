@@ -30,4 +30,26 @@ class UserController extends Controller
     {
         return new UserResource($request->user());
     }
+
+    public function update(UserRequest $request, User $user)
+    {
+        $user->update($request->all());
+        return new UserResource($user);
+    }
+
+    public function destroy(User $user)
+    {
+        try {
+            // soft delete
+            $user->delete();
+            return response()->json(null, 204); // 204: No Content
+        } catch (\Exception $e) {
+            // Log da exceção
+            \Log::error('Error deleting user: ' . $e->getMessage());
+
+            // Retorna uma resposta de erro
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+
 }

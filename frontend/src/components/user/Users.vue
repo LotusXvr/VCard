@@ -1,5 +1,77 @@
-<script setup></script>
+<script setup>
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
+import UserTable from './UserTable.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const props = defineProps({
+  usersTitle: {
+    type: String,
+    default: 'Users'
+  },
+  onlyCurrentUsers: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const users = ref([])
+
+const loadUsers = () => {
+  // Altere mais tarde quando a autenticação for implementada
+  axios
+    .get('users')
+    .then((response) => {
+      users.value = response.data.filter((user) => user.user_type === 'A' && !user.deleted_at)
+      console.log(response.data)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+const addUser = () => {
+  router.push({ name: 'newUser' }) // Certifique-se de ter uma rota chamada 'newUser'
+}
+
+const editUser = (user) => {
+  router.push({ name: 'User', params: { id: user.id } }) // Certifique-se de ter uma rota chamada 'User'
+}
+
+const deleteUser = (user) => {
+  axios
+    .delete('users/' + user.id)
+    .then(() => {
+      loadUsers()
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+onMounted(() => {
+  loadUsers()
+})
+</script>
 
 <template>
-    <p></p>
+  <div class="d-flex justify-content-between">
+    <div class="mx-2">
+      <h3 class="mt-4">{{ usersTitle }}</h3>
+    </div>
+  </div>
+  <hr />
+  <div v-if="!onlyCurrentUsers" class="mb-3 d-flex justify-content-between flex-wrap">
+    <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
+    <div class="mx-2 mt-2">
+      <router-link class="nav-link w-100 me-3" :to="{ name: 'NewUser' }">
+        <button type="button" class="btn btn-success px-4 btn-addtask" @click="addUser">
+          <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add User
+        </button>
+      </router-link>
+    </div>
+  </div>
+  <UserTable :users="users" :showUserId="true" @edit="editUser" @delete="deleteUser"></UserTable>
 </template>
