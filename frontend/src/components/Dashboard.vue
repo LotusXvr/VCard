@@ -40,20 +40,20 @@ const loadVCard = (phone_number) => {
 }
 
 const transactions = ref([])
-const loadLastMonthTransactions = (phone_number) => {
-    if (!phone_number || phone_number < 0) {
-        transactions.value = []
-    } else {
-        axios
-            .get("vcard/" + phone_number + "/transactions/lastmonth")
-            .then((response) => {
-                transactions.value = response.data.data
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }
-}
+// const loadLastMonthTransactions = (phone_number) => {
+//     if (!phone_number || phone_number < 0) {
+//         transactions.value = []
+//     } else {
+//         axios
+//             .get("vcard/" + phone_number + "/transactions/lastmonth")
+//             .then((response) => {
+//                 transactions.value = response.data.data
+//             })
+//             .catch((error) => {
+//                 console.log(error)
+//             })
+//     }
+// }
 
 const creditTransactionsSum = computed(() => {
     return transactions.value.reduce((total, transaction) => total + transaction.value.value, 0)
@@ -61,7 +61,7 @@ const creditTransactionsSum = computed(() => {
 
 onMounted(() => {
     loadVCard(props.phone_number)
-    loadLastMonthTransactions(props.phone_number)
+    // loadLastMonthTransactions(props.phone_number)
 })
 </script>
 

@@ -12,7 +12,6 @@ const router = useRouter()
 
 //color: #17f672 Verde Logo
 //color: #0bbad6 Azul Logo
-const staticPhoneNumber = ref(900000011)
 
 const logout = async () => {
     if (await userStore.logout()) {
@@ -29,6 +28,7 @@ onMounted(async () => {
         if (token) {
             axios.defaults.headers.common.Authorization = "Bearer " + token
             userStore.loadUser()
+            console.log("phone_number: " + userStore.userPhoneNumber)
         }
     } catch (error) {
         console.log(error)
@@ -147,7 +147,10 @@ onMounted(async () => {
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'Dashboard' }"
-                                :to="{ name: 'Dashboard', params: { id: staticPhoneNumber } }"
+                                :to="{
+                                    name: 'Dashboard',
+                                    params: { id: userStore.userPhoneNumber },
+                                }"
                             >
                                 <i class="bi bi-house"></i>
                                 Dashboard
@@ -180,7 +183,10 @@ onMounted(async () => {
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'Transaction' }"
-                                :to="{ name: 'Transaction', params: { id: staticPhoneNumber } }"
+                                :to="{
+                                    name: 'Transaction',
+                                    params: { id: userStore.userPhoneNumber },
+                                }"
                             >
                                 <i class="bi bi-people"></i>
                                 Enviar dinheiro
@@ -207,7 +213,7 @@ onMounted(async () => {
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'VCard' }"
-                                :to="{ name: 'VCard', params: { id: staticPhoneNumber } }"
+                                :to="{ name: 'VCard', params: { id: userStore.userPhoneNumber } }"
                             >
                                 <i class="bi bi-credit-card"></i>
                                 Details
@@ -217,7 +223,10 @@ onMounted(async () => {
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'Transactions' }"
-                                :to="{ name: 'Transactions', params: { id: staticPhoneNumber } }"
+                                :to="{
+                                    name: 'Transactions',
+                                    params: { id: userStore.userPhoneNumber },
+                                }"
                             >
                                 <i class="bi bi-bank"></i>
                                 Transactions
