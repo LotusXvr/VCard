@@ -59,6 +59,16 @@ class TransactionController extends Controller
             return response()->json(['message' => 'Saldo insuficiente'], 401);
         }
 
+        // verify if value being sent is at least 0.01€
+        if ($request->value < 0.01) {
+            return response()->json(['message' => 'Valor mínimo de 0.01€'], 401);
+        }
+
+        // verify if value being sent is less than max_debit
+        if ($request->value > $vcardOrigin->max_debit) {
+            return response()->json(['message' => 'Valor superior ao máximo permitido'], 401);
+        }
+
         // VCARD
 
         if ($request->payment_type == 'VCARD') {
