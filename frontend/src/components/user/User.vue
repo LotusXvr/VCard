@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, defineProps } from "vue"
+import { ref, computed, watch } from "vue"
 import UserDetail from "./UserDetail.vue" // Assuming you have a UserDetail component
 import axios from "axios"
 import { useToast } from "vue-toastification"
