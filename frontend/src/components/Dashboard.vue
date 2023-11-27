@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref, computed } from "vue"
 import axios from "axios"
-import WebSocket from "./WebSocket.vue"
 
 const props = defineProps({
     phone_number: {
