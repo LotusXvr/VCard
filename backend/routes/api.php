@@ -36,11 +36,13 @@ Route::middleware('auth:api')->group(function () {
     /*
      * Globais
      */
+
     Route::apiResource('vcards', VCardController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('transactions', TransactionController::class);
 
 });
+
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();

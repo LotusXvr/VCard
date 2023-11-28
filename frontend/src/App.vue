@@ -12,7 +12,7 @@ const router = useRouter()
 
 //color: #17f672 Verde Logo
 //color: #0bbad6 Azul Logo
-const phoneNumber = ref(900000016)
+const phoneNumber = ref(900000015)
 
 const logout = async () => {
     if (await userStore.logout()) {

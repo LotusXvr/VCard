@@ -1,13 +1,8 @@
 <script setup>
 import { onMounted, ref, computed } from "vue"
 import axios from "axios"
-
-const props = defineProps({
-    phone_number: {
-        type: Number,
-        default: null,
-    },
-})
+import { useUserStore } from "../stores/user"
+const userStore = useUserStore()
 
 const newVCard = () => {
     return {
@@ -23,19 +18,15 @@ const newVCard = () => {
 }
 
 const vcard = ref(newVCard())
-const loadVCard = (phone_number) => {
-    if (!phone_number || phone_number < 0) {
-        vcard.value = newVCard()
-    } else {
-        axios
-            .get("vcards/" + phone_number)
-            .then((response) => {
-                vcard.value = response.data.data
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }
+const loadVCard = () => {
+    axios
+        .get("vcards/" + userStore.userPhoneNumber)
+        .then((response) => {
+            vcard.value = response.data.data
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 const transactions = ref([])
@@ -59,7 +50,7 @@ const creditTransactionsSum = computed(() => {
 })
 
 onMounted(() => {
-    loadVCard(props.phone_number)
+    loadVCard()
     // loadLastMonthTransactions(props.phone_number)
 })
 </script>
@@ -121,8 +112,4 @@ onMounted(() => {
             <!-- Add more cards based on your vCard properties -->
         </div>
     </div>
-
-
-
-
 </template>
