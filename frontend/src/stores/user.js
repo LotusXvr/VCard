@@ -2,10 +2,12 @@ import axios from "axios"
 import { ref, computed, inject } from "vue"
 import { defineStore } from "pinia"
 import avatarNoneUrl from "@/assets/avatar-none.png"
+import { useToast } from "vue-toastification"
 export const useUserStore = defineStore("user", () => {
     const serverBaseUrl = inject("apiDomain")
 
     const user = ref(null)
+    const toast = useToast()
     const userName = computed(() => user.value?.name ?? "Anonymous")
     const userPhoneNumber = computed(() => user.value?.username ?? 0)
     const userPhotoUrl = computed(() =>
@@ -40,7 +42,9 @@ export const useUserStore = defineStore("user", () => {
             await loadUser()
             return true
         } catch (error) {
+            
             clearUser()
+            toast.error("Login failed - " + error.response.data.message ?? "Unknown error")
             return false
         }
     }

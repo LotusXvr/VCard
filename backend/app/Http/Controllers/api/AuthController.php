@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,19 @@ class AuthController extends Controller
     }
     public function login(Request $request)
     {
+        // Find the user by username
+        $user = User::withTrashed()->where('username', $request->username)->first();
+
+        // Check if the user does not exist
+        if (!$user) {
+            return response()->json(["message" => 'Invalid credentials'], 401);
+        }
+
+        // Check if the user is soft-deleted
+        if ($user->trashed()) {
+            return response()->json(["message" => 'User has been deleted'], 401);
+        }
+
         try {
             request()->request->add(
                 $this->passportAuthenticationData($request->username, $request->password)
@@ -33,9 +47,10 @@ class AuthController extends Controller
             $auth_server_response = json_decode((string) $response->content(), true);
             return response()->json($auth_server_response, $errorCode);
         } catch (\Exception $e) {
-            return response()->json('Authentication has failed!', 401);
+            return response()->json(["message" => 'Authentication has failed!'], 401);
         }
     }
+
     public function logout(Request $request)
     {
         $accessToken = $request->user()->token();
