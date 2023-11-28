@@ -23,18 +23,8 @@ const logout = async () => {
     }
 }
 
-onMounted(async () => {
-    try {
-        const token = sessionStorage.getItem("token")
-        if (token) {
-            axios.defaults.headers.common.Authorization = "Bearer " + token
-            await userStore.loadUser()
-            phoneNumber.value = userStore.userPhoneNumber
-            console.log("phone_number: " + phoneNumber.value)
-        }
-    } catch (error) {
-        console.log(error)
-    }
+onMounted(() => {
+    userStore.restoreToken()
 })
 </script>
 
@@ -151,7 +141,6 @@ onMounted(async () => {
                                 :class="{ active: $route.name === 'Dashboard' }"
                                 :to="{
                                     name: 'Dashboard',
-                                    params: { id: phoneNumber },
                                 }"
                             >
                                 <i class="bi bi-house"></i>
@@ -215,7 +204,7 @@ onMounted(async () => {
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'VCard' }"
-                                :to="{ name: 'VCard', params: { id: phoneNumber } }"
+                                :to="{ name: 'VCard'}"
                             >
                                 <i class="bi bi-credit-card"></i>
                                 Details
@@ -227,7 +216,6 @@ onMounted(async () => {
                                 :class="{ active: $route.name === 'Transactions' }"
                                 :to="{
                                     name: 'Transactions',
-                                    params: { id: phoneNumber },
                                 }"
                             >
                                 <i class="bi bi-bank"></i>

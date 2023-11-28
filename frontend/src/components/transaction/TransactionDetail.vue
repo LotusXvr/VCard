@@ -2,8 +2,10 @@
 import axios from "axios"
 import { ref, onMounted } from "vue"
 import { useToast } from "vue-toastification"
-const toast = useToast()
+import { useUserStore } from "../../stores/user"
 
+const toast = useToast()
+const userStore = useUserStore()
 const accountBalance = ref(null)
 const error = ref(null)
 
@@ -19,13 +21,6 @@ const transactionVerifier = ref({
     type: "",
     reference: "",
     value: "",
-})
-
-const props = defineProps({
-    phone_number: {
-        type: Number,
-        default: null,
-    },
 })
 
 const emit = defineEmits(["createTransaction"])
@@ -45,7 +40,7 @@ const createTransaction = async () => {
         if (newTransaction.value.payment_type == "MBWAY") {
             newTransaction.value.payment_type = "VCARD"
         }
-        newTransaction.value.vcard = props.phone_number
+        newTransaction.value.vcard = userStore.userPhoneNumber
         emit("createTransaction", newTransaction.value)
     } catch (err) {
         error.value = err.response.data.message
@@ -53,14 +48,14 @@ const createTransaction = async () => {
     }
 }
 
-const fetchAccountBalance = (phone_number) => {
-    axios.get("vcards/" + phone_number).then((response) => {
+const fetchAccountBalance = () => {
+    axios.get("vcards/" + userStore.userPhoneNumber).then((response) => {
         accountBalance.value = response.data.data.balance
     })
 }
 
 onMounted(() => {
-    fetchAccountBalance(props.phone_number)
+    fetchAccountBalance()
 })
 </script>
 

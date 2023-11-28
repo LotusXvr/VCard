@@ -37,10 +37,9 @@ const router = createRouter({
       component: ChangePassword
     },
     {
-      path: '/dashboard/:id',
+      path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
-      props: (route) => ({ phone_number: parseInt(route.params.id) })
     },
     {
       path: '/vcards',
@@ -61,16 +60,14 @@ const router = createRouter({
       props: { id: -1 }
     },
     {
-      path: '/vcards/:id',
+      path: '/vcard',
       name: 'VCard',
       component: VCard,
-      props: (route) => ({ phone_number: parseInt(route.params.id) })
     },
     {
-      path: '/vcard/:id/transactions',
+      path: '/vcard/transactions',
       name: 'Transactions',
       component: Transactions,
-      props: (route) => ({ phone_number: parseInt(route.params.id) })
     },
     {
       path: '/users',

@@ -11,15 +11,6 @@ import axios from "axios"
 
 const error = ref(null)
 
-const props = defineProps ({
-    phone_number: {
-        type: Number,
-        default: null,
-    },
-})
-
-
-
 const createTransaction = async (newTransaction) => {
     try {
         const response = await axios.post("transactions", newTransaction)
@@ -30,16 +21,8 @@ const createTransaction = async (newTransaction) => {
         toast.error(err.response.data.message)
     }
 }
-
-
-
-
-
 </script>
 
 <template>
-    <transaction-detail
-        :phone_number="phone_number"
-        @createTransaction="createTransaction"
-    ></transaction-detail>
+    <transaction-detail @createTransaction="createTransaction"></transaction-detail>
 </template>

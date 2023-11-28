@@ -5,7 +5,9 @@ import axios from "axios"
 // import config from "../utils/config"
 import { useToast } from "vue-toastification"
 import { useRouter } from "vue-router"
+import { useUserStore } from "../../stores/user"
 
+const userStore = useUserStore()
 const router = useRouter()
 const toast = useToast()
 
@@ -20,26 +22,19 @@ const newVCard = () => {
     }
 }
 
-const props = defineProps({
-    phone_number: {
-        type: Number,
-        default: null,
-    },
-})
-
 const vcard = ref(newVCard())
 const errors = ref({})
 
 const operation = computed(() =>
-    !props.phone_number || props.phone_number < 0 ? "insert" : "update",
+    !userStore.userPhoneNumber || userStore.userPhoneNumber < 0 ? "insert" : "update",
 )
 
-const loadVCard = (phone_number) => {
-    if (!phone_number || phone_number < 0) {
+const loadVCard = () => {
+    if (!userStore.userPhoneNumber || userStore.userPhoneNumber < 0) {
         vcard.value = newVCard()
     } else {
         axios
-            .get("vcards/" + phone_number)
+            .get("vcards/" + userStore.userPhoneNumber)
             .then((response) => {
                 vcard.value = response.data.data
             })
@@ -73,7 +68,7 @@ const save = () => {
             })
     } else {
         axios
-            .put("vcards/" + props.phone_number, vcard.value)
+            .put("vcards/" + userStore.userPhoneNumber, vcard.value)
             .then((response) => {
                 console.log("VCard Updated")
                 console.dir(response.data.data)
@@ -88,7 +83,7 @@ const save = () => {
 }
 
 watch(
-    () => props.phone_number,
+    () => userStore.userPhoneNUmber,
     (newValue) => {
         loadVCard(newValue)
     },

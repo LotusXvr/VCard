@@ -50,11 +50,11 @@ onMounted(() => {
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width:100px">Date</th>
-                    <th style="width:100px">Time</th>
-                    <th style="width:100px">Value</th>
-                    <th style="width:100px">Balance</th>
-                    <th style="width:100px">Reference</th>
+                    <th style="width: 100px">Date</th>
+                    <th style="width: 100px">Time</th>
+                    <th style="width: 100px">Value</th>
+                    <th style="width: 100px">Balance</th>
+                    <th style="width: 100px">Reference</th>
                 </tr>
             </thead>
             <tbody v-for="(transactions, key) in transactionsByYearMonth" :key="key">

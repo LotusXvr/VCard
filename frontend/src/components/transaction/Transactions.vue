@@ -2,21 +2,14 @@
 import { ref, onMounted } from "vue"
 import axios from "axios"
 import TransactionTable from "./TransactionTable.vue"
+import { useUserStore } from "../../stores/user"
+const userStore = useUserStore()
 
-const props = defineProps({
-    phone_number: {
-        type: Number,
-        default: null,
-    },
-})
-
-const phone_number = ref(props.phone_number)
 const transactions = ref([])
 
 const loadTransactions = () => {
-    // Change later when authentication is implemented
     axios
-        .get("vcard/" + phone_number.value + "/transactions")
+        .get("vcard/" + userStore.userPhoneNumber + "/transactions")
         .then((response) => {
             transactions.value = response.data.data
             console.log(response.data)
