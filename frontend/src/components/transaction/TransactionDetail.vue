@@ -48,8 +48,8 @@ const createTransaction = async () => {
         newTransaction.value.vcard = props.phone_number
         emit("createTransaction", newTransaction.value)
     } catch (err) {
-        error.value = err.message
-        toast.error(err.message)
+        error.value = err.response.data.message
+        toast.error(error.value)
     }
 }
 
