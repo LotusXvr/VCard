@@ -55,10 +55,66 @@ const getCountActiveVCards = () => {
         })
 }
 
+const totalVCardBalance = ref(0)
+const getTotalVCardBalance = () => {
+    axios
+        .get("statistics/vcards/balance")
+        .then((response) => {
+            console.log(response.data.vcardBalanceSum)
+            totalVCardBalance.value = response.data.vcardBalanceSum
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
+const totalActiveVCardBalance = ref(0)
+const getTotalActiveVCardBalance = () => {
+    axios
+        .get("statistics/vcards/active/balance")
+        .then((response) => {
+            console.log(response.data.activeVCardBalanceSum)
+            totalActiveVCardBalance.value = response.data.activeVCardBalanceSum
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
+const transactionsCount = ref(0)
+const getCountTransactions = () => {
+    axios
+        .get("statistics/transactions/count")
+        .then((response) => {
+            console.log(response.data.transactionsCount)
+            transactionsCount.value = response.data.transactionsCount
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
+const transactionsSum = ref(0)
+const getSumTransactions = () => {
+    axios
+        .get("statistics/transactions/sum")
+        .then((response) => {
+            console.log(response.data.transactionsSum)
+            transactionsSum.value = response.data.transactionsSum
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
 onMounted(() => {
     loadVCard()
     getCountVCards()
     getCountActiveVCards()
+    getTotalVCardBalance()
+    getTotalActiveVCardBalance()
+    getCountTransactions()
+    getSumTransactions()
 })
 </script>
 
@@ -119,6 +175,14 @@ onMounted(() => {
             <p>{{ vcardCount }}</p>
             <h4>Current count of active vcards</h4>
             <p>{{ activeVCardCount }}</p>
+            <h4>Total balance of all vcards</h4>
+            <p>{{ totalVCardBalance }}</p>
+            <h4>Total balance of all active vcards</h4>
+            <p>{{ totalActiveVCardBalance }}</p>
+            <h4>Current count of transactions</h4>
+            <p>{{ transactionsCount }}</p>
+            <h4>Current sum of transactions</h4>
+            <p>{{ transactionsSum }}</p>
             <!-- Add more cards based on your vCard properties -->
         </div>
     </div>

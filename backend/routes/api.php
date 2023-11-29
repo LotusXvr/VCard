@@ -38,6 +38,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/vcards/balance', [VCardController::class, 'getVCardBalanceSum']);
     Route::get('statistics/vcards/active/count', [VCardController::class, 'getActiveVCardCount']);
     Route::get('statistics/vcards/active/balance', [VCardController::class, 'getActiveVCardBalanceSum']);
+    Route::get('statistics/transactions/count', [TransactionController::class, 'getTransactionsCount']);
+    Route::get('statistics/transactions/sum', [TransactionController::class, 'getTransactionsSum']);
 
     /*
      * Globais

@@ -202,5 +202,20 @@ class TransactionController extends Controller
         //
     }
 
+    // Get sum of all transactions
+    public function getTransactionsSum()
+    {
+        $transactionsSum = Transaction::sum('value');
+
+        return response()->json(['transactionsSum' => $transactionsSum]);
+    }
+
+    // get count of all transactions
+    public function getTransactionsCount()
+    {
+        $transactionsCount = Transaction::count();
+
+        return response()->json(['transactionsCount' => $transactionsCount]);
+    }
 
 }
