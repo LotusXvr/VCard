@@ -29,29 +29,36 @@ const loadVCard = () => {
         })
 }
 
-const transactions = ref([])
-// const loadLastMonthTransactions = (phone_number) => {
-//     if (!phone_number || phone_number < 0) {
-//         transactions.value = []
-//     } else {
-//         axios
-//             .get("vcard/" + phone_number + "/transactions/lastmonth")
-//             .then((response) => {
-//                 transactions.value = response.data.data
-//             })
-//             .catch((error) => {
-//                 console.log(error)
-//             })
-//     }
-// }
+const vcardCount = ref(0)
+const getCountVCards = () => {
+    axios
+        .get("statistics/vcards/count")
+        .then((response) => {
+            console.log(response.data.vcardCount)
+            vcardCount.value = response.data.vcardCount
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
 
-const creditTransactionsSum = computed(() => {
-    return transactions.value.reduce((total, transaction) => total + transaction.value.value, 0)
-})
+const activeVCardCount = ref(0)
+const getCountActiveVCards = () => {
+    axios
+        .get("statistics/vcards/active/count")
+        .then((response) => {
+            console.log(response.data.activeVCardCount)
+            activeVCardCount.value = response.data.activeVCardCount
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
 
 onMounted(() => {
     loadVCard()
-    // loadLastMonthTransactions(props.phone_number)
+    getCountVCards()
+    getCountActiveVCards()
 })
 </script>
 
@@ -89,8 +96,6 @@ onMounted(() => {
                 </div>
             </div>
 
-            {{ creditTransactionsSum }}
-
             <div class="col-lg-12 mb-4">
                 <!-- Email and Name List -->
                 <div class="card text-center">
@@ -109,6 +114,11 @@ onMounted(() => {
                 </div>
             </div>
 
+            <h1 class="text-center">Admin</h1>
+            <h4>Current count of vcards</h4>
+            <p>{{ vcardCount }}</p>
+            <h4>Current count of active vcards</h4>
+            <p>{{ activeVCardCount }}</p>
             <!-- Add more cards based on your vCard properties -->
         </div>
     </div>

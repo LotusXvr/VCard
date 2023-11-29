@@ -72,16 +72,36 @@ class VCardController extends Controller
         return TransactionResource::collection($transactions);
     }
 
-    public function getTransactionsByPhoneNumberLastMonth(Request $request)
+    // get current count of vcards
+    public function getVCardCount()
     {
-        $phone_number = $request->phone_number;
+        $vcardCount = VCard::count();
 
-        // get last month
-        $transaction = Transaction::where('vcard', $phone_number)
-            ->orderBy('date', 'desc')
-            ->first();
+        return response()->json(['vcardCount' => $vcardCount]);
+    }
 
-        return TransactionResource::collection($transaction);
+    // get current count of active vcards
+    public function getActiveVCardCount()
+    {
+        $activeVCardCount = VCard::where('blocked', 0)->count();
+
+        return response()->json(['activeVCardCount' => $activeVCardCount]);
+    }
+
+    // get sum of all vcard balances
+    public function getVCardBalanceSum()
+    {
+        $vcardBalanceSum = VCard::sum('balance');
+
+        return response()->json(['vcardBalanceSum' => $vcardBalanceSum]);
+    }
+
+    // get sum of all active vcard balances
+    public function getActiveVCardBalanceSum()
+    {
+        $activeVCardBalanceSum = VCard::where('blocked', 0)->sum('balance');
+
+        return response()->json(['activeVCardBalanceSum' => $activeVCardBalanceSum]);
     }
 
 }

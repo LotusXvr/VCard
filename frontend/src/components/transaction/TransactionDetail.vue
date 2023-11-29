@@ -27,24 +27,22 @@ const emit = defineEmits(["createTransaction"])
 
 const createTransaction = async () => {
     try {
-        transactionVerifier.value.type = newTransaction.value.payment_type
-        transactionVerifier.value.reference = newTransaction.value.payment_reference
-        transactionVerifier.value.value = parseFloat(newTransaction.value.value)
-        const response = await axios.post(
-            "https://dad-202324-payments-api.vercel.app/api/credit",
-            transactionVerifier.value,
-        )
-        console.log(response.data)
-        toast.success(response.data.message)
-
-        if (newTransaction.value.payment_type == "MBWAY") {
-            newTransaction.value.payment_type = "VCARD"
+        if (newTransaction.value.payment_type != "VCARD") {
+            transactionVerifier.value.type = newTransaction.value.payment_type
+            transactionVerifier.value.reference = newTransaction.value.payment_reference
+            transactionVerifier.value.value = parseFloat(newTransaction.value.value)
+            const response = await axios.post(
+                "https://dad-202324-payments-api.vercel.app/api/credit",
+                transactionVerifier.value,
+            )
+            console.log(response.data)
+            toast.success(response.data.status + " - " + response.data.message)
         }
+
         newTransaction.value.vcard = userStore.userPhoneNumber
         emit("createTransaction", newTransaction.value)
     } catch (err) {
-        error.value = err.response.data.message
-        toast.error(error.value)
+        toast.error(err.response.data.status + " - " + err.response.data.message)
     }
 }
 
@@ -72,6 +70,7 @@ onMounted(() => {
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
                         <select v-model="newTransaction.payment_type" class="form-select" required>
+                            <option value="VCARD">VCARD</option>
                             <option value="MBWAY">MBWAY</option>
                             <option value="IBAN">IBAN</option>
                             <option value="MB">MB</option>

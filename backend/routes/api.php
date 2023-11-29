@@ -33,6 +33,12 @@ Route::middleware('auth:api')->group(function () {
     // List transactions of a specific phone number
     Route::get('vcard/{phone_number}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber']);
 
+    // Statistics
+    Route::get('statistics/vcards/count', [VCardController::class, 'getVCardCount']);
+    Route::get('statistics/vcards/balance', [VCardController::class, 'getVCardBalanceSum']);
+    Route::get('statistics/vcards/active/count', [VCardController::class, 'getActiveVCardCount']);
+    Route::get('statistics/vcards/active/balance', [VCardController::class, 'getActiveVCardBalanceSum']);
+
     /*
      * Globais
      */
