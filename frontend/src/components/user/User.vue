@@ -1,102 +1,111 @@
 <script setup>
-import { ref, computed, watch } from "vue"
-import UserDetail from "./UserDetail.vue" // Assuming you have a UserDetail component
-import axios from "axios"
-import { useToast } from "vue-toastification"
-import { useRouter } from "vue-router"
+import axios from "axios";
+import { useToast } from "vue-toastification";
+import { useUserStore } from "../../stores/user.js";
+import { ref, computed, watch } from "vue";
+import UserDetail from "./UserDetail.vue"; // Assuming you have a UserDetail component
+import { useRouter } from "vue-router";
 
-const router = useRouter()
-const toast = useToast()
+const router = useRouter();
+const toast = useToast();
+const userStore = useUserStore();
+
+const props = defineProps({
+    id: {
+      type: Number,
+      default: null
+    }
+})
 
 const newUser = () => {
     return {
-        username: "",
-        email: "",
-        // Add other user properties as needed
+      id: null,
+      name: '',
+      email: '',
+      password: '',
+      password_confirmation: ''
     }
 }
 
-const props = defineProps({
-    userId: {
-        type: Number,
-        default: null,
-    },
-})
+const user = ref(newUser());
+const errors = ref(null);
+let originalValueStr = ''
 
-const user = ref(newUser())
-const errors = ref({})
-
-const operation = computed(() =>
-    !props.userId || props.userId < 0 ? "insert" : "update",
-)
-
-const loadUser = (userId) => {
-    if (!userId || userId < 0) {
-        user.value = newUser()
-    } else {
-        axios
-            .get("users/" + userId)
-            .then((response) => {
-                user.value = response.data.data
-            })
-            .catch((error) => {
-                console.log(error)
-            })
+const inserting = (id) => !id || (id < 0)
+const loadUser = async (id) => {
+  originalValueStr = ''
+  errors.value = null
+  if (inserting(id)) {
+    user.value = newUser()
+  } else {
+    try {
+      const response = await axios.get('admins/' + id);
+      user.value = response.data.data;
+      originalValueStr = JSON.stringify(user.value);
+    } catch (error) {
+      console.error('Error loading user:', error);
     }
+  }
 }
 
-const save = () => {
-    if (operation.value == "insert") {
-        axios
-            .post("users", user.value)
-            .then((response) => {
-                console.log("User Created")
-                console.dir(response.data.data)
-                toast.success(
-                    "User with ID " +
-                        response.data.data.userId +
-                        " created successfully",
-                    router.back(),
-                )
-            })
-            .catch((error) => {
-                console.dir(error)
-
-                if (error.response.status == 422) {
-                    errors.value = error.response.data.errors
-                    toast.error("Validation error")
-                }
-            })
-    } else {
-        axios
-            .put("users/" + props.userId, user.value)
-            .then((response) => {
-                console.log("User Updated")
-                console.dir(response.data.data)
-                toast.success("User Updated")
-                router.back()
-            })
-            .catch((error) => {
-                errors.value = error.response.data.errors
-                toast.error("Error updating User")
-            })
+const save = async (userToSave) => {
+  errors.value = null
+  if (inserting(props.id)) {
+    try {
+      const response = await axios.post('admins', userToSave)
+      user.value = response.data.data
+      originalValueStr = JSON.stringify(user.value)
+      toast.success('User #' + user.value.name + ' was registered successfully.')
+        router.back()
+    } catch (error) {
+      if (error.response.status == 422) {
+        errors.value = error.response.data.errors
+        toast.error('User was not registered due to validation errors!')
+      } else {
+        toast.error('User was not registered due to unknown server error!')
+      }
     }
+  } else {
+    try {
+      const response = await axios.put('admins/' + props.id, userToSave)
+      user.value = response.data.data
+      originalValueStr = JSON.stringify(user.value)
+      toast.success('User #' + user.value.id + ' was updated successfully.')
+      if (user.value.id == userStore.userId) {
+        await userStore.loadUser()
+      }
+      router.back()
+    } catch (error) {
+      if (error.response.status == 422) {
+        errors.value = error.response.data.errors
+        toast.error('User #' + props.id + ' was not updated due to validation errors!')
+      } else {
+        toast.error('User #' + props.id + ' was not updated due to unknown server error!')
+      }
+    }
+  }
+}
+
+const cancel = () => {
+  originalValueStr = JSON.stringify(user.value)
+  router.back()
 }
 
 watch(
-    () => props.userId,
-    (newValue) => {
-        loadUser(newValue)
+  () => props.id,
+  (newValue) => {
+      loadUser(newValue)
     },
-    { immediate: true },
+  {immediate: true}
 )
 </script>
 
 <template>
-    <UserDetail
-        :user="user"
-        :operationType="operation"
-        @hide="closeEdit"
-        @save="save"
-    ></UserDetail>
+  <UserDetail
+    :user="user"
+    :errors="errors"
+    :inserting="inserting(id)"
+    @save="save"
+    @cancel="cancel"
+  ></UserDetail>
 </template>

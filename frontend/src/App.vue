@@ -166,9 +166,13 @@ onMounted(() => {
                                 <i class="bi bi-list-check"></i>
                                 Users
                             </router-link>
-                            <a class="link-secondary" href="#" aria-label="Add a new task">
+                            <router-link
+                                class="link-secondary"
+                                aria-label="Add a new task"
+                                :to="{ name: 'NewUser' }"
+                            >
                                 <i class="bi bi-xs bi-plus-circle"></i>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
                             <router-link

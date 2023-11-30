@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\AdminController;
 use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\VCardController;
@@ -47,6 +48,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('vcards', VCardController::class);
     Route::apiResource('users', UserController::class);
+    Route::apiResource('admins', AdminController::class);
     Route::apiResource('transactions', TransactionController::class);
 
 });

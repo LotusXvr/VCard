@@ -10,10 +10,6 @@ const props = defineProps({
   usersTitle: {
     type: String,
     default: 'Users'
-  },
-  onlyCurrentUsers: {
-    type: Boolean,
-    default: false
   }
 })
 
@@ -22,7 +18,7 @@ const users = ref([])
 const loadUsers = () => {
   // Altere mais tarde quando a autenticação for implementada
   axios
-    .get('users')
+    .get('admins')
     .then((response) => {
       users.value = response.data
     })
@@ -32,7 +28,7 @@ const loadUsers = () => {
 }
 
 const addUser = () => {
-  router.push({ name: 'newUser' }) // Certifique-se de ter uma rota chamada 'newUser'
+  router.push({ name: 'NewUser' }) // Certifique-se de ter uma rota chamada 'newUser'
 }
 
 const editUser = (user) => {
@@ -41,7 +37,7 @@ const editUser = (user) => {
 
 const deleteUser = (user) => {
   axios
-    .delete('users/' + user.id)
+    .delete('admins/' + user.id)
     .then(() => {
       loadUsers()
     })
@@ -62,7 +58,7 @@ onMounted(() => {
     </div>
   </div>
   <hr />
-  <div v-if="!onlyCurrentUsers" class="mb-3 d-flex justify-content-between flex-wrap">
+  <div class="mb-3 d-flex justify-content-between flex-wrap">
     <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
     <div class="mx-2 mt-2">
       <router-link class="nav-link w-100 me-3" :to="{ name: 'NewUser' }">

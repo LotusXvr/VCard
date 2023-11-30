@@ -70,20 +70,18 @@ const router = createRouter({
       component: Transactions,
     },
     {
-      path: '/users',
+      path: '/admins', // Altere de '/users' para '/administrators'
       name: 'Users',
       component: Users
     },
     {
-      path: '/users/:id',
+      path: '/admins/:id', // Altere de '/users/:id' para '/administrators/:id'
       name: 'User',
       component: User,
-      //props: true
-      // Replaced with the following line to ensure that id is a number
-      props: (route) => ({ id: parseInt(route.params.id) })
+      props: route => ({ id: parseInt(route.params.id) })
     },
     {
-      path: '/users/new',
+      path: '/admins/new', // Altere de '/users/new' para '/administrators/new'
       name: 'NewUser',
       component: User,
       props: { id: -1 }
