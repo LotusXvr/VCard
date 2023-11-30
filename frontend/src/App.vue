@@ -17,7 +17,7 @@ const phoneNumber = ref(900000015)
 const logout = async () => {
     if (await userStore.logout()) {
         toast.success("User has logged out of the application.")
-        router.push({ name: "home" })
+        router.push({ name: "Home" })
     } else {
         toast.error("There was a problem logging out of the application!")
     }
@@ -55,15 +55,15 @@ onMounted(() => {
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
+            <div class="collapse navbar-collapse justify-content-end" >
+                <ul class="navbar-nav" >
+                    <li class="nav-item" v-show="!userStore.user">
                         <a class="nav-link" href="#"
                             ><i class="bi bi-person-check-fill"></i>
                             Register
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" v-show="!userStore.user">
                         <router-link
                             class="nav-link"
                             :class="{ active: $route.name === 'Login' }"
@@ -92,6 +92,7 @@ onMounted(() => {
                         <ul
                             class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
                             aria-labelledby="navbarDropdownMenuLink"
+                            v-show="userStore.user"
                         >
                             <li>
                                 <router-link
@@ -132,10 +133,10 @@ onMounted(() => {
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-                <div class="position-sticky pt-3">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse" >
+                <div class="position-sticky pt-3" v-show="userStore.user">
                     <ul class="nav flex-column">
-                        <li class="nav-item">
+                        <li class="nav-item" >
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'Dashboard' }"
