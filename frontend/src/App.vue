@@ -136,7 +136,7 @@ onMounted(() => {
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse" >
                 <div class="position-sticky pt-3" v-show="userStore.user">
                     <ul class="nav flex-column">
-                        <li class="nav-item" >
+                        <li class="nav-item" v-show="userStore.user?.user_type == 'A'">
                             <router-link
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'Dashboard' }"

@@ -9,6 +9,7 @@ export const useUserStore = defineStore("user", () => {
     const user = ref(null)
     const toast = useToast()
     const userName = computed(() => user.value?.name ?? "Anonymous")
+    const userType = computed(() => user.value?.user_type ?? "Anonymous")
     const userPhoneNumber = computed(() => user.value?.username ?? 0)
     const userPhotoUrl = computed(() =>
         user.value?.photo_url
@@ -42,7 +43,7 @@ export const useUserStore = defineStore("user", () => {
             await loadUser()
             return true
         } catch (error) {
-            
+
             clearUser()
             toast.error("Login failed - " + error.response.data.message ?? "Unknown error")
             return false
@@ -70,6 +71,7 @@ export const useUserStore = defineStore("user", () => {
     return {
         user,
         userName,
+        userType,
         userPhotoUrl,
         userPhoneNumber,
         loadUser,
