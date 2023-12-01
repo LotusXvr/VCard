@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use App\Models\VCard;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Services\Base64Services;
+
 
 class VCardController extends Controller
 {
@@ -26,13 +28,33 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
+    // Register a new vcard
     public function store(CreateVCardRequest $request)
     {
-        $data = $request->validated();
-        $data['blocked'] = 0; // Set blocked to 0
-        $data['max_debit'] = 5000;
-        $data['balance'] = 0;
-        $vcard = VCard::create($data);
+        $dataToSave = $request->validated();
+        $dataToSave['blocked'] = 0; // Set blocked to 0
+        $dataToSave['max_debit'] = 5000;
+        $dataToSave['balance'] = 0;
+
+        $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
+            $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
+        unset($dataToSave["base64ImagePhoto"]);
+
+        $vcard = new VCard();
+        $vcard->name = $dataToSave['name'];
+        $vcard->email = $dataToSave['email'];
+        $vcard->phone_number = $dataToSave['phone_number'];
+        $vcard->password = bcrypt($dataToSave['password']);
+        $vcard->blocked = $dataToSave['blocked'];
+        $vcard->max_debit = $dataToSave['max_debit'];
+        $vcard->balance = $dataToSave['balance'];
+        $vcard->confirmation_code = bcrypt($dataToSave['confirmation_code']);
+
+        if ($base64ImagePhoto) {
+            $vcard->photo_url = $this->storeBase64Image($base64ImagePhoto);
+        }
+
+        $vcard->save();
         return new VCardResource($vcard);
     }
 

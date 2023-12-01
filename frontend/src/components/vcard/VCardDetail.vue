@@ -1,146 +1,197 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue"
-import { useRouter } from "vue-router"
+import { ref, computed, watch } from "vue";
+import avatarNoneUrl from '@/assets/avatar-none.png'
+import { useToast } from "vue-toastification";
 
-const router = useRouter()
+const toast = useToast();
 
 const props = defineProps({
     vcard: {
         type: Object,
         required: true,
     },
-    operationType: {
-        type: String,
-        default: "insert", // insert / update
+    inserting: {
+        type: Boolean,
+        default: false,
+    },
+    errors: {
+        type: Object,
+        required: false,
     },
 })
 
-const emit = defineEmits(["hide", "save"])
+const emit = defineEmits(["save", "cancel"]);
 
 const editingVCard = ref(props.vcard)
-const vcardTitle = ref(getVCardTitle())
+
+const inputPhotoFile = ref(null)
+const editingImageAsBase64 = ref(null)
+const deletePhotoOnTheServer = ref(false)
 
 watch(
     () => props.vcard,
     (newVCard) => {
         editingVCard.value = newVCard
-        vcardTitle.value = getVCardTitle()
     },
+    { immediate: true }
 )
 
-function getVCardTitle() {
-    if (!editingVCard.value) {
-        return ""
+const photoFullUrl = computed(() => {
+    if (deletePhotoOnTheServer.value) {
+        return avatarNoneUrl
     }
-    return props.operationType == "insert"
-        ? "New VCard"
-        : "VCard #" + editingVCard.value.phone_number
-}
-const confirmPassword = ref("") // New variable for Confirm Password
+    if (editingImageAsBase64.value) {
+        return editingImageAsBase64.value
+    } else {
+        return editingVCard.value.photo_url
+            ? serverBaseUrl + "/storage/fotos/" + editingVCard.value.photo_url
+            : avatarNoneUrl
+    }
+})
 
-const validatePasswordMatch = () => {
-    return confirmPassword.value === editingVCard.value.password
-}
+const vcardTitle = computed(() => {
+    if (!editingVCard.value) {
+        return '';
+    }
+    return props.inserting ? 'Register a new Vcard' : 'Vcard #' + editingVCard.value.phone_number;
+});
 
 const save = () => {
-    // Instead of updating the data (task) here, we request to update it by emiting an event
-    emit("save", editingVCard.value)
-}
-
+    const vcardToSave = editingVCard.value;
+    vcardToSave.deletePhotoOnServer = deletePhotoOnTheServer.value
+    vcardToSave.base64ImagePhoto = editingImageAsBase64.value
+    // Adicionando a validação de senha
+    if (props.inserting && editingVCard.value.password !== editingVCard.value.password_confirmation) {
+        toast.error('Passwords do not match');
+    } else {
+        emit("save", vcardToSave);
+    }
+};
 const cancel = () => {
-    router.back()
+    emit("cancel", editingVCard.value);
+};
+
+const changePhotoFile = () => {
+    try {
+        const file = inputPhotoFile.value.files[0]
+        if (!file) {
+            editingImageAsBase64.value = null
+        } else {
+            const reader = new FileReader()
+            reader.addEventListener(
+                'load',
+                () => {
+                    // convert image file to base64 string
+                    editingImageAsBase64.value = reader.result
+                    deletePhotoOnTheServer.value = false
+                },
+                false,
+            )
+            if (file) {
+                reader.readAsDataURL(file)
+            }
+        }
+    } catch (error) {
+        editingImageAsBase64.value = null
+    }
 }
 
-onMounted(() => {
-    // Initializing with the focus on the input
-})
+const resetToOriginalPhoto = () => {
+    deletePhotoOnTheServer.value = false
+    inputPhotoFile.value.value = ''
+    changePhotoFile()
+}
+
+const cleanPhoto = () => {
+    deletePhotoOnTheServer.value = true
+}
 </script>
 
 <template>
-    <div>
+    <form class="row g-3 needs-validation" novalidate @submit.prevent="save">
         <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
         <hr />
-        <h5 class="fw-bold mb-2">Account Balance:</h5>
-        <p class="fs-4 text-success fw-bold">{{ vcard.balance + "€" }}</p>
-        <form class="row g-3 needs-validation" novalidate @submit.prevent="save">
-            <div class="form-group">
-                <label for="phone_number">Phone Number:</label>
-                <input
-                    v-model="editingVCard.phone_number"
-                    type="text"
-                    id="VCardPhoneNumber"
-                    class="form-control"
-                    required
-                    :readonly="props.operationType !== 'insert'"
-                />
-            </div>
+        <div class="d-flex flex-wrap justify-content-between">
+            <div class="w-75 pe-4">
+                <div class="mb-3">
+                    <label for="phone_number">Phone Number:</label>
+                    <input v-model="editingVCard.phone_number" type="text" id="VCardPhoneNumber"
+                        :class="{ 'is-invalid': errors ? errors['phone_number'] : false }" required />
+                    <field-error-message :errors="errors" fieldName="phone_number"></field-error-message>
 
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input
-                    v-model="editingVCard.name"
-                    type="text"
-                    id="VCardName"
-                    class="form-control"
-                    required
-                />
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input
-                    v-model="editingVCard.email"
-                    type="email"
-                    id="VCardEmail"
-                    class="form-control"
-                    required
-                />
-            </div>
-
-            <div v-if="props.operationType === 'insert'">
-                <hr />
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input
-                        v-model="editingVCard.password"
-                        type="password"
-                        id="VCardPassword"
-                        class="form-control"
-                        required
-                    />
                 </div>
-                <br />
+
+                <div class="mb-3 px-1">
+                    <label for="name">Name:</label>
+                    <input v-model="editingVCard.name" type="text" id="VCardName"
+                        :class="{ 'is-invalid': errors ? errors['name'] : false }" required />
+                    <field-error-message :errors="errors" fieldName="name"></field-error-message>
+
+                </div>
+
                 <div class="form-group">
-                    <label for="confirmPassword">Confirm Password:</label>
-                    <input
-                        v-model="confirmPassword"
-                        type="password"
-                        id="VCardConfirmPassword"
-                        class="form-control"
-                        :class="{ 'is-invalid': !validatePasswordMatch() }"
-                        required
-                    />
-                    <div class="invalid-feedback">Passwords do not match.</div>
+                    <label for="email">Email:</label>
+                    <input v-model="editingVCard.email" type="email" id="VCardEmail"
+                        :class="{ 'is-invalid': errors ? errors['email'] : false }" required />
+                    <field-error-message :errors="errors" fieldName="email"></field-error-message>
+
+                </div>
+
+                <div class="mb-3" v-if="inserting">
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input v-model="editingVCard.password" type="password" id="VCardPassword" class="form-control"
+                            required />
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password:</label>
+                        <input v-model="editingVCard.password_confirmation" type="password" id="VCardConfirmPassword"
+                            class="form-control" :class="{ 'is-invalid': errors ? errors['password_confirmation'] : false }"
+                            required />
+                        <div class="invalid-feedback">Passwords do not match.</div>
+                    </div>
+                </div>
+
+                <div class="mb-3" v-if="inserting">
+                    <div class="form-group">
+                        <label for="confirmation_code">Confirmation Code:</label>
+                        <input v-model="editingVCard.confirmation_code" type="text" id="VCard_confirmation_code"
+                            class="form-control" required />
+                    </div>
                 </div>
             </div>
 
-            <div v-if="props.operationType === 'insert'">
-                <div class="form-group">
-                    <label for="confirmation_code">Confirmation Code:</label>
-                    <input
-                        v-model="editingVCard.confirmation_code"
-                        type="text"
-                        id="VCard_confirmation_code"
-                        class="form-control"
-                        required
-                    />
+            <div class="w-25">
+                <div class="d-flex flex-column">
+                    <label class="form-label">Photo</label>
+                    <div class="form-control text-center">
+                        <img :src="photoFullUrl" class="w-50" />
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between flex-wrap">
+                        <label for="inputPhoto" class="btn btn-dark flex-grow-1 mx-1">Carregar</label>
+                        <button class="btn btn-secondary flex-grow-1 mx-1" @click.prevent="resetToOriginalPhoto"
+                            v-if="editingVCard.photo_url">Repor</button>
+                        <button class="btn btn-danger flex-grow-1 mx-1" @click.prevent="cleanPhoto"
+                            v-show="editingVCard.photo_url || editingImageAsBase64">Apagar</button>
+                    </div>
+                    <div>
+                        <field-error-message :errors="errors" fieldName="base64ImagePhoto"></field-error-message>
+                    </div>
                 </div>
             </div>
-
-            <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px">
-                <button type="button" class="btn btn-primary px-5" @click="save">Save</button>
-                <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
-            </div>
-        </form>
-    </div>
+        </div>
+        <hr />
+        <div class="mt-2 d-flex justify-content-end">
+            <button type="button" class="btn btn-primary px-5 mx-2" @click="save">Save</button>
+            <button type="button" class="btn btn-light px-5 mx-2" @click="cancel">Cancel</button>
+        </div>
+    </form>
+    <input type="file" style="visibility:hidden;" id="inputPhoto" ref="inputPhotoFile" @change="changePhotoFile" />
 </template>
+
+<style scoped>
+.total_hours {
+    width: 26rem;
+}
+</style>

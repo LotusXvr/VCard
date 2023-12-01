@@ -18,14 +18,6 @@ const router = createRouter({
       name: 'Home',
       component: HomeView
     },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/AboutView.vue')
-    // }
     {
       path: '/login',
       name: 'Login',
@@ -48,12 +40,6 @@ const router = createRouter({
       props: { onlyCurrentVCards: false, vcardsTitle: 'VCards' }
     },
     {
-      path: '/transaction/:id',
-      name: 'Transaction',
-      component: Transaction,
-      props: (route) => ({ phone_number: parseInt(route.params.id) })
-    },
-    {
       path: '/vcard/new',
       name: 'NewVCard',
       component: VCard,
@@ -63,6 +49,18 @@ const router = createRouter({
       path: '/vcard',
       name: 'VCard',
       component: VCard,
+    },
+    {
+      path: '/vcards/:phone_number',
+      name: 'VCardUpdate',
+      component: VCard,
+      props: (route) => ({ phone_number: parseInt(route.params.phone_number) })
+    },
+    {
+      path: '/transaction/:id',
+      name: 'Transaction',
+      component: Transaction,
+      props: (route) => ({ phone_number: parseInt(route.params.id) })
     },
     {
       path: '/vcard/transactions',

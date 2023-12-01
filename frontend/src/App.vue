@@ -58,10 +58,13 @@ onMounted(() => {
             <div class="collapse navbar-collapse justify-content-end" >
                 <ul class="navbar-nav" >
                     <li class="nav-item" v-show="!userStore.user">
-                        <a class="nav-link" href="#"
+                        <router-link
+                            class="nav-link"
+                            :class="{ active: $route.name === 'NewVCard' }"
+                            :to="{ name: 'NewVCard' }"
                             ><i class="bi bi-person-check-fill"></i>
                             Register
-                        </a>
+                        </router-link>
                     </li>
                     <li class="nav-item" v-show="!userStore.user">
                         <router-link
@@ -232,10 +235,13 @@ onMounted(() => {
                     <div class="collapse navbar-collapse justify-content-end">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="#"
+                                <router-link
+                                    class="nav-link"
+                                    :class="{ active: $route.name === 'NewVCard' }"
+                                    :to="{ name: 'NewVCard' }"
                                     ><i class="bi bi-person-check-fill"></i>
                                     Register
-                                </a>
+                                </router-link>
                             </li>
                             <li class="nav-item">
                                 <router-link
