@@ -11,20 +11,20 @@ const toast = useToast();
 const userStore = useUserStore();
 
 const props = defineProps({
-    id: {
-      type: Number,
-      default: null
-    }
+  id: {
+    type: Number,
+    default: null
+  }
 })
 
 const newUser = () => {
-    return {
-      id: null,
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
-    }
+  return {
+    id: null,
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+  }
 }
 
 const user = ref(newUser());
@@ -56,7 +56,7 @@ const save = async (userToSave) => {
       user.value = response.data.data
       originalValueStr = JSON.stringify(user.value)
       toast.success('User #' + user.value.name + ' was registered successfully.')
-        router.back()
+      router.back()
     } catch (error) {
       if (error.response.status == 422) {
         errors.value = error.response.data.errors
@@ -94,18 +94,12 @@ const cancel = () => {
 watch(
   () => props.id,
   (newValue) => {
-      loadUser(newValue)
-    },
-  {immediate: true}
+    loadUser(newValue)
+  },
+  { immediate: true }
 )
 </script>
 
 <template>
-  <UserDetail
-    :user="user"
-    :errors="errors"
-    :inserting="inserting(id)"
-    @save="save"
-    @cancel="cancel"
-  ></UserDetail>
+  <UserDetail :user="user" :errors="errors" :inserting="inserting(id)" @save="save" @cancel="cancel"></UserDetail>
 </template>

@@ -48,9 +48,9 @@ Route::middleware('auth:api')->group(function () {
      * Globais
      */
 
-    Route::apiResource('vcards', VCardController::class);
+    Route::apiResource('vcards', VCardController::class)->middleware('can:viewAny,App\Models\User');
     Route::apiResource('users', UserController::class);
-    Route::apiResource('admins', AdminController::class);
+    Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
     Route::apiResource('transactions', TransactionController::class);
 
 });

@@ -73,10 +73,5 @@ onMounted(() => {
       </router-link>
     </div>
   </div>
-  <VCardTable
-    :vcards="vcards"
-    :showPhoneNumber="true"
-    @edit="editVCard"
-    @delete="deleteVCard"
-  ></VCardTable>
+  <VCardTable :vcards="vcards" :showPhoneNumber="true" @edit="editVCard" @delete="deleteVCard"></VCardTable>
 </template>

@@ -20,7 +20,7 @@ class VCardController extends Controller
 
     public function index()
     {
-        return VCard::all();
+        $vcards = VCard::all();
     }
 
     public function show(VCard $vcard)
@@ -43,7 +43,9 @@ class VCardController extends Controller
         $vcard = new VCard();
         $vcard->name = $dataToSave['name'];
         $vcard->email = $dataToSave['email'];
+
         $vcard->phone_number = $dataToSave['phone_number'];
+
         $vcard->password = bcrypt($dataToSave['password']);
         $vcard->blocked = $dataToSave['blocked'];
         $vcard->max_debit = $dataToSave['max_debit'];
@@ -54,8 +56,19 @@ class VCardController extends Controller
             $vcard->photo_url = $this->storeBase64Image($base64ImagePhoto);
         }
 
+
         $vcard->save();
+        $vcard->phone_number = $dataToSave['phone_number'];
         return new VCardResource($vcard);
+    }
+
+    // Store base64 image
+    private function storeBase64AsFile(VCard $vCard, string $base64String)
+    {
+        $targetDir = storage_path('app/public/fotos');
+        $newfilename = $vCard->phone_number . "_" . rand(1000, 9999);
+        $base64Service = new Base64Services();
+        return $base64Service->saveFile($base64String, $targetDir, $newfilename);
     }
 
 
