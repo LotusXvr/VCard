@@ -13,7 +13,7 @@ class VcardPolicy
 
     public function view(User $user, User $model)
     {
-        return $user->user_type == 'A' || $user->id == $model->id;
+        return $user->user_type == 'A' || $user->username == $model->username;
     }
 
     public function create(User $user)

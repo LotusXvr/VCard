@@ -2,7 +2,7 @@
 import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user"
-import { ref, watch } from "vue"
+import { ref, watch, onMounted } from "vue"
 import VCardDetail from "./VCardDetail.vue"
 import { useRouter } from "vue-router"
 
@@ -105,6 +105,11 @@ watch(
   },
   { immediate: true },
 )
+
+onMounted(() => {
+  loadVCard(userStore.userPhoneNumber)
+  console.log("123" + userStore.userPhoneNumber)
+})
 </script>
 
 <template>
