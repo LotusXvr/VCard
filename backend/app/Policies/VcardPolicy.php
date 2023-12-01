@@ -13,7 +13,11 @@ use App\Models\User;
 
     public function view(User $user, User $model)
     {
+<<<<<<< HEAD
         return $user->user_type == 'A' || $user->id == $model->phone_number;
+=======
+        return $user->user_type == 'A' || $user->username == $model->username;
+>>>>>>> 343db0d44002f135cf452c80668ea71ac707ea29
     }
 
     public function create(User $user)

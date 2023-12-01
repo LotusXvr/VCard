@@ -1,14 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import VCards from '../components/vcard/VCards.vue'
-import Dashboard from '../components/Dashboard.vue'
-import Transaction from '../components/transaction/Transaction.vue'
-import VCard from '../components/vcard/VCard.vue'
-import Transactions from '../components/transaction/Transactions.vue'
-import Login from '../components/auth/Login.vue'
-import Users from '../components/user/Users.vue'
-import User from '../components/user/User.vue'
-import ChangePassword from '../components/auth/ChangePassword.vue'
+import { createRouter, createWebHistory } from "vue-router"
+import HomeView from "../views/HomeView.vue"
+import VCards from "../components/vcard/VCards.vue"
+import Dashboard from "../components/Dashboard.vue"
+import Transaction from "../components/transaction/Transaction.vue"
+import VCard from "../components/vcard/VCard.vue"
+import Transactions from "../components/transaction/Transactions.vue"
+import Login from "../components/auth/Login.vue"
+import Users from "../components/user/Users.vue"
+import User from "../components/user/User.vue"
+import ChangePassword from "../components/auth/ChangePassword.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
