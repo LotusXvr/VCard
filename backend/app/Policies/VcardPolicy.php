@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class VcardPolicy
+/* class VcardPolicy
 {
     public function viewAny(User $user, User $model)
     {
@@ -13,7 +13,7 @@ class VcardPolicy
 
     public function view(User $user, User $model)
     {
-        return $user->user_type == 'A' || $user->id == $model->id;
+        return $user->user_type == 'A' || $user->id == $model->phone_number;
     }
 
     public function create(User $user)
@@ -30,4 +30,5 @@ class VcardPolicy
     {
         return $user->user_type == 'A' || $user->id == $model->id;
     }
-}
+
+} */

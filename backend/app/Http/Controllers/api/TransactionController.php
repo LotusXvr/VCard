@@ -218,4 +218,19 @@ class TransactionController extends Controller
         return response()->json(['transactionsCount' => $transactionsCount]);
     }
 
+    public function getTransactionsSumBetweenDates(Request $request)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $sumBetweenDates = Transaction::whereBetween('date', [$startDate, $endDate])->sum('value');
+
+        return response()->json(['sumBetweenDates' => $sumBetweenDates]);
+    }
+    public function getOlderTransaction(Request $request){
+
+        $olderTransaction = Transaction::orderBy('date')->first();
+
+        return response()->json(['olderTransaction' => $olderTransaction]);;
+    }
 }

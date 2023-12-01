@@ -43,12 +43,15 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/vcards/active/balance', [VCardController::class, 'getActiveVCardBalanceSum']);
     Route::get('statistics/transactions/count', [TransactionController::class, 'getTransactionsCount']);
     Route::get('statistics/transactions/sum', [TransactionController::class, 'getTransactionsSum']);
+    Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates']);
+    Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction']);
+
 
     /*
      * Globais
      */
 
-    Route::apiResource('vcards', VCardController::class)->middleware('can:viewAny,App\Models\User');
+    Route::apiResource('vcards', VCardController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
     Route::apiResource('transactions', TransactionController::class);

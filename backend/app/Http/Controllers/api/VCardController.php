@@ -20,7 +20,7 @@ class VCardController extends Controller
 
     public function index()
     {
-        $vcards = VCard::all();
+        return VCard::all();
     }
 
     public function show(VCard $vcard)

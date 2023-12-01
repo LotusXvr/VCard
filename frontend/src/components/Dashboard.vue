@@ -93,6 +93,47 @@ const getCountTransactions = () => {
             console.log(error)
         })
 }
+const startDate = ref('');
+const endDate = ref('');
+const transactionsSumBetweenDates = ref(0)
+const today = new Date();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+const day = String(today.getDate()).padStart(2, '0');
+const todayDateString = `${year}-${month}-${day}`;
+
+const filterTransactions = async () => {
+    if(startDate.value==''){
+        await axios.get('statistics/transactions/older', {
+            params: {
+                startDate: startDate.value,
+                endDate: endDate.value
+            }
+        })
+        .then(response => {
+            startDate.value = response.data.olderTransaction.date;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+    if(endDate.value==''){
+        endDate.value=todayDateString
+    }
+    await axios.get('statistics/transactions/sum-between-dates', {
+        params: {
+            startDate: startDate.value,
+            endDate: endDate.value
+        }
+    })
+    .then(response => {
+        transactionsSumBetweenDates.value = response.data.sumBetweenDates;
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    console.log(transactionsSumBetweenDates.value)
+};
 
 const transactionsSum = ref(0)
 const getSumTransactions = () => {
@@ -169,21 +210,47 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
+        </div>  
+    </div>
+            <div class="container mt-5">
+    <h1 class="text-center mb-4">Admin Dashboard</h1>
 
-            <h1 class="text-center">Admin</h1>
-            <h4>Current count of vcards</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Current Count of VCards</h4>
             <p>{{ vcardCount }}</p>
-            <h4>Current count of active vcards</h4>
+
+            <h4>Current Count of Active VCards</h4>
             <p>{{ activeVCardCount }}</p>
-            <h4>Total balance of all vcards</h4>
+
+            <h4>Total Balance of All VCards</h4>
             <p>{{ totalVCardBalance }}</p>
-            <h4>Total balance of all active vcards</h4>
+
+            <h4>Total Balance of All Active VCards</h4>
             <p>{{ totalActiveVCardBalance }}</p>
-            <h4>Current count of transactions</h4>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Current Count of Transactions</h4>
             <p>{{ transactionsCount }}</p>
-            <h4>Current sum of transactions</h4>
+
+            <h4>Current Sum of Transactions</h4>
             <p>{{ transactionsSum }}</p>
-            <!-- Add more cards based on your vCard properties -->
+
+            <div class="mt-3">
+                <label for="startDate"><b>Start Date:</b></label>
+                <input type="date" id="startDate" v-model="startDate" class="form-control">
+
+                <label for="endDate" class="mt-2"><b>End Date:</b></label>
+                <input type="date" id="endDate" v-model="endDate" class="form-control">
+
+                <button @click="filterTransactions" class="btn btn-primary mt-3 float-end">Filter</button>
+            </div>
+
+            <p class="mt-3" v-if="transactionsSumBetweenDates">
+                <b>Sum of Transactions Between {{ startDate }} and {{ endDate }}:</b> {{ transactionsSumBetweenDates }}€
+            </p>
         </div>
     </div>
+</div>
 </template>

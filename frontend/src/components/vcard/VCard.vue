@@ -35,6 +35,7 @@ const errors = ref(null)
 let originalValueStr = ''
 
 const inserting = (phone_number) => !phone_number || (phone_number < 0)
+
 const loadVCard = async (phone_number) => {
   originalValueStr = ''
   errors.value = null
@@ -44,6 +45,7 @@ const loadVCard = async (phone_number) => {
     try {
       const response = await axios.get('vcards/' + phone_number)
       vcard.value = response.data.data
+      console.log(response.data.data)
       originalValueStr = JSON.stringify(vcard.value)
     } catch (error) {
       console.log(error)
@@ -78,7 +80,7 @@ const save = async (vcardToSave) => {
       vcard.value = response.data.data
       originalValueStr = JSON.stringify(vcard.value)
       toast.success('User #' + vcard.value.phone_number + ' was updated successfully.')
-      if (user.value.phone_number == userStore.userId) {
+      if (vcard.value.phone_number == userStore.userId) {
         await userStore.loadUser()
       }
       router.back()
@@ -94,7 +96,7 @@ const save = async (vcardToSave) => {
 }
 
 const cancel = () => {
-  originalValueStr = JSON.stringify(user.value)
+  originalValueStr = JSON.stringify(vcard.value)
   router.back()
 }
 

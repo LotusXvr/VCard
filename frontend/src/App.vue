@@ -115,7 +115,7 @@ onMounted(() => {
                             </router-link>
                         </li>
 
-                        <li class="nav-item">
+                        <li class="nav-item" v-show="userStore.user?.user_type == 'V'">
                             <router-link class="nav-link w-100 me-3" :class="{ active: $route.name === 'Transaction' }" :to="{
                                 name: 'Transaction',
                                 params: { id: phoneNumber },
@@ -124,7 +124,7 @@ onMounted(() => {
                                 Enviar dinheiro
                             </router-link>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" v-show="userStore.user?.user_type == 'V'">
                             <a class="nav-link" href="#">
                                 <i class="bi bi-files"></i>
                                 Pagar serviço
@@ -133,18 +133,22 @@ onMounted(() => {
                     </ul>
 
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span style="color: #17f672">My VCard</span>
-                        <a class="link-secondary" href="#" aria-label="Add a new project">
+                        <span style="color: #17f672" v-show="userStore.user?.user_type == 'V'">My VCard</span>
+                        <a class="link-secondary" href="#" aria-label="Add a new project" v-show="userStore.user?.user_type == 'V'">
                             <i class="bi bi-xs bi-plus-circle"></i>
                         </a>
                     </h6>
-                    <ul class="nav flex-column mb-2">
+                    <ul class="nav flex-column mb-2" v-show="userStore.user?.user_type == 'V'">
                         <li class="nav-item">
-                            <router-link class="nav-link w-100 me-3" :class="{ active: $route.name === 'VCard' }"
-                                :to="{ name: 'VCard' }">
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'VCard' }"
+                                :to="{ name: 'VCard',  params: { phone_number: userStore.userPhoneNumber } }"
+                            >
                                 <i class="bi bi-credit-card"></i>
                                 Details
                             </router-link>
+
                         </li>
                         <li class="nav-item">
                             <router-link class="nav-link w-100 me-3" :class="{ active: $route.name === 'Transactions' }"

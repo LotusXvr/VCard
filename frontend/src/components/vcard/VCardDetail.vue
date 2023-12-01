@@ -1,9 +1,13 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, inject } from "vue";
 import avatarNoneUrl from '@/assets/avatar-none.png'
 import { useToast } from "vue-toastification";
+import { useUserStore } from "../../stores/user"
 
-const toast = useToast();
+const serverBaseUrl = inject("apiDomain")
+const userStore = useUserStore()
+
+const toast = useToast()
 
 const props = defineProps({
     vcard: {
