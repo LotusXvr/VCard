@@ -134,6 +134,45 @@ const filterTransactions = async () => {
     });
     console.log(transactionsSumBetweenDates.value)
 };
+const startDateC = ref('');
+const endDateC = ref('');
+const transactionsCountBetweenDates = ref(0)
+
+const filterTransactionsC = async () => {
+    if (startDateC.value === '') {
+        await axios.get('statistics/transactions/older', {
+            params: {
+                startDate: startDateC.value,
+                endDate: endDateC.value
+            }
+        })
+        .then(response => {
+            startDateC.value = response.data.olderTransaction.date;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+    if (endDateC.value === '') {
+        endDateC.value = todayDateString;
+    }
+    console.log(startDateC.value)
+    console.log(endDateC.value)
+    await axios.get('statistics/transactions/count-between-dates', {
+        params: {
+            startDate: startDateC.value,
+            endDate: endDateC.value
+        }
+    })
+    .then(response => {
+        transactionsCountBetweenDates.value = response.data.countBetweenDates;
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    console.log(transactionsCountBetweenDates.value);
+};
+
 
 const transactionsSum = ref(0)
 const getSumTransactions = () => {
@@ -161,96 +200,83 @@ onMounted(() => {
 
 <template>
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-lg-12 mb-4">
-                <!-- Phone Number Title -->
-                <h2 class="text-primary text-center" style="font-size: 50px">
-                    {{ vcard.phone_number }}
-                </h2>
+      <div class="row">
+        <div class="col-lg-12 mb-4">
+          <h1 class="text-center mb-4">Admin Dashboard</h1>
+          <div class="card text-center">
+            <div class="card-header">
+              <h4 class="card-title">User Information</h4>
             </div>
-
-            <div class="col-lg-6 mb-4">
-                <!-- Balance Card -->
-                <div class="card bg-success text-white text-center">
-                    <div class="card-header">
-                        <h4 class="card-title" style="font-size: 24px">Balance</h4>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text" style="font-size: 36px">{{ vcard.balance }}€</p>
-                    </div>
-                </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Name:</strong> {{ userStore.userName }}</li>
+                <li class="list-group-item">
+                  <strong>Email:</strong> {{ userStore.userPhoneNumber }}
+                </li>
+                <!-- Add more list items based on your user properties -->
+              </ul>
             </div>
-
-            <div class="col-lg-6 mb-4">
-                <!-- Max Debit Card -->
-                <div class="card bg-warning text-dark text-center">
-                    <div class="card-header">
-                        <h4 class="card-title" style="font-size: 24px">Max Debit</h4>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text" style="font-size: 36px">{{ vcard.max_debit }}€</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-12 mb-4">
-                <!-- Email and Name List -->
-                <div class="card text-center">
-                    <div class="card-header">
-                        <h4 class="card-title">Information</h4>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>Name:</strong> {{ vcard.name }}</li>
-                            <li class="list-group-item">
-                                <strong>Email:</strong> {{ vcard.email }}
-                            </li>
-                            <!-- Add more list items based on your vCard properties -->
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>  
-    </div>
-            <div class="container mt-5">
-    <h1 class="text-center mb-4">Admin Dashboard</h1>
-
-    <div class="row">
-        <div class="col-md-6">
+          </div>
+        </div>
+      </div>
+  
+      <h1 class="text-center mb-4">Statistics</h1>
+  
+      <div class="container mt-5">
+        <div class="row" style="margin-bottom: 20px;">
+          <div class="col-md-6">
             <h4>Current Count of VCards</h4>
             <p>{{ vcardCount }}</p>
-
+  
             <h4>Current Count of Active VCards</h4>
             <p>{{ activeVCardCount }}</p>
-
+  
             <h4>Total Balance of All VCards</h4>
             <p>{{ totalVCardBalance }}</p>
-
+  
             <h4>Total Balance of All Active VCards</h4>
             <p>{{ totalActiveVCardBalance }}</p>
-        </div>
-
-        <div class="col-md-6">
+          </div>
+  
+          <div class="col-md-6">
             <h4>Current Count of Transactions</h4>
             <p>{{ transactionsCount }}</p>
-
+            <h7><b>Filter:</b></h7>
+            <div class="mt-3">
+              <label for="startDate"><b>Start Date:</b></label>
+              <input type="date" id="startDate" v-model="startDateC" class="form-control">
+  
+              <label for="endDate" class="mt-2"><b>End Date:</b></label>
+              <input type="date" id="endDate" v-model="endDateC" class="form-control">
+  
+              <button @click="filterTransactionsC" class="btn btn-primary mt-3 float-end">Filter</button>
+            </div>
+  
+            <div class="mt-3">
+                <p v-if="transactionsCountBetweenDates">
+                    <b>Count of Transactions Between {{ startDateC }} and {{ endDateC }}:</b> {{ transactionsCountBetweenDates }}€
+                </p>
+            </div>
+  
             <h4>Current Sum of Transactions</h4>
             <p>{{ transactionsSum }}</p>
-
+            <h7><b>Filter:</b></h7>
             <div class="mt-3">
-                <label for="startDate"><b>Start Date:</b></label>
-                <input type="date" id="startDate" v-model="startDate" class="form-control">
-
-                <label for="endDate" class="mt-2"><b>End Date:</b></label>
-                <input type="date" id="endDate" v-model="endDate" class="form-control">
-
-                <button @click="filterTransactions" class="btn btn-primary mt-3 float-end">Filter</button>
+              <label for="startDate"><b>Start Date:</b></label>
+              <input type="date" id="startDate" v-model="startDate" class="form-control">
+  
+              <label for="endDate" class="mt-2"><b>End Date:</b></label>
+              <input type="date" id="endDate" v-model="endDate" class="form-control">
+  
+              <button @click="filterTransactions" class="btn btn-primary mt-3 float-end">Filter</button>
             </div>
-
+  
             <p class="mt-3" v-if="transactionsSumBetweenDates">
-                <b>Sum of Transactions Between {{ startDate }} and {{ endDate }}:</b> {{ transactionsSumBetweenDates }}€
+              <b>Sum of Transactions Between {{ startDate }} and {{ endDate }}:</b> {{ transactionsSumBetweenDates }}€
             </p>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-</template>
+  </template>
+  
