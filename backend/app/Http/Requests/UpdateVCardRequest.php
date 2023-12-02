@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Services\Base64Services;
 
-class CreateVCardRequest extends FormRequest
+class UpdateVCardRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,21 +22,18 @@ class CreateVCardRequest extends FormRequest
      */
     public function rules(): array
     {
+        $vcard = $this->route('vcard');
+
         return [
-            'phone_number' => 'required|string|unique:vcards,phone_number|digits:9|regex:/^9/',
-            'password' => 'required|string|min:4|max:30',
+            'phone_number' => 'unique:vcards,phone_number|digits:9|regex:/^9/' . $vcard->phone_number,
             'name' => 'required|string|max:30',
-            'email' => 'required|email|unique:vcards,email',
-            'confirmation_code' => 'required|integer|digits:4',
+            'email' => '|email|unique:vcards,email' . $vcard->phone_number,
             'base64ImagePhoto' => 'nullable|string',
+            'deletePhotoOnServer' => 'nullable|boolean',
         ];
+
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
@@ -44,16 +41,12 @@ class CreateVCardRequest extends FormRequest
             'phone_number.unique' => 'Phone number already exists',
             'phone_number.digits' => 'Phone number must be 9 digits',
             'phone_number.regex' => 'Phone number must start with 9', // portuguese rules
-            'password.required' => 'Password is required',
-            'password.min' => 'Password must be at least 4 characters',
-            'password.max' => 'Password must be at most 30 characters',
             'name.required' => 'Name is required',
             'name.max' => 'Name must be at most 30 characters',
             'email.required' => 'Email is required',
             'email.unique' => 'Email already exists',
             'confirmation_code.required' => 'Confirmation code is required',
             'confirmation_code.digits' => 'Confirmation code must be 4 digits',
-            'base64ImagePhoto.string' => 'Photo must be a string',
         ];
     }
 

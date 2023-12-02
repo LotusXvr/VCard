@@ -52,7 +52,7 @@ const router = createRouter({
       props: (route) => ({ phone_number: parseInt(route.params.phone_number) })
     },
     {
-      path: '/vcards/:phone_number',
+      path: '/vcards/admin/:phone_number',
       name: 'VCardUpdate',
       component: VCard,
       props: (route) => ({ phone_number: parseInt(route.params.phone_number) })

@@ -3,8 +3,10 @@ import axios from 'axios'
 import { ref, onMounted } from 'vue'
 import VCardTable from './VCardTable.vue'
 import { useRouter } from 'vue-router'
+import { useToast } from "vue-toastification"
 
 const router = useRouter()
+const toast = useToast()
 
 const props = defineProps({
   vcardsTitle: {
@@ -37,13 +39,14 @@ const addVCard = () => {
 }
 
 const editVCard = (vcard) => {
-  router.push({ name: 'VCard', params: { id: vcard.phone_number } })
+  router.push({ name: 'VCardUpdate', params: { phone_number: vcard.phone_number } })
 }
 
 const deleteVCard = (vcard) => {
   axios
     .delete('vcards/' + vcard.phone_number)
     .then(() => {
+      toast.success('VCard deleted successfully')
       loadVCards()
     })
     .catch((error) => {

@@ -60,7 +60,7 @@ const save = async (vcardToSave) => {
       const response = await axios.post('vcard', vcardToSave)
       vcard.value = response.data.data
       originalValueStr = JSON.stringify(vcard.value)
-      toast.success('User #' + vcard.value.phone_number + ' was registered successfully.')
+      toast.success('VCard #' + vcard.value.phone_number + ' was registered successfully.')
       // await userStore.login({
       //   username: vcard.value.phone_number,
       //   password: vcardToSave.password
@@ -69,9 +69,9 @@ const save = async (vcardToSave) => {
     } catch (error) {
       if (error.response.status == 422) {
         errors.value = error.response.data.errors
-        toast.error('User was not registered due to validation errors!')
+        toast.error('VCard was not registered due to validation errors!')
       } else {
-        toast.error('User was not registered due to unknown server error!')
+        toast.error('VCard was not registered due to unknown server error!')
       }
     }
   } else {
@@ -79,7 +79,7 @@ const save = async (vcardToSave) => {
       const response = await axios.put('vcards/' + props.phone_number, vcardToSave)
       vcard.value = response.data.data
       originalValueStr = JSON.stringify(vcard.value)
-      toast.success('User #' + vcard.value.phone_number + ' was updated successfully.')
+      toast.success('VCard #' + vcard.value.phone_number + ' was updated successfully.')
       if (vcard.value.phone_number == userStore.userId) {
         await userStore.loadUser()
       }
@@ -87,9 +87,9 @@ const save = async (vcardToSave) => {
     } catch (error) {
       if (error.response.status == 422) {
         errors.value = error.response.data.errors
-        toast.error('User #' + props.id + ' was not updated due to validation errors!')
+        toast.error('VCard #' + props.id + ' was not updated due to validation errors!')
       } else {
-        toast.error('User #' + props.id + ' was not updated due to unknown server error!')
+        toast.error('VCard #' + props.id + ' was not updated due to unknown server error!')
       }
     }
   }

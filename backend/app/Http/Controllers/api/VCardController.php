@@ -4,15 +4,18 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateVCardRequest;
-use App\Http\Resources\TransactionResource;
-use App\Http\Resources\VCardResource;
-use App\Models\Transaction;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\VCard;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use App\Http\Resources\VCardResource;
+use App\Http\Requests\UpdateVCardRequest;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Base64Services;
+
+use App\Http\Resources\TransactionResource;
+use App\Models\Transaction;
+use http\Env\Response;
+use Illuminate\Foundation\Http\FormRequest;
+use Carbon\Carbon;
 
 
 class VCardController extends Controller
@@ -28,40 +31,6 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
-    // Register a new vcard
-    public function store(CreateVCardRequest $request)
-    {
-        $dataToSave = $request->validated();
-        $dataToSave['blocked'] = 0; // Set blocked to 0
-        $dataToSave['max_debit'] = 5000;
-        $dataToSave['balance'] = 0;
-
-        $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
-            $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
-        unset($dataToSave["base64ImagePhoto"]);
-
-        $vcard = new VCard();
-        $vcard->name = $dataToSave['name'];
-        $vcard->email = $dataToSave['email'];
-
-        $vcard->phone_number = $dataToSave['phone_number'];
-
-        $vcard->password = bcrypt($dataToSave['password']);
-        $vcard->blocked = $dataToSave['blocked'];
-        $vcard->max_debit = $dataToSave['max_debit'];
-        $vcard->balance = $dataToSave['balance'];
-        $vcard->confirmation_code = bcrypt($dataToSave['confirmation_code']);
-
-        if ($base64ImagePhoto) {
-            $vcard->photo_url = $this->storeBase64Image($base64ImagePhoto);
-        }
-
-
-        $vcard->save();
-        $vcard->phone_number = $dataToSave['phone_number'];
-        return new VCardResource($vcard);
-    }
-
     // Store base64 image
     private function storeBase64AsFile(VCard $vCard, string $base64String)
     {
@@ -71,6 +40,35 @@ class VCardController extends Controller
         return $base64Service->saveFile($base64String, $targetDir, $newfilename);
     }
 
+    // Register a new vcard
+    public function store(CreateVCardRequest $request)
+    {
+        $dataToSave = $request->validated();
+
+        $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
+            $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
+        unset($dataToSave["base64ImagePhoto"]);
+
+        $vcard = new VCard();
+        $vcard->phone_number = $dataToSave['phone_number'];
+        $vcard->name = $dataToSave['name'];
+        $vcard->email = $dataToSave['email'];
+        $vcard->password = bcrypt($dataToSave['password']);
+        $vcard->confirmation_code = bcrypt($dataToSave['confirmation_code']);
+
+        $vcard->blocked = 0;
+        $vcard->max_debit = 5000;
+        $vcard->balance = 0;
+
+        // Create a new photo file from base64 content
+        if ($base64ImagePhoto) {
+            $vcard->photo_url = $this->storeBase64AsFile($vcard, $base64ImagePhoto);
+        }
+
+        $vcard->save();
+        $vcard->phone_number = $dataToSave['phone_number'];
+        return new VCardResource($vcard);
+    }
 
     public function update(Request $request, VCard $vcard)
     {
@@ -78,6 +76,37 @@ class VCardController extends Controller
         $vcard->save();
         return new VCardResource($vcard);
     }
+
+    /*
+        TENTAR FAZER O UPDATE COM O REQUEST VALIDATED
+    */
+    // public function update(UpdateVCardRequest $request, VCard $vcard)
+    // {
+    //     $dataToSave = $request->validated();
+    //     dd($dataToSave);
+    //     $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
+    //         $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
+    //     $deletePhotoOnServer = array_key_exists("deletePhotoOnServer", $dataToSave) && $dataToSave["deletePhotoOnServer"];
+    //     unset($dataToSave["base64ImagePhoto"]);
+    //     unset($dataToSave["deletePhotoOnServer"]);
+
+    //     $vcard->fill($dataToSave);
+
+    //     // Delete previous photo file if a new file is uploaded or the photo is to be deleted
+    //     if ($vcard->photo_url && ($deletePhotoOnServer || $base64ImagePhoto)) {
+    //         if (Storage::exists('public/fotos/' . $vcard->photo_url)) {
+    //             Storage::delete('public/fotos/' . $vcard->photo_url);
+    //         }
+    //         $vcard->photo_url = null;
+    //     }
+
+    //     // Create a new photo file from base64 content
+    //     if ($base64ImagePhoto) {
+    //         $vcard->photo_url = $this->storeBase64AsFile($vcard, $base64ImagePhoto);
+    //     }
+    //     $vcard->save();
+    //     return new VCardResource($vcard);
+    // }
 
     public function destroy(VCard $vcard)
     {
