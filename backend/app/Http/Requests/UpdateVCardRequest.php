@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Services\Base64Services;
+use Illuminate\Validation\Rule;
 
 class UpdateVCardRequest extends FormRequest
 {
@@ -24,10 +25,18 @@ class UpdateVCardRequest extends FormRequest
     {
         $vcard = $this->route('vcard');
 
+
         return [
-            'phone_number' => 'unique:vcards,phone_number|digits:9|regex:/^9/' . $vcard->phone_number,
+            'phone_number' => [
+                "unique:vcards,phone_number,{$vcard->phone_number},phone_number",
+                'digits:9',
+                'regex:/^9/',
+            ],
             'name' => 'required|string|max:30',
-            'email' => '|email|unique:vcards,email' . $vcard->phone_number,
+            'email' => [
+                'email',
+                Rule::unique('vcards', 'email')->ignore($vcard->phone_number, 'phone_number'),
+            ],
             'base64ImagePhoto' => 'nullable|string',
             'deletePhotoOnServer' => 'nullable|boolean',
         ];

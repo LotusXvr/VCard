@@ -70,43 +70,41 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
-    public function update(Request $request, VCard $vcard)
+    /* public function update(Request $request, VCard $vcard)
     {
         $vcard->fill($request->all());
         $vcard->save();
         return new VCardResource($vcard);
-    }
+    } */
 
     /*
         TENTAR FAZER O UPDATE COM O REQUEST VALIDATED
     */
-    // public function update(UpdateVCardRequest $request, VCard $vcard)
-    // {
-    //     $dataToSave = $request->validated();
-    //     dd($dataToSave);
-    //     $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
-    //         $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
-    //     $deletePhotoOnServer = array_key_exists("deletePhotoOnServer", $dataToSave) && $dataToSave["deletePhotoOnServer"];
-    //     unset($dataToSave["base64ImagePhoto"]);
-    //     unset($dataToSave["deletePhotoOnServer"]);
+    public function update(UpdateVCardRequest $request, VCard $vcard)
+    {
+        $dataToSave = $request->validated();
 
-    //     $vcard->fill($dataToSave);
+        $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
+            $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
+        $deletePhotoOnServer = array_key_exists("deletePhotoOnServer", $dataToSave) && $dataToSave["deletePhotoOnServer"];
+        unset($dataToSave["base64ImagePhoto"]);
+        unset($dataToSave["deletePhotoOnServer"]);
 
-    //     // Delete previous photo file if a new file is uploaded or the photo is to be deleted
-    //     if ($vcard->photo_url && ($deletePhotoOnServer || $base64ImagePhoto)) {
-    //         if (Storage::exists('public/fotos/' . $vcard->photo_url)) {
-    //             Storage::delete('public/fotos/' . $vcard->photo_url);
-    //         }
-    //         $vcard->photo_url = null;
-    //     }
+        $vcard->fill($dataToSave);
 
-    //     // Create a new photo file from base64 content
-    //     if ($base64ImagePhoto) {
-    //         $vcard->photo_url = $this->storeBase64AsFile($vcard, $base64ImagePhoto);
-    //     }
-    //     $vcard->save();
-    //     return new VCardResource($vcard);
-    // }
+        if ($vcard->photo_url && ($deletePhotoOnServer || $base64ImagePhoto)) {
+            if (Storage::exists('public/fotos/' . $vcard->photo_url)) {
+                Storage::delete('public/fotos/' . $vcard->photo_url);
+            }
+            $vcard->photo_url = null;
+        }
+
+        if ($base64ImagePhoto) {
+            $vcard->photo_url = $this->storeBase64AsFile($vcard, $base64ImagePhoto);
+        }
+        $vcard->save();
+        return new VCardResource($vcard);
+    }
 
     public function destroy(VCard $vcard)
     {
