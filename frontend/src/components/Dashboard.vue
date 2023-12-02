@@ -216,21 +216,28 @@ onMounted(() => {
             <p>{{ totalActiveVCardBalance }}</p>
 
             <h4>Filter Transactions by type</h4>
-            <div>
-                <label for="paymentType">Select Payment Method:</label>
-                <select v-model="paymentType" id="paymentType" name="paymentType">
-                <option value="Vcard">Vcard</option>
-                <option value="Mbway">Mbway</option>
-                <option value="Iban">Iban</option>
-                <option value="MB">MB</option>
-                <option value="Visa">Visa</option>
-                <option value="Paypal">Paypal</option>
-                </select>
+            <div class="container mt-4">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="mt-3">
+                        <label for="paymentType" class="form-label">Select Payment Method:</label>
+                        <select v-model="paymentType" id="paymentType" name="paymentType" class="form-select">
+                            <option value="Vcard">Vcard</option>
+                            <option value="Mbway">Mbway</option>
+                            <option value="Iban">Iban</option>
+                            <option value="MB">MB</option>
+                            <option value="Visa">Visa</option>
+                            <option value="Paypal">Paypal</option>
+                        </select>
 
-                <button @click="filterTransactionByType">Filter Transactions</button>
+                        <button @click="filterTransactionByType" class="btn btn-primary mt-3">Filter Transactions</button>
+                    </div>
+                </div>
             </div>
 
-            <p v-if="transactionsCountByType">Count transactions by {{ paymentType}}: {{ transactionsCountByType }}</p>
+        </div>
+
+        <p v-if="transactionsCountByType" class="mt-4"><b>Count transactions by {{ paymentType }}: </b>{{ transactionsCountByType }}</p>
           </div>
   
           <div class="col-md-6">
