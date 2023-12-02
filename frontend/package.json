@@ -15,9 +15,11 @@
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.1",
     "bootstrap-vue": "^2.23.1",
+    "chart.js": "^4.4.0",
     "pinia": "^2.1.7",
     "socket.io-client": "^4.7.2",
     "vue": "^3.3.9",
+    "vue-chartjs": "^5.2.0",
     "vue-router": "^4.2.5",
     "vue-toastification": "^2.0.0-rc.5"
   },

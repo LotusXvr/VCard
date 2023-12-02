@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, ref, computed } from "vue"
+import { onMounted, ref, watch } from "vue"
 import axios from "axios"
 import { useUserStore } from "../stores/user"
 const userStore = useUserStore()
+
 
 const newVCard = () => {
     return {
@@ -93,64 +94,67 @@ const getCountTransactions = () => {
             console.log(error)
         })
 }
-const startDate = ref('');
-const endDate = ref('');
+const startDate = ref("")
+const endDate = ref("")
 const transactionsSumBetweenDates = ref(0)
-const today = new Date();
-const year = today.getFullYear();
-const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-const day = String(today.getDate()).padStart(2, '0');
-const todayDateString = `${year}-${month}-${day}`;
+const today = new Date()
+const year = today.getFullYear()
+const month = String(today.getMonth() + 1).padStart(2, "0") // Months are zero-based
+const day = String(today.getDate()).padStart(2, "0")
+const todayDateString = `${year}-${month}-${day}`
 
 const filterTransactions = async () => {
-    if(startDate.value==''){
-        await axios.get('statistics/transactions/older', {
+    if (startDate.value == "") {
+        await axios
+            .get("statistics/transactions/older", {
+                params: {
+                    startDate: startDate.value,
+                    endDate: endDate.value,
+                },
+            })
+            .then((response) => {
+                startDate.value = response.data.olderTransaction.date
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+    }
+    if (endDate.value == "") {
+        endDate.value = todayDateString
+    }
+    await axios
+        .get("statistics/transactions/sum-between-dates", {
             params: {
                 startDate: startDate.value,
-                endDate: endDate.value
-            }
+                endDate: endDate.value,
+            },
         })
-        .then(response => {
-            startDate.value = response.data.olderTransaction.date;
+        .then((response) => {
+            transactionsSumBetweenDates.value = response.data.sumBetweenDates
+            transactionsCountBetweenDates.value = response.data.countBetweenDates
         })
-        .catch(error => {
-            console.error(error);
-        });
-    }
-    if(endDate.value==''){
-        endDate.value=todayDateString
-    }
-    await axios.get('statistics/transactions/sum-between-dates', {
-        params: {
-            startDate: startDate.value,
-            endDate: endDate.value
-        }
-    })
-    .then(response => {
-        transactionsSumBetweenDates.value = response.data.sumBetweenDates;
-        transactionsCountBetweenDates.value = response.data.countBetweenDates;
-    })
-    .catch(error => {
-        console.error(error);
-    });
+        .catch((error) => {
+            console.error(error)
+        })
     console.log(transactionsSumBetweenDates.value)
-};
+}
 const transactionsCountBetweenDates = ref(0)
-const paymentType = ref('Vcard') 
+const paymentType = ref("Vcard")
 const transactionsCountByType = ref(0)
 const filterTransactionByType = async () => {
-    await axios.get('statistics/transactions/count-by-type', {
-        params: {
-            paymentType: paymentType.value,
-        }
-    })
-    .then(response => {
-        transactionsCountByType.value = response.data.countByPayementType;
-    })
-    .catch(error => {
-        console.error(error);
-    });
-};
+    await axios
+        .get("statistics/transactions/count-by-type", {
+            params: {
+                paymentType: paymentType.value,
+            },
+        })
+        .then((response) => {
+            transactionsCountByType.value = response.data.countByPayementType
+        })
+        .catch((error) => {
+            console.error(error)
+        })
+}
 
 const transactionsSum = ref(0)
 const getSumTransactions = () => {
@@ -165,6 +169,8 @@ const getSumTransactions = () => {
         })
 }
 
+
+
 onMounted(() => {
     loadVCard()
     getCountVCards()
@@ -173,100 +179,127 @@ onMounted(() => {
     getTotalActiveVCardBalance()
     getCountTransactions()
     getSumTransactions()
+
 })
 </script>
 
 <template>
     <div class="container mt-4">
-      <div class="row">
-        <div class="col-lg-12 mb-4">
-          <h1 class="text-center mb-4">Admin Dashboard</h1>
-          <div class="card text-center">
-            <div class="card-header">
-              <h4 class="card-title">User Information</h4>
-            </div>
-            <div class="card-body">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item"><strong>Name:</strong> {{ userStore.userName }}</li>
-                <li class="list-group-item">
-                  <strong>Email:</strong> {{ userStore.userPhoneNumber }}
-                </li>
-                <!-- Add more list items based on your user properties -->
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <h1 class="text-center mb-4">Statistics</h1>
-  
-      <div class="container mt-5">
-        <div class="row" style="margin-bottom: 20px;">
-          <div class="col-md-6">
-            <h4>Current Count of VCards</h4>
-            <p>{{ vcardCount }}</p>
-  
-            <h4>Current Count of Active VCards</h4>
-            <p>{{ activeVCardCount }}</p>
-  
-            <h4>Total Balance of All VCards</h4>
-            <p>{{ totalVCardBalance }}</p>
-  
-            <h4>Total Balance of All Active VCards</h4>
-            <p>{{ totalActiveVCardBalance }}</p>
-
-            <h4>Filter Transactions by type</h4>
-            <div class="container mt-4">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="mt-3">
-                        <label for="paymentType" class="form-label">Select Payment Method:</label>
-                        <select v-model="paymentType" id="paymentType" name="paymentType" class="form-select">
-                            <option value="Vcard">Vcard</option>
-                            <option value="Mbway">Mbway</option>
-                            <option value="Iban">Iban</option>
-                            <option value="MB">MB</option>
-                            <option value="Visa">Visa</option>
-                            <option value="Paypal">Paypal</option>
-                        </select>
-
-                        <button @click="filterTransactionByType" class="btn btn-primary mt-3">Filter Transactions</button>
+        <div class="row">
+            <div class="col-lg-12 mb-4">
+                <h1 class="text-center mb-4">Admin Dashboard</h1>
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h4 class="card-title">User Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Name:</strong> {{ userStore.userName }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Email:</strong> {{ userStore.userPhoneNumber }}
+                            </li>
+                            <!-- Add more list items based on your user properties -->
+                        </ul>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <p v-if="transactionsCountByType" class="mt-4"><b>Count transactions by {{ paymentType }}: </b>{{ transactionsCountByType }}</p>
-          </div>
-  
-          <div class="col-md-6">
-            <h4>Current Count of Transactions</h4>
-            <p>{{ transactionsCount }}</p>
-            <h4>Current Sum of Transactions</h4>
-            <p>{{ transactionsSum }}</p>
-            <h7><b>Filter Transactions:</b></h7>
-            <div class="mt-3">
-              <label for="startDate"><b>Start Date:</b></label>
-              <input type="date" id="startDate" v-model="startDate" class="form-control">
-  
-              <label for="endDate" class="mt-2"><b>End Date:</b></label>
-              <input type="date" id="endDate" v-model="endDate" class="form-control">
-  
-              <button @click="filterTransactions" class="btn btn-primary mt-3 float-end">Filter</button>
+        <h1 class="text-center mb-4">Statistics</h1>
+
+        <canvas ref="salesByMonth"></canvas>
+
+        <div class="container mt-5">
+            <div class="row" style="margin-bottom: 20px">
+                <div class="col-md-6">
+                    <h4>Current Count of VCards</h4>
+                    <p>{{ vcardCount }}</p>
+
+                    <h4>Current Count of Active VCards</h4>
+                    <p>{{ activeVCardCount }}</p>
+
+                    <h4>Total Balance of All VCards</h4>
+                    <p>{{ totalVCardBalance }}</p>
+
+                    <h4>Total Balance of All Active VCards</h4>
+                    <p>{{ totalActiveVCardBalance }}</p>
+
+                    <h4>Filter Transactions by type</h4>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mt-3">
+                                    <label for="paymentType" class="form-label"
+                                        >Select Payment Method:</label
+                                    >
+                                    <select
+                                        v-model="paymentType"
+                                        id="paymentType"
+                                        name="paymentType"
+                                        class="form-select"
+                                    >
+                                        <option value="Vcard">Vcard</option>
+                                        <option value="Mbway">Mbway</option>
+                                        <option value="Iban">Iban</option>
+                                        <option value="MB">MB</option>
+                                        <option value="Visa">Visa</option>
+                                        <option value="Paypal">Paypal</option>
+                                    </select>
+
+                                    <button
+                                        @click="filterTransactionByType"
+                                        class="btn btn-primary mt-3"
+                                    >
+                                        Filter Transactions
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p v-if="transactionsCountByType" class="mt-4">
+                        <b>Count transactions by {{ paymentType }}: </b
+                        >{{ transactionsCountByType }}
+                    </p>
+                </div>
+
+                <div class="col-md-6">
+                    <h4>Current Count of Transactions</h4>
+                    <p>{{ transactionsCount }}</p>
+                    <h4>Current Sum of Transactions</h4>
+                    <p>{{ transactionsSum }}</p>
+                    <h7><b>Filter Transactions:</b></h7>
+                    <div class="mt-3">
+                        <label for="startDate"><b>Start Date:</b></label>
+                        <input
+                            type="date"
+                            id="startDate"
+                            v-model="startDate"
+                            class="form-control"
+                        />
+
+                        <label for="endDate" class="mt-2"><b>End Date:</b></label>
+                        <input type="date" id="endDate" v-model="endDate" class="form-control" />
+
+                        <button @click="filterTransactions" class="btn btn-primary mt-3 float-end">
+                            Filter
+                        </button>
+                    </div>
+
+                    <p class="mt-3" v-if="transactionsSumBetweenDates">
+                        <b>Sum of Transactions Between {{ startDate }} and {{ endDate }}:</b>
+                        {{ transactionsSumBetweenDates }}€
+                    </p>
+                    <div class="mt-3">
+                        <p v-if="transactionsCountBetweenDates">
+                            <b>Count of Transactions Between {{ startDate }} and {{ endDate }}:</b>
+                            {{ transactionsCountBetweenDates }}€
+                        </p>
+                    </div>
+                </div>
             </div>
-  
-            <p class="mt-3" v-if="transactionsSumBetweenDates">
-              <b>Sum of Transactions Between {{ startDate }} and {{ endDate }}:</b> {{ transactionsSumBetweenDates }}€
-            </p>
-            <div class="mt-3">
-                <p v-if="transactionsCountBetweenDates">
-                    <b>Count of Transactions Between {{ startDate }} and {{ endDate }}:</b> {{ transactionsCountBetweenDates }}€
-                </p>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </template>
-  
+</template>
