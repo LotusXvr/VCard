@@ -9,6 +9,7 @@ export const useUserStore = defineStore("user", () => {
     const user = ref(null)
     const toast = useToast()
     const userName = computed(() => user.value?.name ?? "Anonymous")
+    const userId = computed(() => user.value?.id ?? -1)
     const userType = computed(() => user.value?.user_type ?? "Anonymous")
     const userPhoneNumber = computed(() => user.value?.username ?? 0)
     const userPhotoUrl = computed(() =>
@@ -21,6 +22,7 @@ export const useUserStore = defineStore("user", () => {
         try {
             const response = await axios.get("users/me")
             user.value = response.data.data
+            console.log(user.value)
         } catch (error) {
             clearUser()
             throw error
@@ -58,6 +60,30 @@ export const useUserStore = defineStore("user", () => {
             return false
         }
     }
+    async function changePassword(credentials) {
+        console.log(userId.value)
+        if (userId.value < 0) {
+            throw 'Anonymous users cannot change the password!'
+        }
+
+        if (userType == 'A') {
+            try {
+                await axios.patch(`admins/${user.value.id}/password`, credentials)
+                return true
+            } catch (error) {
+                throw error
+            }
+        }
+
+        try {
+            await axios.patch(`vcards/${user.value.id}/password`, credentials)
+            return true
+        } catch (error) {
+            throw error
+        }
+
+    }
+
     async function restoreToken() {
         let storedToken = sessionStorage.getItem("token")
         if (storedToken) {
@@ -70,6 +96,7 @@ export const useUserStore = defineStore("user", () => {
     }
     return {
         user,
+        userId,
         userName,
         userType,
         userPhotoUrl,
@@ -79,5 +106,6 @@ export const useUserStore = defineStore("user", () => {
         login,
         logout,
         restoreToken,
+        changePassword,
     }
 })

@@ -27,6 +27,8 @@ Route::post('vcard', [VCardController::class, 'store']);
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users/me', [UserController::class, 'show_me']);
+    Route::patch('admins/{admin}/password', [AdminController::class, 'update_password']);
+    Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']);
 
     Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
 
@@ -46,7 +48,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates']);
     Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction']);
     Route::get('statistics/transactions/count-by-type', [TransactionController::class, 'getTransactionsCountByType']);
-
 
     /*
      * Globais

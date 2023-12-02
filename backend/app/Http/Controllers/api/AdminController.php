@@ -7,6 +7,8 @@ use App\Http\Requests\AdminRequest;
 use App\Http\Resources\AdminResource;
 use App\Models\Admin;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateUserPasswordRequest;
+
 
 class AdminController extends Controller
 {
@@ -53,4 +55,12 @@ class AdminController extends Controller
         $admin->delete();
         return new AdminResource($admin);
     }
+
+    public function update_password(UpdateUserPasswordRequest $request, Admin $admin)
+    {
+        $admin->password = bcrypt($request->validated()['password']);
+        $admin->save();
+        return new AdminResource($admin);
+    }
+
 }

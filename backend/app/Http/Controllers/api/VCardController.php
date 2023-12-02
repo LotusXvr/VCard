@@ -13,9 +13,8 @@ use App\Services\Base64Services;
 
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
-use http\Env\Response;
-use Illuminate\Foundation\Http\FormRequest;
-use Carbon\Carbon;
+use App\Http\Requests\UpdateUserPasswordRequest;
+
 
 
 class VCardController extends Controller
@@ -164,6 +163,13 @@ class VCardController extends Controller
         $activeVCardBalanceSum = VCard::where('blocked', 0)->sum('balance');
 
         return response()->json(['activeVCardBalanceSum' => $activeVCardBalanceSum]);
+    }
+
+    public function update_password(UpdateUserPasswordRequest $request, VCard $vcard)
+    {
+        $vcard->password = bcrypt($request->validated()['password']);
+        $vcard->save();
+        return new VCardResource($vcard);
     }
 
 }
