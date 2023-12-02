@@ -136,7 +136,7 @@ const filterTransactions = async () => {
     console.log(transactionsSumBetweenDates.value)
 };
 const transactionsCountBetweenDates = ref(0)
-const paymentType = ref('')
+const paymentType = ref('Vcard') 
 const transactionsCountByType = ref(0)
 const filterTransactionByType = async () => {
     await axios.get('statistics/transactions/count-by-type', {
@@ -145,7 +145,7 @@ const filterTransactionByType = async () => {
         }
     })
     .then(response => {
-        transactionsCountByType.value = response.data.countByType;
+        transactionsCountByType.value = response.data.countByPayementType;
     })
     .catch(error => {
         console.error(error);
@@ -216,7 +216,21 @@ onMounted(() => {
             <p>{{ totalActiveVCardBalance }}</p>
 
             <h4>Filter Transactions by type</h4>
-            <p>{{ transactionsCountByType }}</p>
+            <div>
+                <label for="paymentType">Select Payment Method:</label>
+                <select v-model="paymentType" id="paymentType" name="paymentType">
+                <option value="Vcard">Vcard</option>
+                <option value="Mbway">Mbway</option>
+                <option value="Iban">Iban</option>
+                <option value="MB">MB</option>
+                <option value="Visa">Visa</option>
+                <option value="Paypal">Paypal</option>
+                </select>
+
+                <button @click="filterTransactionByType">Filter Transactions</button>
+            </div>
+
+            <p v-if="transactionsCountByType">Count transactions by {{ paymentType}}: {{ transactionsCountByType }}</p>
           </div>
   
           <div class="col-md-6">

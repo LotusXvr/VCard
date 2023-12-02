@@ -240,10 +240,7 @@ class TransactionController extends Controller
     {
         $paymentType = $request->input('paymentType');
 
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
-
-        $countBetweenDates = Transaction::whereBetween('date', [$startDate, $endDate])->count();
-        return response()->json(['countBetweenDates' => $countBetweenDates]);
+        $countByPayementType = Transaction::where('payment_type', $paymentType)->count();
+        return response()->json(['countByPayementType' => $countByPayementType]);
     }
 }
