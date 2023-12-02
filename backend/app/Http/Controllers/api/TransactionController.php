@@ -224,17 +224,9 @@ class TransactionController extends Controller
         $endDate = $request->input('endDate');
 
         $sumBetweenDates = Transaction::whereBetween('date', [$startDate, $endDate])->sum('value');
-
-        return response()->json(['sumBetweenDates' => $sumBetweenDates]);
-    }
-
-    public function getTransactionsCountBetweenDates(Request $request)
-    {
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
-
         $countBetweenDates = Transaction::whereBetween('date', [$startDate, $endDate])->count();
-        return response()->json(['countBetweenDates' => $countBetweenDates]);
+
+        return response()->json(['sumBetweenDates' => $sumBetweenDates, 'countBetweenDates' => $countBetweenDates]);
     }
 
     public function getOlderTransaction(Request $request){
@@ -242,5 +234,16 @@ class TransactionController extends Controller
         $olderTransaction = Transaction::orderBy('date')->first();
 
         return response()->json(['olderTransaction' => $olderTransaction]);;
+    }
+
+    public function getTransactionsCountByType(Request $request)
+    {
+        $paymentType = $request->input('paymentType');
+
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $countBetweenDates = Transaction::whereBetween('date', [$startDate, $endDate])->count();
+        return response()->json(['countBetweenDates' => $countBetweenDates]);
     }
 }

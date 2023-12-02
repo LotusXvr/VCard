@@ -128,51 +128,29 @@ const filterTransactions = async () => {
     })
     .then(response => {
         transactionsSumBetweenDates.value = response.data.sumBetweenDates;
+        transactionsCountBetweenDates.value = response.data.countBetweenDates;
     })
     .catch(error => {
         console.error(error);
     });
     console.log(transactionsSumBetweenDates.value)
 };
-const startDateC = ref('');
-const endDateC = ref('');
 const transactionsCountBetweenDates = ref(0)
-
-const filterTransactionsC = async () => {
-    if (startDateC.value === '') {
-        await axios.get('statistics/transactions/older', {
-            params: {
-                startDate: startDateC.value,
-                endDate: endDateC.value
-            }
-        })
-        .then(response => {
-            startDateC.value = response.data.olderTransaction.date;
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
-    if (endDateC.value === '') {
-        endDateC.value = todayDateString;
-    }
-    console.log(startDateC.value)
-    console.log(endDateC.value)
-    await axios.get('statistics/transactions/count-between-dates', {
+const paymentType = ref('')
+const transactionsCountByType = ref(0)
+const filterTransactionByType = async () => {
+    await axios.get('statistics/transactions/count-by-type', {
         params: {
-            startDate: startDateC.value,
-            endDate: endDateC.value
+            paymentType: paymentType.value,
         }
     })
     .then(response => {
-        transactionsCountBetweenDates.value = response.data.countBetweenDates;
+        transactionsCountByType.value = response.data.countByType;
     })
     .catch(error => {
         console.error(error);
     });
-    console.log(transactionsCountBetweenDates.value);
 };
-
 
 const transactionsSum = ref(0)
 const getSumTransactions = () => {
@@ -236,31 +214,17 @@ onMounted(() => {
   
             <h4>Total Balance of All Active VCards</h4>
             <p>{{ totalActiveVCardBalance }}</p>
+
+            <h4>Filter Transactions by type</h4>
+            <p>{{ transactionsCountByType }}</p>
           </div>
   
           <div class="col-md-6">
             <h4>Current Count of Transactions</h4>
             <p>{{ transactionsCount }}</p>
-            <h7><b>Filter:</b></h7>
-            <div class="mt-3">
-              <label for="startDate"><b>Start Date:</b></label>
-              <input type="date" id="startDate" v-model="startDateC" class="form-control">
-  
-              <label for="endDate" class="mt-2"><b>End Date:</b></label>
-              <input type="date" id="endDate" v-model="endDateC" class="form-control">
-  
-              <button @click="filterTransactionsC" class="btn btn-primary mt-3 float-end">Filter</button>
-            </div>
-  
-            <div class="mt-3">
-                <p v-if="transactionsCountBetweenDates">
-                    <b>Count of Transactions Between {{ startDateC }} and {{ endDateC }}:</b> {{ transactionsCountBetweenDates }}€
-                </p>
-            </div>
-  
             <h4>Current Sum of Transactions</h4>
             <p>{{ transactionsSum }}</p>
-            <h7><b>Filter:</b></h7>
+            <h7><b>Filter Transactions:</b></h7>
             <div class="mt-3">
               <label for="startDate"><b>Start Date:</b></label>
               <input type="date" id="startDate" v-model="startDate" class="form-control">
@@ -274,6 +238,11 @@ onMounted(() => {
             <p class="mt-3" v-if="transactionsSumBetweenDates">
               <b>Sum of Transactions Between {{ startDate }} and {{ endDate }}:</b> {{ transactionsSumBetweenDates }}€
             </p>
+            <div class="mt-3">
+                <p v-if="transactionsCountBetweenDates">
+                    <b>Count of Transactions Between {{ startDate }} and {{ endDate }}:</b> {{ transactionsCountBetweenDates }}€
+                </p>
+            </div>
           </div>
         </div>
       </div>
