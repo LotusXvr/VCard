@@ -87,9 +87,17 @@ const save = async (vcardToSave) => {
     } catch (error) {
       if (error.response.status == 422) {
         errors.value = error.response.data.errors
-        toast.error('VCard #' + props.id + ' was not updated due to validation errors!')
+        // toast.error('VCard #' + props.phone_number + ' was not updated due to validation errors!')
+        // console.log(error.response.data.errors['phone_number'][0])
+
+        // show first error message only ( not only phone_number but all fields)
+        for (const [key, value] of Object.entries(error.response.data.errors)) {
+          toast.error(value[0])
+          break
+        }
+
       } else {
-        toast.error('VCard #' + props.id + ' was not updated due to unknown server error!')
+        toast.error('VCard #' + props.phone_number + ' was not updated due to unknown server error!')
       }
     }
   }

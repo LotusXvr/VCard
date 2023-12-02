@@ -122,7 +122,6 @@ const cleanPhoto = () => {
                     <input v-model="editingVCard.phone_number" type="text" id="VCardPhoneNumber"
                         :class="{ 'is-invalid': errors ? errors['phone_number'] : false }" required />
                     <field-error-message :errors="errors" fieldName="phone_number"></field-error-message>
-
                 </div>
 
                 <div class="mb-3 px-1">

@@ -17,7 +17,7 @@
     "bootstrap-vue": "^2.23.1",
     "pinia": "^2.1.7",
     "socket.io-client": "^4.7.2",
-    "vue": "^3.3.4",
+    "vue": "^3.3.9",
     "vue-router": "^4.2.5",
     "vue-toastification": "^2.0.0-rc.5"
   },
