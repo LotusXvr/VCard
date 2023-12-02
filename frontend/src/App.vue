@@ -199,13 +199,23 @@ onMounted(async () => {
                                 <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
                                     aria-labelledby="navbarDropdownMenuLink">
                                     <li>
-                                        <router-link class="dropdown-item" :class="{
-                                            active:
-                                                $route.name == 'User' && $route.params.id == 1,
-                                        }" :to="{ name: 'User', params: { id: 1 } }">
-                                            <i class="bi bi-person-square"></i>
-                                            Profile
-                                        </router-link>
+                                        <div v-if="userStore.user?.user_type == 'A'">
+                                            <router-link class="dropdown-item" :class="{
+                                                active: $route.name == 'User' && $route.params.id == userStore.userId,
+                                            }" :to="{ name: 'User', params: { id: userStore.userId } }">
+                                                <i class="bi bi-person-square"></i>
+                                                Profile
+                                            </router-link>
+                                        </div>
+                                        <div v-if="userStore.user?.user_type == 'V'">
+                                            <router-link class="dropdown-item"
+                                                :class="{ active: $route.name == 'VCard' && $route.params.phone_number == userStore.userPhoneNumber, }"
+                                                :to="{ name: 'VCard', params: { phone_number: userStore.userPhoneNumber } }"
+                                                @click="clickMenuOption">
+                                                <i class="bi bi-person-square"></i>
+                                                Profile
+                                            </router-link>
+                                        </div>
                                     </li>
                                     <li>
                                         <router-link class="dropdown-item"

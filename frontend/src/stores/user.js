@@ -61,7 +61,6 @@ export const useUserStore = defineStore("user", () => {
         }
     }
     async function changePassword(credentials) {
-        console.log(userType.value)
         if (userId.value < 0) {
             throw 'Anonymous users cannot change the password!'
         }
