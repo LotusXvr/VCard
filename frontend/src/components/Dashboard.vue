@@ -1,7 +1,8 @@
 <script setup>
-import { onMounted, ref, watch } from "vue"
+import { onMounted, ref, shallowRef, nextTick } from "vue"
 import axios from "axios"
 import { useUserStore } from "../stores/user"
+import Chart from "chart.js/auto"
 const userStore = useUserStore()
 
 const newVCard = () => {
@@ -168,6 +169,103 @@ const getSumTransactions = () => {
         })
 }
 
+const salesChartEl = ref(null)
+const salesChart = shallowRef(null)
+const sumSalesByMonth = ref(null)
+const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+]
+const salesQuantityByMonth = ref(0)
+const getSalesQuantityByMonth = () => {
+    axios
+        .get("statistics/transactions/quantity-by-month")
+        .then((response) => {
+            console.log(response.data.transactionsCountByMonth)
+            salesQuantityByMonth.value = response.data.transactionsCountByMonth
+
+            const months = sumSalesByMonth.value.map((entry) => monthNames[entry.month - 1])
+            const sums = sumSalesByMonth.value.map((entry) => parseFloat(entry.sum))
+            const salesQuantity = salesQuantityByMonth.value.map((entry) => entry.count)
+
+            salesChart.value = new Chart(salesChartEl.value.getContext("2d"), {
+                type: "line",
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: "Sales by month (€)",
+                            data: sums,
+                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            borderColor: "rgba(255, 99, 132, 1)",
+                            borderWidth: 1,
+                        },
+                        {
+                            label: "Sales by month (€)",
+                            data: salesQuantity,
+                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            borderColor: "rgba(255, 99, 132, 1)",
+                            borderWidth: 1,
+                        },
+                    ],
+                   
+                },
+            })
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+const getSalesByMonthEuros = () => {
+    axios
+        .get("statistics/transactions/sum-by-month")
+        .then((response) => {
+            console.log("sum by month" + response.data.transactionsSumByMonth)
+            sumSalesByMonth.value = response.data.transactionsSumByMonth
+
+            const months = sumSalesByMonth.value.map((entry) => monthNames[entry.month - 1])
+            const sums = sumSalesByMonth.value.map((entry) => parseFloat(entry.sum))
+            const salesQuantity = salesQuantityByMonth.value.map((entry) => entry.count)
+
+            salesChart.value = new Chart(salesChartEl.value.getContext("2d"), {
+                type: "line",
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: "Sales by month (€)",
+                            data: sums,
+                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            borderColor: "rgba(255, 99, 132, 1)",
+                            borderWidth: 1,
+                        },
+                        {
+                            label: "Sales by month (€)",
+                            data: salesQuantity,
+                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            borderColor: "rgba(255, 99, 132, 1)",
+                            borderWidth: 1,
+                        },
+                    ],
+                   
+                },
+            })
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
 onMounted(() => {
     loadVCard()
     getCountVCards()
@@ -176,6 +274,8 @@ onMounted(() => {
     getTotalActiveVCardBalance()
     getCountTransactions()
     getSumTransactions()
+    getSalesQuantityByMonth()
+    getSalesByMonthEuros()
 })
 </script>
 
@@ -205,7 +305,7 @@ onMounted(() => {
 
         <h1 class="text-center mb-4">Statistics</h1>
 
-        <canvas ref="salesByMonth"></canvas>
+        <canvas ref="salesChartEl"></canvas>
 
         <div class="container mt-5">
             <div class="row" style="margin-bottom: 20px">

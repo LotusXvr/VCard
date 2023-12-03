@@ -50,6 +50,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates']);
     Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction']);
     Route::get('statistics/transactions/count-by-type', [TransactionController::class, 'getTransactionsCountByType']);
+    Route::get('statistics/transactions/sum-by-month', [TransactionController::class, 'getTransactionsSumByMonth']);
+    Route::get('statistics/transactions/quantity-by-month', [TransactionController::class, 'getTransactionsCountByMonth']);
     /*
      * Globais
      */

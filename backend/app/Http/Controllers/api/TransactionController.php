@@ -243,4 +243,26 @@ class TransactionController extends Controller
         $countByPayementType = Transaction::where('payment_type', $paymentType)->count();
         return response()->json(['countByPayementType' => $countByPayementType]);
     }
+
+    // get sum of all transaction by month this year
+    public function getTransactionsSumByMonth()
+    {
+        $transactionsSumByMonth = Transaction::select(DB::raw('MONTH(date) as month'), DB::raw('SUM(value) as sum'))
+            ->whereYear('date', date('Y'))
+            ->groupBy('month')
+            ->get();
+
+        return response()->json(['transactionsSumByMonth' => $transactionsSumByMonth]);
+    }
+
+    // get quantity of transaction  by month this year
+    public function getTransactionsCountByMonth()
+    {
+        $transactionsCountByMonth = Transaction::select(DB::raw('MONTH(date) as month'), DB::raw('COUNT(*) as count'))
+            ->whereYear('date', date('Y'))
+            ->groupBy('month')
+            ->get();
+
+        return response()->json(['transactionsCountByMonth' => $transactionsCountByMonth]);
+    }
 }
