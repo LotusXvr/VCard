@@ -7,6 +7,8 @@ import { useUserStore } from "../../stores/user"
 const toast = useToast()
 const userStore = useUserStore()
 const accountBalance = ref(null)
+const categories = ref([])
+
 const error = ref(null)
 
 const newTransaction = ref({
@@ -51,8 +53,25 @@ const fetchAccountBalance = () => {
         accountBalance.value = response.data.data.balance
     })
 }
+function clearCategories() {
+        categories.value = []
+}
 
-onMounted(() => {
+async function loadCategory() {
+        try {
+            const response = await axios.get('category', 
+            {
+                phone_number :userStore.userPhoneNumber
+            })
+            categories.value = response.data
+            return categories.value
+        } catch (error) {
+            clearCategories()
+            throw error
+        }
+}
+onMounted(async () => {
+    await loadCategory()
     fetchAccountBalance()
 })
 </script>
@@ -116,6 +135,15 @@ onMounted(() => {
                             class="form-control"
                             required
                         />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="confirmation_code">Category:</label>
+                        <select v-model="newTransaction.category" class="form-select" required>~
+                            <option value="" selected>Sem Categoria</option>
+                            <option v-for="category in categories" :key="category.id" :value="category.id"> {{ category.name }}</option>
+                        </select>
                     </div>
                 </div>
             </div>

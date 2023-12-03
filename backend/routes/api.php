@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AdminController;
+use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\VCardController;
@@ -20,7 +21,7 @@ use App\Http\Controllers\api\AuthController;
 */
 
 // login and register
-Route::post('login', [AuthController::class, 'login']);
+Route::post('login', [AuthController::class, 'login'])->name('login');
 
 Route::post('vcard', [VCardController::class, 'store']);
 
@@ -54,6 +55,7 @@ Route::middleware('auth:api')->group(function () {
      */
 
     Route::apiResource('vcards', VCardController::class);
+    Route::apiResource('category', CategoryController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
     Route::apiResource('transactions', TransactionController::class);
