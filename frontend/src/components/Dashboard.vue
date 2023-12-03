@@ -4,7 +4,6 @@ import axios from "axios"
 import { useUserStore } from "../stores/user"
 const userStore = useUserStore()
 
-
 const newVCard = () => {
     return {
         phone_number: "",
@@ -169,8 +168,6 @@ const getSumTransactions = () => {
         })
 }
 
-
-
 onMounted(() => {
     loadVCard()
     getCountVCards()
@@ -179,7 +176,6 @@ onMounted(() => {
     getTotalActiveVCardBalance()
     getCountTransactions()
     getSumTransactions()
-
 })
 </script>
 
