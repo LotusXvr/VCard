@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
+import axios from "axios"
 
 const props = defineProps({
     transactions: {
@@ -9,7 +10,7 @@ const props = defineProps({
 })
 
 const transactionsRef = ref([])
-
+const categoryNamesRef = ref({});
 const wasSent = (transaction) => {
     return transaction.type == "D" ? true : false
 }
@@ -37,8 +38,54 @@ const transactionsByYearMonth = computed(() => {
     return groupedTransactions
 })
 
-onMounted(() => {
+
+const fetchCategoryNames = async () => {
+  try {
+    const response = await axios.get("category");
+    const categories = response.data;
+    for (const category of categories) {
+      categoryNamesRef.value[category.id] = category.name;
+    } 
+  } catch (error) {
+    console.error("Error fetching category names:", error);
+  }
+};
+
+const getCategoryNameById = (categoryId) => {
+    console.log(categoryId)
+    console.log(categoryNamesRef.value[categoryId])
+  return categoryNamesRef.value[categoryId] || "Undefined";
+};
+
+const getCategoryNameForTransaction = (transaction) => {
+  const categoryId = transaction.category_id;
+  return getCategoryNameById(categoryId);
+};
+
+const categoryColorMap = {};
+
+const getCategoryColor = (categoryId) => {
+  // Ensure categoryId is a string
+  const categoryIdString = String(categoryId);
+
+  if (!categoryColorMap[categoryIdString]) {
+    // If not, generate a color based on the category ID
+    const hash = categoryIdString.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+    const hue = (hash % 160) + 100;
+    categoryColorMap[categoryIdString] = `hsl(${hue}, 70%, 80%)`;
+  }
+  
+  return categoryColorMap[categoryIdString];
+};
+
+const getCategoryColorForTransaction = (transaction) => {
+  const categoryId = transaction.category_id;
+  return getCategoryColor(categoryId);
+};
+
+onMounted(async () => {
     transactionsRef.value = props.transactions
+    await fetchCategoryNames();
 })
 </script>
 
@@ -46,7 +93,6 @@ onMounted(() => {
     <div>
         <h1>Transactions</h1>
         <hr />
-
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -55,6 +101,7 @@ onMounted(() => {
                     <th style="width: 100px">Value</th>
                     <th style="width: 100px">Balance</th>
                     <th style="width: 100px">Reference</th>
+                    <th style="width: 100px">Category</th>
                 </tr>
             </thead>
             <tbody v-for="(transactions, key) in transactionsByYearMonth" :key="key">
@@ -67,6 +114,7 @@ onMounted(() => {
                     </td>
                     <td>{{ transaction.new_balance }}</td>
                     <td>{{ transaction.payment_reference }}</td>
+                    <td :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }">{{ getCategoryNameForTransaction(transaction) }}</td>
                 </tr>
             </tbody>
         </table>
