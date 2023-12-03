@@ -8,6 +8,11 @@ const props = defineProps({
         default: () => [],
     },
 })
+const emit = defineEmits(['edit'])
+
+const editClick = (transaction) => {
+  emit('edit', transaction)
+}
 
 const transactionsRef = ref([])
 const categoryNamesRef = ref({});
@@ -87,6 +92,7 @@ onMounted(async () => {
     transactionsRef.value = props.transactions
     await fetchCategoryNames();
 })
+
 </script>
 
 <template>
@@ -114,7 +120,16 @@ onMounted(async () => {
                     </td>
                     <td>{{ transaction.new_balance }}</td>
                     <td>{{ transaction.payment_reference }}</td>
-                    <td :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }">{{ getCategoryNameForTransaction(transaction) }}</td>
+                    <td :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }" class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {{ getCategoryNameForTransaction(transaction) }}
+                        </div>
+                        <button class="btn btn-xs btn-light" @click="editClick(transaction)">
+                            <i class="bi bi-xs bi-pencil"></i>
+                        </button>
+                    </td>
+
+
                 </tr>
             </tbody>
         </table>
