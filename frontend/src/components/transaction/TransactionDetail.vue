@@ -59,10 +59,7 @@ function clearCategories() {
 
 async function loadCategory() {
         try {
-            const response = await axios.get('category', 
-            {
-                phone_number :userStore.userPhoneNumber
-            })
+            const response = await axios.get('vcard/'+ userStore.userPhoneNumber +'/category')
             categories.value = response.data
             return categories.value
         } catch (error) {

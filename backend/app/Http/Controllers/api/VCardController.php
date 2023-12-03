@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateVCardRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\VCard;
 use App\Http\Resources\VCardResource;
@@ -170,6 +171,10 @@ class VCardController extends Controller
         $vcard->password = bcrypt($request->validated()['password']);
         $vcard->save();
         return new VCardResource($vcard);
+    }
+
+    public function getCategoryFromVCard(VCard $vcard){
+        return Category::where('vcard', $vcard->phone_number)->get();
     }
 
 }

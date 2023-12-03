@@ -38,6 +38,7 @@ Route::middleware('auth:api')->group(function () {
 
     // List transactions of a specific phone number
     Route::get('vcard/{phone_number}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber']);
+    Route::get('vcard/{vcard}/category', [VCardController::class, 'getCategoryFromVCard']);
 
     // Statistics
     Route::get('statistics/vcards/count', [VCardController::class, 'getVCardCount']);
@@ -49,7 +50,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates']);
     Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction']);
     Route::get('statistics/transactions/count-by-type', [TransactionController::class, 'getTransactionsCountByType']);
-
     /*
      * Globais
      */

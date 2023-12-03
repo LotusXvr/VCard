@@ -95,7 +95,7 @@ class TransactionController extends Controller
                     $transaction1->payment_type = $request->payment_type;
                     $transaction1->payment_reference = $request->payment_reference;
                     $transaction1->pair_vcard = $request->payment_reference;
-                    $transaction1->category_id = null;
+                    $transaction1->category_id = $request->category;
                     $transaction1->description = null;
 
                     // Money reception transaction

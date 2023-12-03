@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Default_Category;
+use App\Models\VCard;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -12,13 +13,9 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $collection = Default_Category::all();
-
-        $additionalCategories = Category::where('vcard', $request->phone_number)->get();
-
-        return $collection->merge($additionalCategories);
+        return Category::all();
     }
 
     /**
@@ -32,7 +29,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(VCard $vcard)
     {
         //
     }
