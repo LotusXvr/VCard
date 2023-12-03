@@ -171,6 +171,8 @@ const getSumTransactions = () => {
 
 const salesChartEl = ref(null)
 const salesChart = shallowRef(null)
+const salesQuantityChartEl = ref(null)
+const salesQuantityChart = shallowRef(null)
 const sumSalesByMonth = ref(null)
 const monthNames = [
     "January",
@@ -194,31 +196,22 @@ const getSalesQuantityByMonth = () => {
             console.log(response.data.transactionsCountByMonth)
             salesQuantityByMonth.value = response.data.transactionsCountByMonth
 
-            const months = sumSalesByMonth.value.map((entry) => monthNames[entry.month - 1])
-            const sums = sumSalesByMonth.value.map((entry) => parseFloat(entry.sum))
+            const months = salesQuantityByMonth.value.map((entry) => monthNames[entry.month - 1])
             const salesQuantity = salesQuantityByMonth.value.map((entry) => entry.count)
 
-            salesChart.value = new Chart(salesChartEl.value.getContext("2d"), {
+            salesQuantityChart.value = new Chart(salesQuantityChartEl.value.getContext("2d"), {
                 type: "line",
                 data: {
                     labels: months,
                     datasets: [
                         {
-                            label: "Sales by month (€)",
-                            data: sums,
-                            backgroundColor: "rgba(255, 99, 132, 0.2)",
-                            borderColor: "rgba(255, 99, 132, 1)",
-                            borderWidth: 1,
-                        },
-                        {
-                            label: "Sales by month (€)",
+                            label: "Sales by month (quantity)",
                             data: salesQuantity,
                             backgroundColor: "rgba(255, 99, 132, 0.2)",
                             borderColor: "rgba(255, 99, 132, 1)",
                             borderWidth: 1,
                         },
                     ],
-                   
                 },
             })
         })
@@ -235,7 +228,6 @@ const getSalesByMonthEuros = () => {
 
             const months = sumSalesByMonth.value.map((entry) => monthNames[entry.month - 1])
             const sums = sumSalesByMonth.value.map((entry) => parseFloat(entry.sum))
-            const salesQuantity = salesQuantityByMonth.value.map((entry) => entry.count)
 
             salesChart.value = new Chart(salesChartEl.value.getContext("2d"), {
                 type: "line",
@@ -249,15 +241,7 @@ const getSalesByMonthEuros = () => {
                             borderColor: "rgba(255, 99, 132, 1)",
                             borderWidth: 1,
                         },
-                        {
-                            label: "Sales by month (€)",
-                            data: salesQuantity,
-                            backgroundColor: "rgba(255, 99, 132, 0.2)",
-                            borderColor: "rgba(255, 99, 132, 1)",
-                            borderWidth: 1,
-                        },
                     ],
-                   
                 },
             })
         })
@@ -306,6 +290,7 @@ onMounted(() => {
         <h1 class="text-center mb-4">Statistics</h1>
 
         <canvas ref="salesChartEl"></canvas>
+        <canvas ref="salesQuantityChartEl"></canvas>
 
         <div class="container mt-5">
             <div class="row" style="margin-bottom: 20px">
