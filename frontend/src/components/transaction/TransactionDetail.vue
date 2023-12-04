@@ -54,6 +54,15 @@ const transactionTitle = computed(() => {
 })
 
 const save = async () => {
+    if (!validateReference()) {
+        toast.error("Invalid payment reference");
+        return;
+    }
+
+    if (!validateValue()) {
+        toast.error("Invalid transaction value");
+        return;
+    }
     const newTransaction = editingTransaction.value
     try {
         console.log(newTransaction)
@@ -74,6 +83,30 @@ const save = async () => {
         toast.error(err.response.data.status + " - " + err.response.data.message)
     }
 }
+
+const validateReference = () => {
+    const reference = editingTransaction.value.payment_reference;
+    switch (editingTransaction.value.payment_type) {
+        case "MBWAY":
+            return /^\d{9}$/.test(reference);
+        case "PAYPAL":
+            // Use a more sophisticated email validation if needed
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reference);
+        case "IBAN":
+            return /^[A-Z]{2}\d{23}$/.test(reference);
+        case "MB":
+            return /^\d{5}-\d{9}$/.test(reference);
+        case "VISA":
+            return /^4\d{15}$/.test(reference);
+        default:
+            return false;
+    }
+};
+
+const validateValue = () => {
+    const value = parseFloat(editingTransaction.value.value);
+    return !isNaN(value) && value > 0 && value < 100000;
+};
 
 const cancel = () => {
     emit("cancel", editingTransaction.value)
@@ -117,7 +150,7 @@ onMounted(() => {
                         <input
                             v-model="editingTransaction.payment_reference"
                             type="text"
-                            id="transactionPaymentReferenec"
+                            id="transactionPaymentReference"
                             class="form-control"
                             required
                         />
