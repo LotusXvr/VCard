@@ -12,10 +12,10 @@ const props = defineProps({
         default: () => [],
     },
 })
-const emit = defineEmits(['edit'])
+const emit = defineEmits(["edit"])
 
 const editClick = (transaction, categories) => {
-  emit('edit', transaction, categories)
+    emit("edit", transaction, categories)
 }
 
 const transactionsRef = ref([])
@@ -47,64 +47,62 @@ const transactionsByYearMonth = computed(() => {
     return groupedTransactions
 })
 
-
 const fetchCategoryNames = async () => {
-  try {
-    const response = await axios.get("category");
-    const categories = response.data;
-    for (const category of categories) {
-      categoriesRef.value[category.id] = category.name;
-    } 
-  } catch (error) {
-    console.error("Error fetching category names:", error);
-  }
-};
+    try {
+        const response = await axios.get("category")
+        const categories = response.data
+        for (const category of categories) {
+            categoriesRef.value[category.id] = category.name
+        }
+    } catch (error) {
+        console.error("Error fetching category names:", error)
+    }
+}
 
 const getCategoryNameById = (categoryId) => {
-  return categoriesRef.value[categoryId] || "Undefined";
-};
+    return categoriesRef.value[categoryId] || "Undefined"
+}
 
 const getCategoryNameForTransaction = (transaction) => {
-  const categoryId = transaction.category_id;
-  return getCategoryNameById(categoryId);
-};
+    const categoryId = transaction.category_id
+    return getCategoryNameById(categoryId)
+}
 
-const categoryColorMap = {};
+const categoryColorMap = {}
 
 const getCategoryColor = (categoryId) => {
-  // Ensure categoryId is a string
-  const categoryIdString = String(categoryId);
+    // Ensure categoryId is a string
+    const categoryIdString = String(categoryId)
 
-  if (!categoryColorMap[categoryIdString]) {
-    // If not, generate a color based on the category ID
-    const hash = categoryIdString.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
-    const hue = (hash % 160) + 100;
-    categoryColorMap[categoryIdString] = `hsl(${hue}, 70%, 80%)`;
-  }
-  
-  return categoryColorMap[categoryIdString];
-};
+    if (!categoryColorMap[categoryIdString]) {
+        // If not, generate a color based on the category ID
+        const hash = categoryIdString.split("").reduce((acc, char) => char.charCodeAt(0) + acc, 0)
+        const hue = (hash % 160) + 100
+        categoryColorMap[categoryIdString] = `hsl(${hue}, 70%, 80%)`
+    }
+
+    return categoryColorMap[categoryIdString]
+}
 
 const getCategoryColorForTransaction = (transaction) => {
-  const categoryId = transaction.category_id;
-  return getCategoryColor(categoryId);
-};
+    const categoryId = transaction.category_id
+    return getCategoryColor(categoryId)
+}
 
 const truncateDescription = (description) => {
-    const maxLength = 27;
+    const maxLength = 27
     if (description.length <= maxLength) {
-      return description;
+        return description
     } else {
-      return description.substring(0, maxLength) + "..."
+        return description.substring(0, maxLength) + "..."
     }
-};
+}
 
 onMounted(async () => {
     transactionsRef.value = props.transactions
     categoriesRef.value = props.categories
-    await fetchCategoryNames();
+    await fetchCategoryNames()
 })
-
 </script>
 
 <template>
@@ -133,17 +131,27 @@ onMounted(async () => {
                     </td>
                     <td>{{ transaction.new_balance }}</td>
                     <td>{{ transaction.payment_reference }}</td>
-                    <td>{{ transaction.description ? truncateDescription(transaction.description) : '' }}</td>
-                    <td :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }" class="d-flex justify-content-between align-items-center">
+                    <td>
+                        {{
+                            transaction.description
+                                ? truncateDescription(transaction.description)
+                                : ""
+                        }}
+                    </td>
+                    <td
+                        :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }"
+                        class="d-flex justify-content-between align-items-center"
+                    >
                         <div>
                             {{ getCategoryNameForTransaction(transaction) }}
                         </div>
-                        <button class="btn btn-xs btn-light" @click="editClick(transaction, categories)">
+                        <button
+                            class="btn btn-xs btn-light"
+                            @click="editClick(transaction, categories)"
+                        >
                             <i class="bi bi-xs bi-pencil"></i>
                         </button>
                     </td>
-
-
                 </tr>
             </tbody>
         </table>

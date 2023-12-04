@@ -11,22 +11,22 @@ const categoriesRef = ref([])
 
 const props = defineProps({
     transaction: {
-      type: Object,
-      required: true
+        type: Object,
+        required: true,
     },
     inserting: {
         type: Boolean,
         default: false,
     },
     errors: {
-      type: Object,
-      required: false,
+        type: Object,
+        required: false,
     },
     categories: {
-      type: Array,
-      required: true,
+        type: Array,
+        required: true,
     },
-  })
+})
 
 const editingTransaction = ref(props.transaction)
 
@@ -36,25 +36,25 @@ const transactionVerifier = ref({
     value: "",
 })
 
-const emit = defineEmits(['save', 'cancel'])
+const emit = defineEmits(["save", "cancel"])
 
 watch(
     () => props.transaction,
     (newTransaction) => {
-      editingTransaction.value = newTransaction
+        editingTransaction.value = newTransaction
     },
-    { immediate: true }
+    { immediate: true },
 )
 
-const transactionTitle = computed( () => {
+const transactionTitle = computed(() => {
     if (!editingTransaction.value) {
-        return ''
-    } 
-      return props.inserting == 'insert' ? 'New Transaction' : 'Task #' + editingTransaction.value.id
-  })
+        return ""
+    }
+    return props.inserting == "insert" ? "New Transaction" : "Task #" + editingTransaction.value.id
+})
 
 const save = async () => {
-    const newTransaction = editingTransaction.value;
+    const newTransaction = editingTransaction.value
     try {
         console.log(newTransaction)
         if (newTransaction.payment_type != "VCARD") {
@@ -65,7 +65,7 @@ const save = async () => {
                 "https://dad-202324-payments-api.vercel.app/api/credit",
                 transactionVerifier.value,
             )
-            
+
             toast.success(response.data.status + " - " + response.data.message)
         }
         newTransaction.vcard = userStore.userPhoneNumber
@@ -76,13 +76,12 @@ const save = async () => {
 }
 
 const cancel = () => {
-emit('cancel', editingTransaction.value)
+    emit("cancel", editingTransaction.value)
 }
 
 onMounted(() => {
-  categoriesRef.value = props.categories
+    categoriesRef.value = props.categories
 })
-
 </script>
 
 <template>
@@ -98,7 +97,11 @@ onMounted(() => {
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
-                        <select v-model="editingTransaction.payment_type" class="form-select" required>
+                        <select
+                            v-model="editingTransaction.payment_type"
+                            class="form-select"
+                            required
+                        >
                             <option value="VCARD">VCARD</option>
                             <option value="MBWAY">MBWAY</option>
                             <option value="IBAN">IBAN</option>
@@ -150,9 +153,16 @@ onMounted(() => {
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
-                        <select v-model="editingTransaction.category" class="form-select" required>~
-                            <option value="" selected>{{editingTransaction.category}}</option>
-                            <option v-for="category in categoriesRef.value" :key="category.id" :value="category.id"> {{ category.name }}</option>
+                        <select v-model="editingTransaction.category" class="form-select" required>
+                            ~
+                            <option value="" selected>{{ editingTransaction.category }}</option>
+                            <option
+                                v-for="category in categoriesRef.value"
+                                :key="category.id"
+                                :value="category.id"
+                            >
+                                {{ category.name }}
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -170,14 +180,8 @@ onMounted(() => {
             </div>
 
             <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px">
-                <button
-                    type="button"
-                    class="btn btn-light px-5"
-                    @click="cancel"
-                >Cancel</button>
-                <button type="button" class="btn btn-primary px-5" @click="save">
-                    Save
-                </button>
+                <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
+                <button type="button" class="btn btn-primary px-5" @click="save">Save</button>
             </div>
         </form>
     </div>
