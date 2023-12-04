@@ -62,7 +62,7 @@ const save = async () => {
             transactionVerifier.value.reference = newTransaction.payment_reference
             transactionVerifier.value.value = parseFloat(newTransaction.value)
             const response = await axios.post(
-                "https://dad-202324-payments-api.vercel.app/api/credit",
+                "https://dad-202324-payments-api.vercel.app/api/debit",
                 transactionVerifier.value,
             )
 

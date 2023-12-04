@@ -383,7 +383,7 @@ onMounted(() => {
 
 <template>
     <div class="container mt-4">
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-lg-12 mb-4">
                 <h1 class="text-center mb-4">Admin Dashboard</h1>
                 <div class="card text-center">
@@ -398,14 +398,13 @@ onMounted(() => {
                             <li class="list-group-item">
                                 <strong>Email:</strong> {{ userStore.userPhoneNumber }}
                             </li>
-                            <!-- Add more list items based on your user properties -->
                         </ul>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
-        <h1 class="text-center mb-4">Statistics</h1>
+        <h1 class="text-center mb-4">Charts</h1>
 
         <div class="container mt-4">
             <div class="row">
@@ -429,6 +428,8 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+
+        <h1 class="text-center mb-4">Numbers</h1>
 
         <div class="container mt-5">
             <div class="row mb-4">
@@ -511,16 +512,16 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
+                                <p v-if="transactionsCountByType" class="mt-4">
+                                    <b>Count transactions by {{ paymentType }}: </b
+                                    >{{ transactionsCountByType }}
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <div class="card mt-4">
                         <div class="card-body">
-                            <p v-if="transactionsCountByType" class="mt-4">
-                                <b>Count transactions by {{ paymentType }}: </b
-                                >{{ transactionsCountByType }}
-                            </p>
                             <div class="mt-3">
                                 <label for="startDate"><b>Start Date:</b></label>
                                 <input
