@@ -47,18 +47,16 @@ const transactionsByYearMonth = computed(() => {
     return groupedTransactions
 })
 
+// Get the current date
+const currentDate = new Date();
+// Calculate the first day of the last month
+const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+// Extract the year and month of the last month
+const lastMonthYear = lastMonthDate.getFullYear();
+const lastMonthMonth = lastMonthDate.getMonth() + 1; // Months are zero-indexed
+
+// Compute last month's transactions
 const lastMonthTransactions = computed(() => {
-    // Get the current date
-    const currentDate = new Date();
-
-    // Calculate the first day of the last month
-    const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-
-    // Extract the year and month of the last month
-    const lastMonthYear = lastMonthDate.getFullYear();
-    const lastMonthMonth = lastMonthDate.getMonth() + 1; // Months are zero-indexed
-
-    // Filter transactions based on whether they belong to the last month
     return transactionsRef.value.filter((transaction) => {
         const transactionDate = new Date(transaction.datetime);
         return (
@@ -68,29 +66,18 @@ const lastMonthTransactions = computed(() => {
     });
 });
 
-const lastMonthDebitTransactions = computed(() => {
-    return lastMonthTransactions.value.filter((transaction) => {
-        return transaction.type === "D";
-    });
-});
+// Function to calculate the sum of values for a given type ("D" or "C")
+const sumValues = (transactions, type) => {
+    return transactions
+        .filter((transaction) => transaction.type === type)
+        .reduce((sum, transaction) => sum + parseFloat(transaction.value), 0);
+};
 
-const lastMonthCreditTransactions = computed(() => {
-    return lastMonthTransactions.value.filter((transaction) => {
-        return transaction.type === "C";
-    });
-});
+// Compute the sum of debit and credit values for last month
+const sumDebitValues = computed(() => sumValues(lastMonthTransactions.value, "D"));
+const sumCreditValues = computed(() => sumValues(lastMonthTransactions.value, "C"));
 
-const sumDebitValues = computed(() => {
-    return lastMonthDebitTransactions.value.reduce((sum, transaction) => {
-        return sum + parseFloat(transaction.value);
-    }, 0);
-});
 
-const sumCreditValues = computed(() => {
-    return lastMonthCreditTransactions.value.reduce((sum, transaction) => {
-        return sum + parseFloat(transaction.value);
-    }, 0);
-});
 
 
 const fetchCategoryNames = async () => {
