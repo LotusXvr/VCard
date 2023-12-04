@@ -49,9 +49,9 @@ const transactionsByYearMonth = computed(() => {
 
 // Get the current date
 const currentDate = new Date();
-// Calculate the first day of the last month
-const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-// Extract the year and month of the last month
+// Calculate the first day of the current month
+const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+// Extract the year and month of the current month
 const lastMonthYear = lastMonthDate.getFullYear();
 const lastMonthMonth = lastMonthDate.getMonth() + 1; // Months are zero-indexed
 
@@ -141,8 +141,8 @@ onMounted(async () => {
 <template>
     <div>
         <h1>Transactions</h1>
-        <p> Credits: {{ lastMonthCreditTransactions }} {{ sumCreditValues }}</p>
-        <p> Debits: {{ lastMonthDebitTransactions }} {{ sumDebitValues }}</p>
+        <p> Credits: {{ sumCreditValues }}</p>
+        <p> Debits: {{ sumDebitValues }}</p>
         <hr />
         <table class="table table-striped">
             <thead>

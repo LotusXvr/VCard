@@ -62,11 +62,11 @@ const save = async (transactionToSave) => {
             toast.success("Transaction #" + transaction.value.id + " was registered successfully.")
             router.back()
         } catch (error) {
+            errors.value = error.response.data.message
             if (error.response.status == 422) {
-                errors.value = error.response.data.errors
-                toast.error("Transaction was not registered due to validation errors!")
+                toast.error("422: " + errors.value)
             } else {
-                toast.error("Transaction was not registered due to unknown server error!")
+                toast.error(errors.value)
             }
         }
     } else {
@@ -77,14 +77,12 @@ const save = async (transactionToSave) => {
             toast.success("Transaction #" + transaction.value.id + " was updated successfully.")
             router.back()
         } catch (error) {
+            errors.value = error.response.data.message
             if (error.response.status == 422) {
-                errors.value = error.response.data.errors
-                toast.error(
-                    "Transaction #" + props.id + " was not updated due to validation errors!",
-                )
+                toast.error("Transaction #" + props.id + " - " + error.value)
             } else {
                 toast.error(
-                    "Transaction #" + props.id + " was not updated due to unknown server error!",
+                    "Transaction #" + props.id + " - " + error.value,
                 )
             }
         }
