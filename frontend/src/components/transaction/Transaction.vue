@@ -57,9 +57,7 @@ const save = async (transactionToSave) => {
     if (inserting(props.id)) {
         try {
             const response = await axios.post("transactions", transactionToSave)
-            transaction.value = response.data.data
-            originalValueStr = JSON.stringify(transaction.value)
-            toast.success("Transaction #" + transaction.value.id + " was registered successfully.")
+            toast.success(response.data.message)
             router.back()
         } catch (error) {
             errors.value = error.response.data.message
@@ -72,9 +70,7 @@ const save = async (transactionToSave) => {
     } else {
         try {
             const response = await axios.put("transactions/" + props.id, transactionToSave)
-            transaction.value = response.data.data
-            originalValueStr = JSON.stringify(transaction.value)
-            toast.success("Transaction #" + transaction.value.id + " was updated successfully.")
+            toast.success(response.data.message)
             router.back()
         } catch (error) {
             errors.value = error.response.data.message
