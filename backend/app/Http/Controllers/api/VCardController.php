@@ -23,7 +23,7 @@ class VCardController extends Controller
 
     public function index()
     {
-        return VCard::all();
+        return VCard::paginate(10);
     }
 
     public function show(VCard $vcard)
@@ -173,7 +173,8 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
-    public function getCategoryFromVCard(VCard $vcard){
+    public function getCategoryFromVCard(VCard $vcard)
+    {
         return Category::where('vcard', $vcard->phone_number)->get();
     }
 

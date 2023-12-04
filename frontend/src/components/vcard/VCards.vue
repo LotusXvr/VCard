@@ -1,12 +1,9 @@
 <script setup>
-import axios from "axios"
-import { ref, onMounted } from "vue"
-import VCardTable from "./VCardTable.vue"
-import { useRouter } from "vue-router"
-import { useToast } from "vue-toastification"
-
-const router = useRouter()
-const toast = useToast()
+import axios from 'axios';
+import { ref, onMounted, defineProps } from 'vue';
+import VCardTable from './VCardTable.vue';
+import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 const props = defineProps({
     vcardsTitle: {
@@ -19,20 +16,41 @@ const props = defineProps({
     },
 })
 
-const vcards = ref([])
+const router = useRouter();
+const toast = useToast();
+const vcards = ref([]);
+const currentPage = ref(1);
+const totalItems = ref(0);
 
 const loadVCards = () => {
     // Change later when authentication is implemented
     axios
-        .get("vcards")
+        .get('vcards', { params: { page: props.currentPage } })
         .then((response) => {
-            vcards.value = response.data
-            console.log(response.data)
+            const responseData = response.data;
+            vcards.value = responseData.data;
+            console.log(responseData);
+            paginationData.value = {
+                currentPage: responseData.current_page,
+                lastPage: responseData.last_page,
+                nextPageUrl: responseData.next_page_url,
+                prevPageUrl: responseData.prev_page_url,
+                per_page: responseData.per_page,
+            };
+            totalItems.value = responseData.total;
         })
         .catch((error) => {
             console.log(error)
         })
 }
+
+const paginationData = ref({
+    currentPage: 1,
+    lastPage: 1,
+    nextPageUrl: null,
+    prevPageUrl: null,
+    per_page: 10,
+});
 
 const addVCard = () => {
     router.push({ name: "newVCard" })
@@ -57,6 +75,11 @@ const deleteVCard = (vcard) => {
 onMounted(() => {
     loadVCards()
 })
+
+const getResults = (page) => {
+    currentPage.value = page;
+    loadVCards();
+};
 </script>
 
 <template>
@@ -76,10 +99,19 @@ onMounted(() => {
             </router-link>
         </div>
     </div>
-    <VCardTable
-        :vcards="vcards"
-        :showPhoneNumber="true"
-        @edit="editVCard"
-        @delete="deleteVCard"
-    ></VCardTable>
+    <VCardTable :vcards="vcards" :showPhoneNumber="true" @edit="editVCard" @delete="deleteVCard"></VCardTable>
+    <div>
+        <ul class="pagination">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <a class="page-link" href="#" @click.prevent="getResults(currentPage - 1)">Previous</a>
+            </li>
+            <li class="page-item" v-for="page in paginationData.lastPage" :key="page"
+                :class="{ active: currentPage === page }">
+                <a class="page-link" href="#" @click.prevent="getResults(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" :class="{ disabled: currentPage === paginationData.lastPage }">
+                <a class="page-link" href="#" @click.prevent="getResults(currentPage + 1)">Next</a>
+            </li>
+        </ul>
+    </div>
 </template>
