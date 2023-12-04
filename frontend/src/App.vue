@@ -101,7 +101,9 @@ onMounted(async () => {
                                 class="rounded-circle z-depth-0 avatar-img"
                                 alt="avatar image"
                             />
-                            <span class="avatar-text">{{ formatUserName(userStore.userName) }}</span>
+                            <span class="avatar-text">{{
+                                formatUserName(userStore.userName)
+                            }}</span>
                         </a>
                         <ul
                             class="dropdown-menu dropdown-menu-dark dropdown-menu-end"
