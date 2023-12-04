@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateVCardRequest;
 use App\Models\Category;
+use App\Models\Default_Category;
 use Illuminate\Http\Request;
 use App\Models\VCard;
 use App\Http\Resources\VCardResource;
@@ -66,7 +67,16 @@ class VCardController extends Controller
         }
 
         $vcard->save();
-        $vcard->phone_number = $dataToSave['phone_number'];
+        //$vcard->phone_number = $dataToSave['phone_number']; acho que esta a mais
+
+        $defaultCategories = Default_Category::all();
+
+        $defaultCategories->each(function ($defaultCategory) use ($dataToSave) {
+            $defaultCategory->vcard = $dataToSave['phone_number'];
+            unset($defaultCategory->id);
+        });
+
+        Category::insert($defaultCategories->toArray());
         return new VCardResource($vcard);
     }
 
