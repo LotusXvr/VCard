@@ -7,15 +7,19 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    categories: {
+        type: Array,
+        default: () => [],
+    },
 })
 const emit = defineEmits(['edit'])
 
-const editClick = (transaction) => {
-  emit('edit', transaction)
+const editClick = (transaction, categories) => {
+  emit('edit', transaction, categories)
 }
 
 const transactionsRef = ref([])
-const categoryNamesRef = ref({});
+const categoriesRef = ref([])
 const wasSent = (transaction) => {
     return transaction.type == "D" ? true : false
 }
@@ -49,7 +53,7 @@ const fetchCategoryNames = async () => {
     const response = await axios.get("category");
     const categories = response.data;
     for (const category of categories) {
-      categoryNamesRef.value[category.id] = category.name;
+      categoriesRef.value[category.id] = category.name;
     } 
   } catch (error) {
     console.error("Error fetching category names:", error);
@@ -57,7 +61,7 @@ const fetchCategoryNames = async () => {
 };
 
 const getCategoryNameById = (categoryId) => {
-  return categoryNamesRef.value[categoryId] || "Undefined";
+  return categoriesRef.value[categoryId] || "Undefined";
 };
 
 const getCategoryNameForTransaction = (transaction) => {
@@ -97,6 +101,7 @@ const truncateDescription = (description) => {
 
 onMounted(async () => {
     transactionsRef.value = props.transactions
+    categoriesRef.value = props.categories
     await fetchCategoryNames();
 })
 
@@ -133,7 +138,7 @@ onMounted(async () => {
                         <div>
                             {{ getCategoryNameForTransaction(transaction) }}
                         </div>
-                        <button class="btn btn-xs btn-light" @click="editClick(transaction)">
+                        <button class="btn btn-xs btn-light" @click="editClick(transaction, categories)">
                             <i class="bi bi-xs bi-pencil"></i>
                         </button>
                     </td>

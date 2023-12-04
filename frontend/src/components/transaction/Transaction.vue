@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue"
+import { onMounted, ref, watch } from "vue"
 import TransactionDetail from "./TransactionDetail.vue"
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification"
@@ -10,13 +10,18 @@ const router = useRouter();
 const errors = ref(null);
 const inserting = (id) => !id || (id < 0)
 const error = ref(null)
+const categoriesRef = ref([])
 let originalValueStr = ''
 
 const props = defineProps({
     id: {
     type: Number,
     default: null
-  }
+    },
+    categories: {
+        type: Array,
+        required: true,
+    },
 })
 
 const newTransaction = () => {
@@ -95,9 +100,12 @@ watch(
     }, 
   { immediate: true}
 )
+onMounted(() => {
+  categoriesRef.value = props.categories
+})
 
 </script>
 
 <template>
-    <transaction-detail :transaction="transaction" :errors="errors" :inserting="inserting(id)" @save="save" @cancel="cancel"></transaction-detail>
+    <transaction-detail :transaction="transaction" :errors="errors" :inserting="inserting(id)" :categories="categoriesRef" @save="save" @cancel="cancel"></transaction-detail>
 </template>

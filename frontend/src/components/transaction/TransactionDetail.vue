@@ -7,7 +7,7 @@ import { useUserStore } from "../../stores/user"
 const toast = useToast()
 const userStore = useUserStore()
 const accountBalance = ref(null)
-const categories = ref([])
+const categoriesRef = ref([])
 
 const props = defineProps({
     transaction: {
@@ -21,6 +21,10 @@ const props = defineProps({
     errors: {
       type: Object,
       required: false,
+    },
+    categories: {
+      type: Array,
+      required: true,
     },
   })
 
@@ -75,6 +79,9 @@ const cancel = () => {
 emit('cancel', editingTransaction.value)
 }
 
+onMounted(() => {
+  categoriesRef.value = props.categories
+})
 
 </script>
 
@@ -144,8 +151,8 @@ emit('cancel', editingTransaction.value)
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
                         <select v-model="editingTransaction.category" class="form-select" required>~
-                            <option value="" selected>Sem Categoria</option>
-                            <option v-for="category in categories" :key="category.id" :value="category.id"> {{ category.name }}</option>
+                            <option value="" selected>{{editingTransaction.category}}</option>
+                            <option v-for="category in categoriesRef.value" :key="category.id" :value="category.id"> {{ category.name }}</option>
                         </select>
                     </div>
                 </div>
