@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, shallowRef, nextTick } from "vue"
+import { onMounted, ref, shallowRef } from "vue"
 import axios from "axios"
 import { useUserStore } from "../stores/user"
 import Chart from "chart.js/auto"

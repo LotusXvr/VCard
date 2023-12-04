@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, computed } from "vue"
+import { ref, onMounted, computed, shallowRef } from "vue"
+import Chart from "chart.js/auto"
 import axios from "axios"
 
 const props = defineProps({
@@ -47,38 +48,92 @@ const transactionsByYearMonth = computed(() => {
     return groupedTransactions
 })
 
+const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+]
 // Get the current date
-const currentDate = new Date();
+const currentDate = new Date()
 // Calculate the first day of the current month
-const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
 // Extract the year and month of the current month
-const lastMonthYear = lastMonthDate.getFullYear();
-const lastMonthMonth = lastMonthDate.getMonth() + 1; // Months are zero-indexed
+const lastMonthYear = lastMonthDate.getFullYear()
+const lastMonthMonth = lastMonthDate.getMonth() + 1 // Months are zero-indexed
 
 // Compute last month's transactions
 const lastMonthTransactions = computed(() => {
     return transactionsRef.value.filter((transaction) => {
-        const transactionDate = new Date(transaction.datetime);
+        const transactionDate = new Date(transaction.datetime)
         return (
             transactionDate.getFullYear() === lastMonthYear &&
             transactionDate.getMonth() + 1 === lastMonthMonth
-        );
-    });
-});
+        )
+    })
+})
 
 // Function to calculate the sum of values for a given type ("D" or "C")
 const sumValues = (transactions, type) => {
     return transactions
         .filter((transaction) => transaction.type === type)
-        .reduce((sum, transaction) => sum + parseFloat(transaction.value), 0);
-};
+        .reduce((sum, transaction) => sum + parseFloat(transaction.value), 0)
+}
 
 // Compute the sum of debit and credit values for last month
-const sumDebitValues = computed(() => sumValues(lastMonthTransactions.value, "D"));
-const sumCreditValues = computed(() => sumValues(lastMonthTransactions.value, "C"));
+const sumDebitValues = computed(() => sumValues(lastMonthTransactions.value, "D"))
+const sumCreditValues = computed(() => sumValues(lastMonthTransactions.value, "C"))
 
+const dateindex = ref(0)
+const dates = computed(() => {
+    const dates = lastMonthTransactions.value
+        .map((transaction) => {
+            dateindex.value += 1
+            return "(" + dateindex.value + ") " + formatDateTime(transaction.datetime).date
+        })
+        .reverse()
 
+    return dates
+})
 
+const balances = computed(() => {
+    const balances = lastMonthTransactions.value
+        .map((transaction) => {
+            return transaction.new_balance
+        })
+        .reverse()
+
+    return balances
+})
+
+const balanceChartEl = ref(null)
+const balanceChart = shallowRef(null)
+
+const loadChart = () => {
+    balanceChart.value = new Chart(balanceChartEl.value.getContext("2d"), {
+        type: "line",
+        data: {
+            labels: dates.value,
+            datasets: [
+                {
+                    label: "Balance (€)",
+                    data: balances.value,
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1,
+                },
+            ],
+        },
+    })
+}
 
 const fetchCategoryNames = async () => {
     try {
@@ -134,15 +189,36 @@ const truncateDescription = (description) => {
 onMounted(async () => {
     transactionsRef.value = props.transactions
     categoriesRef.value = props.categories
-    await fetchCategoryNames()
+    fetchCategoryNames()
+    loadChart()
 })
 </script>
 
 <template>
     <div>
         <h1>Transactions</h1>
-        <p> Credits: {{ sumCreditValues }}</p>
-        <p> Debits: {{ sumDebitValues }}</p>
+
+        <div class="container">
+            <h4>Your balance in {{ monthNames[lastMonthMonth - 1] }}</h4>
+            <canvas
+                ref="balanceChartEl"
+                height="200px"
+                width="200px"
+                style="height: 200px; width: 200px"
+            ></canvas>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Your earnings:</h5>
+                    <p class="h5 text-success">{{ sumCreditValues }}€</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Your expenses:</h5>
+                    <p class="h5 text-danger">{{ sumDebitValues }}€</p>
+                </div>
+            </div>
+        </div>
+
         <hr />
         <table class="table table-striped">
             <thead>

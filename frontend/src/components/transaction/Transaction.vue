@@ -75,7 +75,7 @@ const save = async (transactionToSave) => {
         } catch (error) {
             errors.value = error.response.data.message
             if (error.response.status == 422) {
-                toast.error("Transaction #" + props.id + " - " + error.value)
+                toast.error("422: Transaction #" + props.id + " - " + error.value)
             } else {
                 toast.error(
                     "Transaction #" + props.id + " - " + error.value,
