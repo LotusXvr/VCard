@@ -57,8 +57,6 @@ const fetchCategoryNames = async () => {
 };
 
 const getCategoryNameById = (categoryId) => {
-    console.log(categoryId)
-    console.log(categoryNamesRef.value[categoryId])
   return categoryNamesRef.value[categoryId] || "Undefined";
 };
 

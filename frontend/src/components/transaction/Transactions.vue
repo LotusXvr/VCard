@@ -26,7 +26,6 @@ const loadTransactions = () => {
         .catch((error) => {
             console.log(error)
         })
-    console.log("transacoes"+transactions.value)
 }
 
 const addTransaction = () => {
@@ -44,22 +43,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="d-flex justify-content-between">
-      <div class="mx-2">
-        <h3 class="mt-4">{{ transactionsTitle }}</h3>
-      </div>
-    </div>
     <hr />
-    <div class="mb-3 d-flex justify-content-between flex-wrap">
-      <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
-      <div class="mx-2 mt-2">
-        <router-link class="nav-link w-100 me-3" :to="{ name: 'NewTransaction' }">
-          <button type="button" class="btn btn-success px-4 btn-addtransaction" @click="addTransaction">
-            <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add Transaction
-          </button>
-        </router-link>
-      </div>
-    </div>
     <div v-if="transactions.length > 0">
       <TransactionTable :transactions="transactions" :showUserId="true" @edit="editTransaction"></TransactionTable>
       </div>

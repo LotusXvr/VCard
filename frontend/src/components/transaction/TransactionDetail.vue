@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios"
-import { ref, onMounted, watch, computed } from "vue"
+import { ref, watch, computed, onMounted } from "vue"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user"
 
@@ -10,13 +10,13 @@ const accountBalance = ref(null)
 const categories = ref([])
 
 const props = defineProps({
-    trasaction: {
+    transaction: {
       type: Object,
       required: true
     },
-    operationType: {
-      type: String,
-      default: 'insert' 
+    inserting: {
+        type: Boolean,
+        default: false,
     },
     errors: {
       type: Object,
@@ -45,35 +45,36 @@ watch(
 const transactionTitle = computed( () => {
     if (!editingTransaction.value) {
         return ''
-      }
-      return props.operationType == 'insert' ? 'New Transaction' : 'Task #' + editingTransaction.value.phone_number
+    } 
+      return props.inserting == 'insert' ? 'New Transaction' : 'Task #' + editingTransaction.value.id
   })
 
 const save = async () => {
     const newTransaction = editingTransaction.value;
     try {
-        if (newTransaction.value.payment_type != "VCARD") {
-            transactionVerifier.value.type = newTransaction.value.payment_type
-            transactionVerifier.value.reference = newTransaction.value.payment_reference
-            transactionVerifier.value.value = parseFloat(newTransaction.value.value)
+        console.log(newTransaction)
+        if (newTransaction.payment_type != "VCARD") {
+            transactionVerifier.value.type = newTransaction.payment_type
+            transactionVerifier.value.reference = newTransaction.payment_reference
+            transactionVerifier.value.value = parseFloat(newTransaction.value)
             const response = await axios.post(
                 "https://dad-202324-payments-api.vercel.app/api/credit",
                 transactionVerifier.value,
             )
-            console.log(response.data)
+            
             toast.success(response.data.status + " - " + response.data.message)
         }
-
-        newTransaction.value.vcard = userStore.userPhoneNumber
-        emit("createTransaction", newTransaction.value)
+        newTransaction.vcard = userStore.userPhoneNumber
+        emit("save", newTransaction)
     } catch (err) {
         toast.error(err.response.data.status + " - " + err.response.data.message)
     }
 }
 
-  const cancel = () => {
-    emit('cancel', editingTransaction.value)
-  }
+const cancel = () => {
+emit('cancel', editingTransaction.value)
+}
+
 
 </script>
 
@@ -85,12 +86,12 @@ const save = async () => {
             <p>Account Balance: {{ accountBalance }}</p>
         </div>
         <hr />
-        <form @submit.prevent="createTransaction">
-            <div class="row">
+        <form @submit.prevent="save">
+            <div class="row" v-if="inserting">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
-                        <select v-model="newTransaction.payment_type" class="form-select" required>
+                        <select v-model="editingTransaction.payment_type" class="form-select" required>
                             <option value="VCARD">VCARD</option>
                             <option value="MBWAY">MBWAY</option>
                             <option value="IBAN">IBAN</option>
@@ -104,7 +105,7 @@ const save = async () => {
                     <div class="form-group">
                         <label for="payment_reference">Send money to...</label>
                         <input
-                            v-model="newTransaction.payment_reference"
+                            v-model="editingTransaction.payment_reference"
                             type="text"
                             id="transactionPaymentReferenec"
                             class="form-control"
@@ -115,11 +116,11 @@ const save = async () => {
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div v-if="inserting" class="col-md-6">
                     <div class="form-group">
                         <label for="value">Amount:</label>
                         <input
-                            v-model="newTransaction.value"
+                            v-model="editingTransaction.value"
                             type="text"
                             id="transactionValue"
                             class="form-control"
@@ -127,11 +128,11 @@ const save = async () => {
                         />
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div v-if="inserting" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Confirmation Code:</label>
                         <input
-                            v-model="newTransaction.confirmation_code"
+                            v-model="editingTransaction.confirmation_code"
                             type="text"
                             id="transaction_confirmation_code"
                             class="form-control"
@@ -142,7 +143,7 @@ const save = async () => {
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
-                        <select v-model="newTransaction.category" class="form-select" required>~
+                        <select v-model="editingTransaction.category" class="form-select" required>~
                             <option value="" selected>Sem Categoria</option>
                             <option v-for="category in categories" :key="category.id" :value="category.id"> {{ category.name }}</option>
                         </select>
@@ -152,7 +153,7 @@ const save = async () => {
                     <div class="form-group">
                         <label for="confirmation_code">Description:</label>
                         <input
-                            v-model="newTransaction.description"
+                            v-model="editingTransaction.description"
                             type="text"
                             id="transaction_description"
                             class="form-control"
@@ -170,7 +171,6 @@ const save = async () => {
                 <button type="button" class="btn btn-primary px-5" @click="save">
                     Save
                 </button>
-                <!-- <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button> -->
             </div>
         </form>
     </div>

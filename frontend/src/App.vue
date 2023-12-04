@@ -199,10 +199,9 @@ onMounted(async () => {
                         <li class="nav-item" v-show="userStore.user?.user_type == 'V'">
                             <router-link
                                 class="nav-link w-100 me-3"
-                                :class="{ active: $route.name === 'Transaction' }"
+                                :class="{ active: $route.name === 'NewTransaction' }"
                                 :to="{
-                                    name: 'Transaction',
-                                    params: { id: phoneNumber },
+                                    name: 'NewTransaction',
                                 }"
                             >
                                 <i class="bi bi-people"></i>

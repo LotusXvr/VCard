@@ -144,7 +144,7 @@ class TransactionController extends Controller
         }
 
         // ANY OTHER PAYMENT TYPE
-        elseif ($request->payment_type == 'IBAN'  || $request->payment_type == 'PAYPAL' || $request->payment_type == 'VISA' || $request->payment_type == 'MB') {
+        elseif ($request->payment_type == 'IBAN'  || $request->payment_type == 'PAYPAL' || $request->payment_type == 'VISA' || $request->payment_type == 'MB' || $request->payment_type == 'MBWAY') {
             try {
                 DB::transaction(function () use ($request) {
                     // Money sending transaction
@@ -181,7 +181,8 @@ class TransactionController extends Controller
         }
 
         else {
-            return response()->json(['message' => 'Tipo de pagamento inválido'], 401);}
+            return response()->json(['message' => 'Tipo de pagamento inválido'], 401);
+        }
     }
 
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import TransactionDetail from "./TransactionDetail.vue"
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification"
@@ -7,9 +7,11 @@ import axios from "axios"
 
 const toast = useToast()
 const router = useRouter();
-
+const errors = ref(null);
+const inserting = (id) => !id || (id < 0)
 const error = ref(null)
 let originalValueStr = ''
+
 const props = defineProps({
     id: {
     type: Number,
@@ -26,14 +28,28 @@ const newTransaction = () => {
         value: "",
     }
 }
-
 const transaction = ref(newTransaction());
-const errors = ref(null);
-const inserting = (id) => !id || (id < 0)
+
+const loadTransaction = async (id) => {
+  originalValueStr = ''
+  errors.value = null
+  if (inserting(id)) {
+    transaction.value = newTransaction()
+  } else {
+    try {
+      const response = await axios.get('transactions/' + id);
+      transaction.value = response.data.data;
+      originalValueStr = JSON.stringify(transaction.value);
+    } catch (error) {
+      console.error('Error loading transaction:', error);
+    }
+  }
+}
 
 
 const save = async (transactionToSave) => {
   errors.value = null
+  console.log(transactionToSave)
   if (inserting(props.id)) {
     try {
       const response = await axios.post('transactions', transactionToSave)
@@ -72,9 +88,16 @@ const cancel = () => {
   router.back()
 }
 
+watch(
+  () => props.id,
+  (newValue) => {
+      loadTransaction(newValue)
+    }, 
+  { immediate: true}
+)
+
 </script>
 
 <template>
-    <transaction-detail @createTransaction="createTransaction"></transaction-detail>
-    <transaction-detail :transaction="trasaction" :errors="errors" :inserting="inserting(id)" @save="save" @cancel="cancel"></transaction-detail>
+    <transaction-detail :transaction="transaction" :errors="errors" :inserting="inserting(id)" @save="save" @cancel="cancel"></transaction-detail>
 </template>

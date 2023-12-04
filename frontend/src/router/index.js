@@ -67,7 +67,7 @@ const router = createRouter({
       path: '/transaction/:id',
       name: 'Transaction',
       component: Transaction,
-      props: (route) => ({ phone_number: parseInt(route.params.id) })
+      props: (route) => ({ id: parseInt(route.params.id) })
     },
     {
       path: '/vcard/transactions',
