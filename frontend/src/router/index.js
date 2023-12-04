@@ -58,6 +58,12 @@ const router = createRouter({
       props: (route) => ({ phone_number: parseInt(route.params.phone_number) })
     },
     {
+      path: '/transactions/new',
+      name: 'NewTransaction',
+      component: Transaction,
+      props: { id: -1 }
+    },
+    {
       path: '/transaction/:id',
       name: 'Transaction',
       component: Transaction,

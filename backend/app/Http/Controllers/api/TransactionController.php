@@ -96,7 +96,7 @@ class TransactionController extends Controller
                     $transaction1->payment_reference = $request->payment_reference;
                     $transaction1->pair_vcard = $request->payment_reference;
                     $transaction1->category_id = $request->category;
-                    $transaction1->description = null;
+                    $transaction1->description = $request->description;
 
                     // Money reception transaction
                     $transaction2 = new Transaction();
@@ -112,8 +112,8 @@ class TransactionController extends Controller
                     $transaction2->payment_reference = $request->vcard;
                     $transaction2->pair_transaction = $transaction1->id;
                     $transaction2->pair_vcard = $request->vcard;
-                    $transaction2->category_id = null;
-                    $transaction2->description = null;
+                    $transaction2->category_id = $request->category;
+                    $transaction2->description = $request->description;
 
                     // Save transactions to get their id's
                     $transaction1->save();
@@ -160,8 +160,8 @@ class TransactionController extends Controller
                     $transaction->payment_type = $request->payment_type;
                     $transaction->payment_reference = $request->payment_reference;
                     $transaction->pair_vcard = null;
-                    $transaction->category_id = null;
-                    $transaction->description = null;
+                    $transaction->category_id = $request->category;
+                    $transaction->description = $request->description;
                     $transaction->pair_transaction = null;
 
                     $transaction->save();

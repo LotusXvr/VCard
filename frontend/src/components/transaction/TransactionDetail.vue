@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios"
-import { ref, onMounted } from "vue"
+import { ref, onMounted, watch, computed } from "vue"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user"
 
@@ -9,15 +9,22 @@ const userStore = useUserStore()
 const accountBalance = ref(null)
 const categories = ref([])
 
-const error = ref(null)
+const props = defineProps({
+    trasaction: {
+      type: Object,
+      required: true
+    },
+    operationType: {
+      type: String,
+      default: 'insert' 
+    },
+    errors: {
+      type: Object,
+      required: false,
+    },
+  })
 
-const newTransaction = ref({
-    payment_type: "",
-    vcard: "",
-    confirmation_code: "",
-    payment_reference: "",
-    value: "",
-})
+const editingTransaction = ref(props.transaction)
 
 const transactionVerifier = ref({
     type: "",
@@ -25,9 +32,25 @@ const transactionVerifier = ref({
     value: "",
 })
 
-const emit = defineEmits(["createTransaction"])
+const emit = defineEmits(['save', 'cancel'])
 
-const createTransaction = async () => {
+watch(
+    () => props.transaction,
+    (newTransaction) => {
+      editingTransaction.value = newTransaction
+    },
+    { immediate: true }
+)
+
+const transactionTitle = computed( () => {
+    if (!editingTransaction.value) {
+        return ''
+      }
+      return props.operationType == 'insert' ? 'New Transaction' : 'Task #' + editingTransaction.value.phone_number
+  })
+
+const save = async () => {
+    const newTransaction = editingTransaction.value;
     try {
         if (newTransaction.value.payment_type != "VCARD") {
             transactionVerifier.value.type = newTransaction.value.payment_type
@@ -48,32 +71,14 @@ const createTransaction = async () => {
     }
 }
 
-const fetchAccountBalance = () => {
-    axios.get("vcards/" + userStore.userPhoneNumber).then((response) => {
-        accountBalance.value = response.data.data.balance
-    })
-}
-function clearCategories() {
-        categories.value = []
-}
+  const cancel = () => {
+    emit('cancel', editingTransaction.value)
+  }
 
-async function loadCategory() {
-        try {
-            const response = await axios.get('vcard/'+ userStore.userPhoneNumber +'/category')
-            categories.value = response.data
-            return categories.value
-        } catch (error) {
-            clearCategories()
-            throw error
-        }
-}
-onMounted(async () => {
-    await loadCategory()
-    fetchAccountBalance()
-})
 </script>
 
 <template>
+    <h3 class="mt-5 mb-3">{{ transactionTitle }}</h3>
     <div>
         <h3 class="mt-5 mb-3">Transaction</h3>
         <div v-if="accountBalance !== null">
@@ -143,11 +148,27 @@ onMounted(async () => {
                         </select>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="confirmation_code">Description:</label>
+                        <input
+                            v-model="newTransaction.description"
+                            type="text"
+                            id="transaction_description"
+                            class="form-control"
+                        />
+                    </div>
+                </div>
             </div>
 
             <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px">
-                <button type="button" class="btn btn-primary px-5" @click="createTransaction">
-                    Send money
+                <button
+                    type="button"
+                    class="btn btn-light px-5"
+                    @click="cancel"
+                >Cancel</button>
+                <button type="button" class="btn btn-primary px-5" @click="save">
+                    Save
                 </button>
                 <!-- <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button> -->
             </div>

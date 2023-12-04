@@ -88,6 +88,15 @@ const getCategoryColorForTransaction = (transaction) => {
   return getCategoryColor(categoryId);
 };
 
+const truncateDescription = (description) => {
+    const maxLength = 27;
+    if (description.length <= maxLength) {
+      return description;
+    } else {
+      return description.substring(0, maxLength) + "..."
+    }
+};
+
 onMounted(async () => {
     transactionsRef.value = props.transactions
     await fetchCategoryNames();
@@ -107,6 +116,7 @@ onMounted(async () => {
                     <th style="width: 100px">Value</th>
                     <th style="width: 100px">Balance</th>
                     <th style="width: 100px">Reference</th>
+                    <th style="width: 100px">Description</th>
                     <th style="width: 100px">Category</th>
                 </tr>
             </thead>
@@ -120,6 +130,7 @@ onMounted(async () => {
                     </td>
                     <td>{{ transaction.new_balance }}</td>
                     <td>{{ transaction.payment_reference }}</td>
+                    <td>{{ transaction.description ? truncateDescription(transaction.description) : '' }}</td>
                     <td :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }" class="d-flex justify-content-between align-items-center">
                         <div>
                             {{ getCategoryNameForTransaction(transaction) }}

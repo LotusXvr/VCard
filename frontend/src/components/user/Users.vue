@@ -70,7 +70,6 @@ onMounted(() => {
   </div>
   <div v-if="users.length > 0">
     <UserTable :users="users" :showUserId="true" @edit="editUser" @delete="deleteUser"></UserTable>
-
     </div>
     <div v-else>Loading Users...</div>
 </template>
