@@ -268,31 +268,92 @@ const getTransactionsByPaymentMethodGraph = () => {
             const paymentMethods = response.data.paymentMethods
             const transactionCounts = response.data.transactionCounts
 
-            // Vcard has a duplicated version on the transactions list for every transaction
-            // so its essencial we divide by 2 to get the accurate amount of vcard transactions
-            transactionCounts[1] = transactionCounts[1] / 2
+            // Combine payment methods and counts into an array of objects
+            const data = paymentMethods.map((method, index) => ({
+                method,
+                count: transactionCounts[index],
+            }))
+
+            // Find the index of VCard dynamically
+            const vcardIndex = data.findIndex((item) => item.method === "VCARD")
+
+            // If VCard is found, divide its transaction count by 2
+            if (vcardIndex !== -1) {
+                data[vcardIndex].count /= 2
+            }
+
+            // Sort the array based on transaction count in descending order
+            data.sort((a, b) => b.count - a.count)
+
+            // Extract sorted payment methods and transaction counts
+            const sortedPaymentMethods = data.map((item) => item.method)
+            const sortedTransactionCounts = data.map((item) => item.count)
 
             transactionsByPaymentMethodChart.value = new Chart(
                 transactionsByPaymentMethodChartEl.value.getContext("2d"),
                 {
                     type: "pie",
                     data: {
-                        labels: paymentMethods,
+                        labels: sortedPaymentMethods,
                         datasets: [
                             {
-                                data: transactionCounts,
+                                data: sortedTransactionCounts,
                                 backgroundColor: [
                                     "rgba(255, 99, 132, 0.5)",
                                     "rgba(54, 162, 235, 0.5)",
                                     "rgba(255, 206, 86, 0.5)",
-                                    // Add more colors if needed
+                                    "rgba(75, 192, 192, 0.5)",
+                                    "rgba(153, 102, 255, 0.5)",
+                                    "rgba(255, 159, 64, 0.5)",
                                 ],
                                 borderColor: [
                                     "rgba(255, 99, 132, 1)",
                                     "rgba(54, 162, 235, 1)",
                                     "rgba(255, 206, 86, 1)",
-                                    // Add more colors if needed
+                                    "rgba(75, 192, 192, 1)",
+                                    "rgba(153, 102, 255, 1)",
+                                    "rgba(255, 159, 64, 1)",
                                 ],
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
+                },
+            )
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
+const averageTransactionAmountChartEl = ref(null)
+const averageTransactionAmountChart = shallowRef(null)
+const averageTransactionAmountByMonth = ref([])
+const getAverageTransactionAmountGraph = () => {
+    axios
+        .get("statistics/transactions/average-amount-by-month")
+        .then((response) => {
+            averageTransactionAmountByMonth.value = response.data
+
+            const months = averageTransactionAmountByMonth.value.map(
+                (entry) => `${monthNames[entry.month - 1]} ${entry.year}`,
+            )
+            const averageAmounts = averageTransactionAmountByMonth.value.map(
+                (entry) => entry.average_amount,
+            )
+
+            averageTransactionAmountChart.value = new Chart(
+                averageTransactionAmountChartEl.value.getContext("2d"),
+                {
+                    type: "line",
+                    data: {
+                        labels: months,
+                        datasets: [
+                            {
+                                label: "Average Transaction Amount",
+                                data: averageAmounts,
+                                backgroundColor: "rgba(0, 128, 0, 0.2)", 
+                                borderColor: "rgba(0, 128, 0, 1)",
                                 borderWidth: 1,
                             },
                         ],
@@ -316,6 +377,7 @@ onMounted(() => {
     getTransactionsQuantityByMonthGraph()
     getVCardBalanceDistributionGraph()
     getTransactionsByPaymentMethodGraph()
+    getAverageTransactionAmountGraph()
 })
 </script>
 
@@ -348,21 +410,21 @@ onMounted(() => {
         <div class="container mt-4">
             <div class="row">
                 <div class="col-md-6">
-                    <h4>Transactions Quantity Chart</h4>
+                    <h4>Transactions Quantity</h4>
                     <canvas ref="transactionsQuantityChartEl"></canvas>
                 </div>
                 <div class="col-md-6">
-                    <h4>VCard Balance Distribution Chart</h4>
-                    <canvas ref="vcardBalanceDistributionChartEl"></canvas>
+                    <h4>Average Transaction Amount</h4>
+                    <canvas ref="averageTransactionAmountChartEl"></canvas>
                 </div>
             </div>
             <div class="row mt-4">
                 <div class="col-md-6">
-                    <h4>VCard Balance Distribution Chart</h4>
+                    <h4>VCard Balance Distribution</h4>
                     <canvas ref="vcardBalanceDistributionChartEl"></canvas>
                 </div>
                 <div class="col-md-6">
-                    <h4>Transactions By Payment Method Chart</h4>
+                    <h4>Transactions By Payment Method</h4>
                     <canvas ref="transactionsByPaymentMethodChartEl"></canvas>
                 </div>
             </div>
