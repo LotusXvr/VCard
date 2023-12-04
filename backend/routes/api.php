@@ -54,6 +54,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('statistics/transactions/quantity-by-month', [TransactionController::class, 'getTransactionsCountByMonth']);
     Route::get('statistics/vcards/balance-distribution', [VCardController::class, 'getVCardBalanceDistribution']);
     Route::get('statistics/transactions/by-payment-method', [TransactionController::class, 'getTransactionsByPaymentMethod']);
+    Route::get("statistics/transactions/average-amount-by-month", [TransactionController::class, 'getAverageTransactionAmountByMonth']);
     /*
      * Globais
      */
