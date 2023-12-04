@@ -47,6 +47,52 @@ const transactionsByYearMonth = computed(() => {
     return groupedTransactions
 })
 
+const lastMonthTransactions = computed(() => {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Calculate the first day of the last month
+    const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+
+    // Extract the year and month of the last month
+    const lastMonthYear = lastMonthDate.getFullYear();
+    const lastMonthMonth = lastMonthDate.getMonth() + 1; // Months are zero-indexed
+
+    // Filter transactions based on whether they belong to the last month
+    return transactionsRef.value.filter((transaction) => {
+        const transactionDate = new Date(transaction.datetime);
+        return (
+            transactionDate.getFullYear() === lastMonthYear &&
+            transactionDate.getMonth() + 1 === lastMonthMonth
+        );
+    });
+});
+
+const lastMonthDebitTransactions = computed(() => {
+    return lastMonthTransactions.value.filter((transaction) => {
+        return transaction.type === "D";
+    });
+});
+
+const lastMonthCreditTransactions = computed(() => {
+    return lastMonthTransactions.value.filter((transaction) => {
+        return transaction.type === "C";
+    });
+});
+
+const sumDebitValues = computed(() => {
+    return lastMonthDebitTransactions.value.reduce((sum, transaction) => {
+        return sum + parseFloat(transaction.value);
+    }, 0);
+});
+
+const sumCreditValues = computed(() => {
+    return lastMonthCreditTransactions.value.reduce((sum, transaction) => {
+        return sum + parseFloat(transaction.value);
+    }, 0);
+});
+
+
 const fetchCategoryNames = async () => {
     try {
         const response = await axios.get("category")
@@ -108,6 +154,8 @@ onMounted(async () => {
 <template>
     <div>
         <h1>Transactions</h1>
+        <p> Credits: {{ lastMonthCreditTransactions }} {{ sumCreditValues }}</p>
+        <p> Debits: {{ lastMonthDebitTransactions }} {{ sumDebitValues }}</p>
         <hr />
         <table class="table table-striped">
             <thead>

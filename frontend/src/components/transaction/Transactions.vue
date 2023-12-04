@@ -28,6 +28,7 @@ const loadTransactions = () => {
             console.log(error)
         })
 }
+
 const loadCategories = () => {
     axios
         .get("vcard/" + userStore.userPhoneNumber + "/category")
