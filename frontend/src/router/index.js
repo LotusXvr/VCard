@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router"
+import { useUserStore } from "../stores/user.js"
 import HomeView from "../views/HomeView.vue"
 import VCards from "../components/vcard/VCards.vue"
 import Dashboard from "../components/Dashboard.vue"
@@ -9,6 +10,8 @@ import Login from "../components/auth/Login.vue"
 import Users from "../components/user/Users.vue"
 import User from "../components/user/User.vue"
 import ChangePassword from "../components/auth/ChangePassword.vue"
+
+let handlingFirstRoute = true
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -93,5 +96,47 @@ const router = createRouter({
     }
   ]
 })
+
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore();
+
+  if (handlingFirstRoute) {
+    handlingFirstRoute = false;
+    await userStore.restoreToken();
+  }
+
+  // Rotas públicas que podem ser acessadas por usuários não autenticados
+  const publicRoutes = ['Login', 'Home', 'NewVCard'];
+
+  if (publicRoutes.includes(to.name)) {
+    next();
+    return;
+  }
+
+  // Redirecionar para a página de login se o usuário não estiver autenticado
+  if (!userStore.user) {
+    next({ name: 'Login' });
+    return;
+  }
+
+  if (to.name === 'Transactions' && (userStore.userType !== 'V' || userStore.userId === parseInt(to.params.id))) {
+    next();
+    return;
+  }
+
+  // Restrições específicas para tipos de usuários e páginas
+  if (to.name === 'Dashboard' && userStore.userType !== 'A') {
+    next({ name: 'Home' });
+    return;
+  }
+
+  if (to.name === 'User' && (userStore.userType === 'A' || userStore.userId === parseInt(to.params.id))) {
+    next();
+    return;
+  }
+
+  // Se nenhuma condição for atendida, permitir o acesso à rota
+  next();
+});
 
 export default router

@@ -4,7 +4,7 @@ import { useToast } from "vue-toastification";
 import { useUserStore } from "../../stores/user.js";
 import { ref, computed, watch } from "vue";
 import UserDetail from "./UserDetail.vue"; // Assuming you have a UserDetail component
-import { useRouter } from "vue-router";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 
 const router = useRouter();
 const toast = useToast();
@@ -98,8 +98,31 @@ watch(
   },
   { immediate: true }
 )
+let nextCallBack = null
+const leaveConfirmed = () => {
+  if (nextCallBack) {
+    nextCallBack()
+  }
+}
+
+onBeforeRouteLeave((to, from, next) => {
+  nextCallBack = null
+  let newValueStr = JSON.stringify(user.value)
+  if (originalValueStr != newValueStr) {
+    // Some value has changed - only leave after confirmation
+    nextCallBack = next
+    confirmationLeaveDialog.value.show()
+  } else {
+    // No value has changed, so we can leave the component without confirming
+    next()
+  }
+})
 </script>
 
 <template>
+  <confirmation-dialog ref="confirmationLeaveDialog" confirmationBtn="Discard changes and leave"
+    msg="Do you really want to leave? You have unsaved changes!" @confirmed="leaveConfirmed">
+  </confirmation-dialog>
+
   <UserDetail :user="user" :errors="errors" :inserting="inserting(id)" @save="save" @cancel="cancel"></UserDetail>
 </template>
