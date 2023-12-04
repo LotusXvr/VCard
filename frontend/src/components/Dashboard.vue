@@ -169,11 +169,8 @@ const getSumTransactions = () => {
         })
 }
 
-const salesChartEl = ref(null)
-const salesChart = shallowRef(null)
-const salesQuantityChartEl = ref(null)
-const salesQuantityChart = shallowRef(null)
-const sumSalesByMonth = ref(null)
+const transactionsQuantityChartEl = ref(null)
+const transactionsQuantityChart = shallowRef(null)
 const monthNames = [
     "January",
     "February",
@@ -188,62 +185,120 @@ const monthNames = [
     "November",
     "December",
 ]
-const salesQuantityByMonth = ref(0)
-const getSalesQuantityByMonth = () => {
+const transactionsQuantityByMonth = ref(0)
+const getTransactionsQuantityByMonthGraph = () => {
     axios
         .get("statistics/transactions/quantity-by-month")
         .then((response) => {
             console.log(response.data.transactionsCountByMonth)
-            salesQuantityByMonth.value = response.data.transactionsCountByMonth
+            transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
 
-            const months = salesQuantityByMonth.value.map((entry) => monthNames[entry.month - 1])
-            const salesQuantity = salesQuantityByMonth.value.map((entry) => entry.count)
+            const months = transactionsQuantityByMonth.value.map(
+                (entry) => monthNames[entry.month - 1],
+            )
+            const transactionsQuantity = transactionsQuantityByMonth.value.map(
+                (entry) => entry.count,
+            )
 
-            salesQuantityChart.value = new Chart(salesQuantityChartEl.value.getContext("2d"), {
-                type: "line",
-                data: {
-                    labels: months,
-                    datasets: [
-                        {
-                            label: "Sales by month (quantity)",
-                            data: salesQuantity,
-                            backgroundColor: "rgba(255, 99, 132, 0.2)",
-                            borderColor: "rgba(255, 99, 132, 1)",
-                            borderWidth: 1,
-                        },
-                    ],
+            transactionsQuantityChart.value = new Chart(
+                transactionsQuantityChartEl.value.getContext("2d"),
+                {
+                    type: "line",
+                    data: {
+                        labels: months,
+                        datasets: [
+                            {
+                                label: "Number of monthly transactions",
+                                data: transactionsQuantity,
+                                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                                borderColor: "rgba(255, 99, 132, 1)",
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
                 },
-            })
+            )
         })
         .catch((error) => {
             console.log(error)
         })
 }
-const getSalesByMonthEuros = () => {
+
+const vcardBalanceDistributionChartEl = ref(null)
+const vcardBalanceDistributionChart = shallowRef(null)
+
+const getVCardBalanceDistributionGraph = () => {
     axios
-        .get("statistics/transactions/sum-by-month")
+        .get("statistics/vcards/balance-distribution")
         .then((response) => {
-            console.log("sum by month" + response.data.transactionsSumByMonth)
-            sumSalesByMonth.value = response.data.transactionsSumByMonth
+            const balanceRanges = response.data.balanceRanges
+            const vcardCounts = response.data.vcardCounts
 
-            const months = sumSalesByMonth.value.map((entry) => monthNames[entry.month - 1])
-            const sums = sumSalesByMonth.value.map((entry) => parseFloat(entry.sum))
-
-            salesChart.value = new Chart(salesChartEl.value.getContext("2d"), {
-                type: "line",
-                data: {
-                    labels: months,
-                    datasets: [
-                        {
-                            label: "Sales by month (€)",
-                            data: sums,
-                            backgroundColor: "rgba(255, 99, 132, 0.2)",
-                            borderColor: "rgba(255, 99, 132, 1)",
-                            borderWidth: 1,
-                        },
-                    ],
+            vcardBalanceDistributionChart.value = new Chart(
+                vcardBalanceDistributionChartEl.value.getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: balanceRanges,
+                        datasets: [
+                            {
+                                label: "VCard Balance Distribution",
+                                data: vcardCounts,
+                                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                                borderColor: "rgba(75, 192, 192, 1)",
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
                 },
-            })
+            )
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
+const transactionsByPaymentMethodChartEl = ref(null)
+const transactionsByPaymentMethodChart = shallowRef(null)
+
+const getTransactionsByPaymentMethodGraph = () => {
+    axios
+        .get("statistics/transactions/by-payment-method")
+        .then((response) => {
+            const paymentMethods = response.data.paymentMethods
+            const transactionCounts = response.data.transactionCounts
+
+            // Vcard has a duplicated version on the transactions list for every transaction
+            // so its essencial we divide by 2 to get the accurate amount of vcard transactions
+            transactionCounts[1] = transactionCounts[1] / 2
+
+            transactionsByPaymentMethodChart.value = new Chart(
+                transactionsByPaymentMethodChartEl.value.getContext("2d"),
+                {
+                    type: "pie",
+                    data: {
+                        labels: paymentMethods,
+                        datasets: [
+                            {
+                                data: transactionCounts,
+                                backgroundColor: [
+                                    "rgba(255, 99, 132, 0.5)",
+                                    "rgba(54, 162, 235, 0.5)",
+                                    "rgba(255, 206, 86, 0.5)",
+                                    // Add more colors if needed
+                                ],
+                                borderColor: [
+                                    "rgba(255, 99, 132, 1)",
+                                    "rgba(54, 162, 235, 1)",
+                                    "rgba(255, 206, 86, 1)",
+                                    // Add more colors if needed
+                                ],
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
+                },
+            )
         })
         .catch((error) => {
             console.log(error)
@@ -258,8 +313,9 @@ onMounted(() => {
     getTotalActiveVCardBalance()
     getCountTransactions()
     getSumTransactions()
-    getSalesQuantityByMonth()
-    getSalesByMonthEuros()
+    getTransactionsQuantityByMonthGraph()
+    getVCardBalanceDistributionGraph()
+    getTransactionsByPaymentMethodGraph()
 })
 </script>
 
@@ -289,8 +345,28 @@ onMounted(() => {
 
         <h1 class="text-center mb-4">Statistics</h1>
 
-        <canvas ref="salesChartEl"></canvas>
-        <canvas ref="salesQuantityChartEl"></canvas>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Transactions Quantity Chart</h4>
+                    <canvas ref="transactionsQuantityChartEl"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h4>VCard Balance Distribution Chart</h4>
+                    <canvas ref="vcardBalanceDistributionChartEl"></canvas>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h4>VCard Balance Distribution Chart</h4>
+                    <canvas ref="vcardBalanceDistributionChartEl"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h4>Transactions By Payment Method Chart</h4>
+                    <canvas ref="transactionsByPaymentMethodChartEl"></canvas>
+                </div>
+            </div>
+        </div>
 
         <div class="container mt-5">
             <div class="row" style="margin-bottom: 20px">

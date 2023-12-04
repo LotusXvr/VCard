@@ -266,4 +266,20 @@ class TransactionController extends Controller
 
         return response()->json(['transactionsCountByMonth' => $transactionsCountByMonth]);
     }
+
+    public function getTransactionsByPaymentMethod()
+    {
+        // Adjust this query based on your Transaction model and logic
+        $transactionByPaymentMethod = Transaction::selectRaw('payment_type, COUNT(*) as transaction_count')
+            ->groupBy('payment_type')
+            ->get();
+
+        $paymentMethods = $transactionByPaymentMethod->pluck('payment_type')->toArray();
+        $transactionCounts = $transactionByPaymentMethod->pluck('transaction_count')->toArray();
+
+        return response()->json([
+            'paymentMethods' => $paymentMethods,
+            'transactionCounts' => $transactionCounts,
+        ]);
+    }
 }

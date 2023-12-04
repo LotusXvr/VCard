@@ -178,4 +178,20 @@ class VCardController extends Controller
         return Category::where('vcard', $vcard->phone_number)->get();
     }
 
+    public function getVCardBalanceDistribution()
+    {
+        // Adjust this query based on your VCard model and logic
+        $vcardDistribution = VCard::selectRaw('FLOOR(balance / 100) * 100 as balance_range, COUNT(*) as vcard_count')
+            ->groupBy('balance_range')
+            ->orderBy('balance_range')
+            ->get();
+
+        $balanceRanges = $vcardDistribution->pluck('balance_range')->toArray();
+        $vcardCounts = $vcardDistribution->pluck('vcard_count')->toArray();
+
+        return response()->json([
+            'balanceRanges' => $balanceRanges,
+            'vcardCounts' => $vcardCounts,
+        ]);
+    }
 }
