@@ -66,29 +66,10 @@ const save = async () => {
         toast.error(validateValue())
         return
     }
+
     const newTransaction = editingTransaction.value
-    try {
-        // if(props.inserting){
-        //     console.log(newTransaction)
-        //     if (newTransaction.payment_type != "VCARD") {
-
-        //         // // laravel
-        //         // transactionVerifier.value.type = newTransaction.payment_type
-        //         // transactionVerifier.value.reference = newTransaction.payment_reference
-        //         // transactionVerifier.value.value = parseFloat(newTransaction.value)
-        //         // const response = await axios.post(
-        //         //     "https://dad-202324-payments-api.vercel.app/api/credit",
-        //         //     transactionVerifier.value,
-        //         // )
-
-        //         toast.success(response.data.status + " - " + response.data.message)
-        //     }
-        // }
-        newTransaction.vcard = userStore.userPhoneNumber
-        emit("save", newTransaction)
-    } catch (err) {
-        toast.error(err.response.data.status + " - " + err.response.data.message)
-    }
+    newTransaction.vcard = userStore.userPhoneNumber
+    emit("save", newTransaction)
 }
 
 const validateReference = () => {
@@ -150,16 +131,16 @@ const cancel = () => {
     emit("cancel", editingTransaction.value)
 }
 
-const loadCategories= async () => {
-  try {
-    await categoryStore.loadCategory()
-  } catch (error) {
-    console.log(error)
-  }
+const loadCategories = async () => {
+    try {
+        await categoryStore.loadCategory()
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 onMounted(() => {
-    loadCategories() 
+    loadCategories()
 })
 </script>
 
@@ -231,7 +212,11 @@ onMounted(() => {
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
-                        <select v-model="editingTransaction.category_id" class="form-select" required>
+                        <select
+                            v-model="editingTransaction.category_id"
+                            class="form-select"
+                            required
+                        >
                             <option :value="null">-- Sem Categoria --</option>
                             <option
                                 v-for="category in categoryStore.categories"
