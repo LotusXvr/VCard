@@ -49,7 +49,6 @@ const transactionsByYearMonth = computed(() => {
 
         groupedTransactions[key].push(transaction)
     })
-    console.log(groupedTransactions)
     return groupedTransactions
 })
 
@@ -141,22 +140,13 @@ const loadChart = () => {
 }
 const categoriesValue = categoryStore.categories
 
-const categoryName = ref(null)
 const getCategoryNameById = (categoryId) => {
-    console.log("read")
     if (categoryId != null) {
-        categoryName.value = categoriesValue.filter((category) => category.id == categoryId)[0].name
-        return categoryName.value
+        return categoriesValue.filter((category) => category.id == categoryId)[0].name
     } else {
         return "Sem Categoria"
     }
 }
-
-const getCategoryNames = computed(() => {
-    return transactionsRef.value.map((transaction) => {
-        return getCategoryNameById(transaction.category_id);
-    });
-});
 
 const categoryColorMap = {}
 
@@ -255,7 +245,7 @@ onMounted(async () => {
                         class="d-flex justify-content-between align-items-center"
                     >
                         <div>
-                            {{ getCategoryNames[key] }}
+                            {{ getCategoryNameById(transaction.category_id) }}
                         </div>
                         <button class="btn btn-xs btn-light" @click="editClick(transaction)">
                             <i class="bi bi-xs bi-pencil"></i>
