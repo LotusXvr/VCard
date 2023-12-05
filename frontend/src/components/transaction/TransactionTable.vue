@@ -142,8 +142,9 @@ const loadChart = () => {
 const categoriesValue = categoryStore.categories;
 
 const getCategoryNameById = (categoryId) => {
-    if (categoriesValue) {
-        return categoriesValue.name[categoryId];
+  console.log(categoryId)
+    if (categoryId != null) {
+        return categoriesValue.filter((category) => category.id == categoryId)[0].name;
     } else {
         return "Sem Categoria";
     }
