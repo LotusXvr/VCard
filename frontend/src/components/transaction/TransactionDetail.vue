@@ -3,11 +3,12 @@ import axios from "axios"
 import { ref, watch, computed, onMounted } from "vue"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user"
+import { useCategoryStore } from "../../stores/category"
 
 const toast = useToast()
 const userStore = useUserStore()
 const accountBalance = ref(null)
-const categoriesRef = ref([])
+const categoryStore = useCategoryStore()
 
 const props = defineProps({
     transaction: {
@@ -24,7 +25,7 @@ const props = defineProps({
     },
     categories: {
         type: Array,
-        required: true,
+        required: false,
     },
 })
 
@@ -56,17 +57,19 @@ const transactionTitle = computed(() => {
 const save = async () => {
     const newTransaction = editingTransaction.value
     try {
-        console.log(newTransaction)
-        if (newTransaction.payment_type != "VCARD") {
-            transactionVerifier.value.type = newTransaction.payment_type
-            transactionVerifier.value.reference = newTransaction.payment_reference
-            transactionVerifier.value.value = parseFloat(newTransaction.value)
-            const response = await axios.post(
-                "https://dad-202324-payments-api.vercel.app/api/credit",
-                transactionVerifier.value,
-            )
+        if(props.inserting){
+            console.log(newTransaction)
+            if (newTransaction.payment_type != "VCARD") {
+                transactionVerifier.value.type = newTransaction.payment_type
+                transactionVerifier.value.reference = newTransaction.payment_reference
+                transactionVerifier.value.value = parseFloat(newTransaction.value)
+                const response = await axios.post(
+                    "https://dad-202324-payments-api.vercel.app/api/credit",
+                    transactionVerifier.value,
+                )
 
-            toast.success(response.data.status + " - " + response.data.message)
+                toast.success(response.data.status + " - " + response.data.message)
+            }
         }
         newTransaction.vcard = userStore.userPhoneNumber
         emit("save", newTransaction)
@@ -79,8 +82,16 @@ const cancel = () => {
     emit("cancel", editingTransaction.value)
 }
 
+const loadCategories= async () => {
+  try {
+    await categoryStore.loadCategory()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 onMounted(() => {
-    categoriesRef.value = props.categories
+    loadCategories() 
 })
 </script>
 
@@ -153,11 +164,10 @@ onMounted(() => {
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
-                        <select v-model="editingTransaction.category" class="form-select" required>
-                            ~
-                            <option value="" selected>{{ editingTransaction.category }}</option>
+                        <select v-model="editingTransaction.category_id" class="form-select" required>
+                            <option :value="null">-- Sem Categoria --</option>
                             <option
-                                v-for="category in categoriesRef.value"
+                                v-for="category in categoryStore.categories"
                                 :key="category.id"
                                 :value="category.id"
                             >

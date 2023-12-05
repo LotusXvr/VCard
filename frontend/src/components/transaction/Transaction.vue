@@ -4,6 +4,8 @@ import TransactionDetail from "./TransactionDetail.vue"
 import { useRouter } from "vue-router"
 import { useToast } from "vue-toastification"
 import axios from "axios"
+import { useCategoryStore } from "../../stores/category"
+const categoryStore = useCategoryStore()
 
 const toast = useToast()
 const router = useRouter()
@@ -17,10 +19,6 @@ const props = defineProps({
     id: {
         type: Number,
         default: null,
-    },
-    categories: {
-        type: Array,
-        required: true,
     },
 })
 
@@ -53,7 +51,6 @@ const loadTransaction = async (id) => {
 
 const save = async (transactionToSave) => {
     errors.value = null
-    console.log(transactionToSave)
     if (inserting(props.id)) {
         try {
             const response = await axios.post("transactions", transactionToSave)
@@ -69,8 +66,8 @@ const save = async (transactionToSave) => {
         }
     } else {
         try {
-            const response = await axios.put("transactions/" + props.id, transactionToSave)
-            toast.success(response.data.message)
+            await axios.put("transactions/" + props.id, transactionToSave)
+            toast.success("Transaction # "+transactionToSave.id+" updated successfully")
             router.back()
         } catch (error) {
             errors.value = error.response.data.message
@@ -97,8 +94,18 @@ watch(
     },
     { immediate: true },
 )
+
+const loadCategories= async () => {
+  try {
+    await categoryStore.loadCategory()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 onMounted(() => {
-    categoriesRef.value = props.categories
+    loadCategories()
+    categoriesRef.value = categoryStore.categories 
 })
 </script>
 
@@ -107,7 +114,6 @@ onMounted(() => {
         :transaction="transaction"
         :errors="errors"
         :inserting="inserting(id)"
-        :categories="categoriesRef"
         @save="save"
         @cancel="cancel"
     ></transaction-detail>

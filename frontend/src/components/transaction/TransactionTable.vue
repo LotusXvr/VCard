@@ -1,25 +1,29 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
-import axios from "axios"
+import { useCategoryStore } from "../../stores/category"
+
+const categoryStore = useCategoryStore()
 
 const props = defineProps({
     transactions: {
         type: Array,
         default: () => [],
     },
-    categories: {
-        type: Array,
-        default: () => [],
-    },
 })
 const emit = defineEmits(["edit"])
 
-const editClick = (transaction, categories) => {
-    emit("edit", transaction, categories)
+const editClick = (transaction) => {
+    emit("edit", transaction)
+}
+const loadCategories= async () => {
+  try {
+    await categoryStore.loadCategory()
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const transactionsRef = ref([])
-const categoriesRef = ref([])
 const wasSent = (transaction) => {
     return transaction.type == "D" ? true : false
 }
@@ -77,24 +81,16 @@ const sumValues = (transactions, type) => {
 const sumDebitValues = computed(() => sumValues(lastMonthTransactions.value, "D"));
 const sumCreditValues = computed(() => sumValues(lastMonthTransactions.value, "C"));
 
-
-
-
-const fetchCategoryNames = async () => {
-    try {
-        const response = await axios.get("category")
-        const categories = response.data
-        for (const category of categories) {
-            categoriesRef.value[category.id] = category.name
-        }
-    } catch (error) {
-        console.error("Error fetching category names:", error)
-    }
-}
-
 const getCategoryNameById = (categoryId) => {
-    return categoriesRef.value[categoryId] || "Undefined"
-}
+    const categoriesValue = categoryStore.categories;
+    console.log("categoriesValue", categoriesValue)
+
+    if (categoriesValue && categoriesValue.name && categoriesValue.name[categoryId]) {
+        return categoriesValue.name[categoryId];
+    } else {
+        return "Sem Categoria";
+    }
+};
 
 const getCategoryNameForTransaction = (transaction) => {
     const categoryId = transaction.category_id
@@ -133,8 +129,7 @@ const truncateDescription = (description) => {
 
 onMounted(async () => {
     transactionsRef.value = props.transactions
-    categoriesRef.value = props.categories
-    await fetchCategoryNames()
+    loadCategories()
 })
 </script>
 
@@ -182,7 +177,7 @@ onMounted(async () => {
                         </div>
                         <button
                             class="btn btn-xs btn-light"
-                            @click="editClick(transaction, categories)"
+                            @click="editClick(transaction)"
                         >
                             <i class="bi bi-xs bi-pencil"></i>
                         </button>
