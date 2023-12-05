@@ -99,7 +99,7 @@ const dates = computed(() => {
             dateindex.value += 1
             return "(" + dateindex.value + ") " + formatDateTime(transaction.datetime).date
         })
-        .reverse()
+        .reverse() // Reverse the array so that the oldest transaction is first
 
     return dates
 })
@@ -109,7 +109,7 @@ const balances = computed(() => {
         .map((transaction) => {
             return transaction.new_balance
         })
-        .reverse()
+        .reverse() // Reverse the array so that the oldest transaction is first
 
     return balances
 })

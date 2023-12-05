@@ -59,8 +59,8 @@ const save = async () => {
         return
     }
 
-    if (!validateValue()) {
-        toast.error("Invalid transaction value")
+    if (validateValue() != true) {
+        toast.error(validateValue())
         return
     }
     const newTransaction = editingTransaction.value
@@ -105,7 +105,42 @@ const validateReference = () => {
 
 const validateValue = () => {
     const value = parseFloat(editingTransaction.value.value)
-    return !isNaN(value) && value > 0 && value < 100000
+
+    if (isNaN(value) || value <= 0 || value >= 100000) {
+        return "Invalid value"
+    }
+
+    // Check the maximum value based on payment type
+    const paymentType = editingTransaction.value.payment_type
+    switch (paymentType) {
+        case "MBWAY":
+            if (value > 50) return "MBWAY transactions cannot exceed 50€"
+            break
+        case "PAYPAL":
+            if (value > 100) {
+                return "PAYPAL transactions cannot exceed 100€"
+            }
+            break
+        case "IBAN":
+            if (value > 1000) {
+                return "IBAN transactions cannot exceed 1000€"
+            }
+            break
+        case "MB":
+            if (value > 500) {
+                return "MB transactions cannot exceed 500€"
+            }
+            break
+        case "VISA":
+            if (value > 200) {
+                return "VISA transactions cannot exceed 200€"
+            }
+            break
+        default:
+            return "Invalid payment type"
+    }
+
+    return true // Indicates a valid transaction value
 }
 
 const cancel = () => {
