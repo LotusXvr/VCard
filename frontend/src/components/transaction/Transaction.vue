@@ -28,6 +28,7 @@ const newTransaction = () => {
         confirmation_code: "",
         payment_reference: "",
         value: "",
+        type: "",
     }
 }
 const transaction = ref(newTransaction())

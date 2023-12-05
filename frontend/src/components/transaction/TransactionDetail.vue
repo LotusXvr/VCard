@@ -45,9 +45,7 @@ const transactionTitle = computed(() => {
     if (!editingTransaction.value) {
         return ""
     }
-    console.log(editingTransaction.value)
-    console.log(props.transaction)
-    switch (props.inserting){
+    switch (props.inserting) {
         case "debit":
             return "New Transaction"
         case "credit":
@@ -70,6 +68,15 @@ const save = async () => {
 
     const newTransaction = editingTransaction.value
     newTransaction.vcard = userStore.userPhoneNumber
+
+    if (props.inserting === "debit") {
+        newTransaction.type = 'D'
+    }
+    if (props.inserting === "credit") {
+        newTransaction.type = 'C'
+    }
+
+    console.log(newTransaction)
     emit("save", newTransaction)
 }
 
@@ -153,7 +160,7 @@ onMounted(() => {
         </div>
         <hr />
         <form @submit.prevent="save">
-            <div class="row" v-if="inserting === 'debit'">
+            <div class="row" v-if="inserting === 'debit' || inserting === 'credit'">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
@@ -186,7 +193,7 @@ onMounted(() => {
             </div>
 
             <div class="row">
-                <div v-if="inserting === 'debit'" class="col-md-6">
+                <div v-if="inserting === 'debit' || inserting === 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="value">Amount:</label>
                         <input
@@ -210,7 +217,7 @@ onMounted(() => {
                         />
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div v-if="inserting != 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
                         <select
@@ -229,7 +236,7 @@ onMounted(() => {
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div v-if="inserting != 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Description:</label>
                         <input
