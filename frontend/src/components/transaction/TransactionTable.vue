@@ -1,4 +1,8 @@
 <script setup>
+import { ref, onMounted, computed } from "vue"
+import { useCategoryStore } from "../../stores/category"
+
+const categoryStore = useCategoryStore()
 import { ref, onMounted, computed, shallowRef } from "vue"
 import Chart from "chart.js/auto"
 import axios from "axios"
@@ -8,19 +12,21 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-    categories: {
-        type: Array,
-        default: () => [],
-    },
 })
 const emit = defineEmits(["edit"])
 
-const editClick = (transaction, categories) => {
-    emit("edit", transaction, categories)
+const editClick = (transaction) => {
+    emit("edit", transaction)
+}
+const loadCategories= async () => {
+  try {
+    await categoryStore.loadCategory()
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const transactionsRef = ref([])
-const categoriesRef = ref([])
 const wasSent = (transaction) => {
     return transaction.type == "D" ? true : false
 }
@@ -148,8 +154,15 @@ const fetchCategoryNames = async () => {
 }
 
 const getCategoryNameById = (categoryId) => {
-    return categoriesRef.value[categoryId] || "Undefined"
-}
+    const categoriesValue = categoryStore.categories;
+    console.log("categoriesValue", categoriesValue)
+
+    if (categoriesValue && categoriesValue.name && categoriesValue.name[categoryId]) {
+        return categoriesValue.name[categoryId];
+    } else {
+        return "Sem Categoria";
+    }
+};
 
 const getCategoryNameForTransaction = (transaction) => {
     const categoryId = transaction.category_id
@@ -188,8 +201,7 @@ const truncateDescription = (description) => {
 
 onMounted(async () => {
     transactionsRef.value = props.transactions
-    categoriesRef.value = props.categories
-    fetchCategoryNames()
+    loadCategories()
     loadChart()
 })
 </script>
@@ -258,7 +270,7 @@ onMounted(async () => {
                         </div>
                         <button
                             class="btn btn-xs btn-light"
-                            @click="editClick(transaction, categories)"
+                            @click="editClick(transaction)"
                         >
                             <i class="bi bi-xs bi-pencil"></i>
                         </button>

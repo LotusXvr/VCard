@@ -95,7 +95,7 @@ class TransactionController extends Controller
                     $transaction1->payment_type = $request->payment_type;
                     $transaction1->payment_reference = $request->payment_reference;
                     $transaction1->pair_vcard = $request->payment_reference;
-                    $transaction1->category_id = $request->category;
+                    $transaction1->category_id = $request->category_id;
                     $transaction1->description = $request->description;
 
                     // Money reception transaction
@@ -112,7 +112,7 @@ class TransactionController extends Controller
                     $transaction2->payment_reference = $request->vcard;
                     $transaction2->pair_transaction = $transaction1->id;
                     $transaction2->pair_vcard = $request->vcard;
-                    $transaction2->category_id = $request->category;
+                    $transaction2->category_id = $request->category_id;
                     $transaction2->description = $request->description;
 
                     // Save transactions to get their id's
@@ -160,7 +160,7 @@ class TransactionController extends Controller
                     $transaction->payment_type = $request->payment_type;
                     $transaction->payment_reference = $request->payment_reference;
                     $transaction->pair_vcard = null;
-                    $transaction->category_id = $request->category;
+                    $transaction->category_id = $request->category_id;
                     $transaction->description = $request->description;
                     $transaction->pair_transaction = null;
 
@@ -190,7 +190,13 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
+        $data = $request->all();
+
+        // Update the transaction with the extracted data
+        $transaction->update($data);
+
+        // Return the updated transaction
+        return new TransactionResource($transaction);
     }
 
     /**
