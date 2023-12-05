@@ -29,6 +29,7 @@ const newVCard = () => {
     }
 }
 
+// const confirmationLeaveDialog = ref({})
 const vcard = ref(newVCard())
 const errors = ref(null)
 
@@ -98,8 +99,8 @@ const save = async (vcardToSave) => {
             } else {
                 toast.error(
                     "VCard #" +
-                        props.phone_number +
-                        " was not updated due to unknown server error!",
+                    props.phone_number +
+                    " was not updated due to unknown server error!",
                 )
             }
         }
@@ -124,41 +125,31 @@ onMounted(() => {
     console.log("123" + userStore.userPhoneNumber)
 })
 
-let nextCallBack = null
-const leaveConfirmed = () => {
-    if (nextCallBack) {
-        nextCallBack()
-    }
-}
+// let nextCallBack = null
+// const leaveConfirmed = () => {
+//     if (nextCallBack) {
+//         nextCallBack()
+//     }
+// }
 
-onBeforeRouteLeave((to, from, next) => {
-    nextCallBack = null
-    let newValueStr = JSON.stringify(vcard.value)
-    if (originalValueStr != newValueStr) {
-        // Some value has changed - only leave after confirmation
-        nextCallBack = next
-        confirmationLeaveDialog.value.show()
-    } else {
-        // No value has changed, so we can leave the component without confirming
-        next()
-    }
-})
+// onBeforeRouteLeave((to, from, next) => {
+//     nextCallBack = null
+//     let newValueStr = JSON.stringify(vcard.value)
+//     if (originalValueStr != newValueStr) {
+//         // Some value has changed - only leave after confirmation
+//         nextCallBack = next
+//         confirmationLeaveDialog.value.show()
+//     } else {
+//         // No value has changed, so we can leave the component without confirming
+//         next()
+//     }
+// })
 </script>
 
 <template>
-    <confirmation-dialog
-        ref="confirmationLeaveDialog"
-        confirmationBtn="Discard changes and leave"
-        msg="Do you really want to leave? You have unsaved changes!"
-        @confirmed="leaveConfirmed"
-    >
-    </confirmation-dialog>
-    <VCardDetail
-        :vcard="vcard"
-        :errors="errors"
-        :inserting="inserting(phone_number)"
-        @save="save"
-        @cancel="cancel"
-    >
+    <!-- <confirmation-dialog ref="confirmationLeaveDialog" confirmationBtn="Discard changes and leave"
+        msg="Do you really want to leave? You have unsaved changes!" @confirmed="leaveConfirmed">
+    </confirmation-dialog> -->
+    <VCardDetail :vcard="vcard" :errors="errors" :inserting="inserting(phone_number)" @save="save" @cancel="cancel">
     </VCardDetail>
 </template>

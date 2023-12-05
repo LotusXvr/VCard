@@ -80,16 +80,23 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
-    /* public function update(Request $request, VCard $vcard)
+    public function changeStatus(VCard $vcard)
     {
-        $vcard->fill($request->all());
-        $vcard->save();
-        return new VCardResource($vcard);
-    } */
+        try {
+            // Sua lógica para alterar o status do VCard aqui
+            $vcard->blocked = !$vcard->blocked; // Inverte o status
 
-    /*
-        TENTAR FAZER O UPDATE COM O REQUEST VALIDATED
-    */
+            // Você pode querer adicionar outras verificações ou lógicas aqui, dependendo das suas necessidades
+
+            $vcard->save();
+
+            return response()->json(['message' => 'VCard status changed successfully']);
+        } catch (\Exception $e) {
+            // Lida com erros, se necessário
+            return response()->json(['message' => 'Error changing VCard status'], 500);
+        }
+    }
+
     public function update(UpdateVCardRequest $request, VCard $vcard)
     {
         $dataToSave = $request->validated();
