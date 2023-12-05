@@ -3,14 +3,7 @@ import { onMounted, ref, shallowRef } from "vue"
 import axios from "axios"
 import Chart from "chart.js/auto"
 
-const vcardCount = ref(0)
-const vcardCountActive = ref(0)
-const vcardBalanceSum = ref(0)
-const vcardBalanceSumActive = ref(0)
-
-const vcardBalanceDistributionChartEl = ref(null)
-const vcardBalanceDistributionChart = shallowRef(null)
-
+// AUXILIARES
 const startDate = ref("")
 const endDate = ref("")
 const transactionsSumBetweenDates = ref(0)
@@ -19,20 +12,6 @@ const year = today.getFullYear()
 const month = String(today.getMonth() + 1).padStart(2, "0") // Months are zero-based
 const day = String(today.getDate()).padStart(2, "0")
 const todayDateString = `${year}-${month}-${day}`
-
-const transactionsCount = ref(0)
-const transactionsCountBetweenDates = ref(0)
-const paymentType = ref("Vcard")
-const transactionsCountByType = ref(0)
-const transactionsSum = ref(0)
-const transactionsQuantityByMonth = ref(0)
-const transactionsByPaymentMethodChartEl = ref(null)
-const transactionsByPaymentMethodChart = shallowRef(null)
-const transactionsQuantityChartEl = ref(null)
-const transactionsQuantityChart = shallowRef(null)
-const averageTransactionAmountChartEl = ref(null)
-const averageTransactionAmountChart = shallowRef(null)
-const averageTransactionAmountByMonth = ref([])
 const monthNames = [
     "January",
     "February",
@@ -47,6 +26,31 @@ const monthNames = [
     "November",
     "December",
 ]
+
+// VCARDS
+const vcardCount = ref(0)
+const vcardCountActive = ref(0)
+const vcardBalanceSum = ref(0)
+const vcardBalanceSumActive = ref(0)
+// grafico
+const vcardBalanceDistributionChartEl = ref(null)
+const vcardBalanceDistributionChart = shallowRef(null)
+
+// TRANSAÇOES
+const paymentType = ref("Vcard")
+const transactionsCount = ref(0)
+const transactionsCountBetweenDates = ref(0)
+const transactionsCountByType = ref(0)
+const transactionsSum = ref(0)
+const transactionsQuantityByMonth = ref(0)
+const averageTransactionAmountByMonth = ref([])
+// graficos
+const transactionsByPaymentMethodChartEl = ref(null)
+const transactionsByPaymentMethodChart = shallowRef(null)
+const transactionsQuantityChartEl = ref(null)
+const transactionsQuantityChart = shallowRef(null)
+const averageTransactionAmountChartEl = ref(null)
+const averageTransactionAmountChart = shallowRef(null)
 
 const getVCardStatistics = () => {
     axios
@@ -96,7 +100,7 @@ const getTransactionsStatistics = () => {
             averageTransactionAmountByMonth.value = response.data.averageTransactionAmounts
             transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
 
-            // GRAFICO 1
+            // GRAFICO DE QUANTIDADE DE TRANSAÇOES POR MES
             const months = transactionsQuantityByMonth.value.map(
                 (entry) => monthNames[entry.month - 1],
             )
@@ -123,7 +127,7 @@ const getTransactionsStatistics = () => {
                 },
             )
 
-            // GRAFICO 2
+            // GRAFICO DE MEDIA DE VOLUME DE TRANSAÇOES POR MES
             const monthsWithYear = averageTransactionAmountByMonth.value.map(
                 (entry) => `${monthNames[entry.month - 1]} ${entry.year}`,
             )
@@ -150,7 +154,7 @@ const getTransactionsStatistics = () => {
                 },
             )
 
-            // GRAFICO 3
+            // GRAFICO DE QUANTIDADE DE TRANSAÇOES POR METODO DE PAGAMENTO
             const paymentMethods = response.data.paymentMethods
             const transactionCounts = response.data.transactionCounts
 
@@ -211,7 +215,6 @@ const getTransactionsStatistics = () => {
             console.log(error)
         })
 }
-
 
 const filterTransactions = async () => {
     if (startDate.value == "") {
