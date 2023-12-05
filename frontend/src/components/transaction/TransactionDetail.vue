@@ -51,10 +51,22 @@ const transactionTitle = computed(() => {
     if (!editingTransaction.value) {
         return ""
     }
-    return props.inserting == "insert" ? "New Transaction" : "Task #" + editingTransaction.value.id
+    if (props.inserting == "inserting debit") return "New Debit Transaction"
+    if (props.inserting == "editing debit") return "Transaction #" + editingTransaction.value.id
+    if (props.inserting == "inserting credit") return "New Credit Transaction"
+    return "unknown"
 })
 
 const save = async () => {
+    if (!validateReference()) {
+        toast.error("Invalid payment reference")
+        return
+    }
+
+    if (validateValue() != true) {
+        toast.error(validateValue())
+        return
+    }
     const newTransaction = editingTransaction.value
     try {
         if(props.inserting){
@@ -78,6 +90,61 @@ const save = async () => {
     }
 }
 
+const validateReference = () => {
+    const reference = editingTransaction.value.payment_reference
+    switch (editingTransaction.value.payment_type) {
+        case "MBWAY":
+            return /^9\d{8}$/.test(reference)
+        case "PAYPAL":
+            // Use a more sophisticated email validation if needed
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reference)
+        case "IBAN":
+            return /^[A-Z]{2}\d{23}$/.test(reference)
+        case "MB":
+            return /^\d{5}-\d{9}$/.test(reference)
+        case "VISA":
+            return /^4\d{15}$/.test(reference)
+        case "VCARD":
+            return true
+        default:
+            return false
+    }
+}
+
+const validateValue = () => {
+    const value = parseFloat(editingTransaction.value.value)
+
+    if (isNaN(value) || value <= 0 || value >= 100000) {
+        return "Invalid value"
+    }
+
+    // Check the maximum value based on payment type
+    const paymentType = editingTransaction.value.payment_type
+    switch (paymentType) {
+        case "MBWAY":
+            if (value > 50) return "MBWAY transactions cannot exceed 50€"
+            break
+        case "PAYPAL":
+            if (value > 100) return "PAYPAL transactions cannot exceed 100€"
+            break
+        case "IBAN":
+            if (value > 1000) return "IBAN transactions cannot exceed 1000€"
+            break
+        case "MB":
+            if (value > 500) return "MB transactions cannot exceed 500€"
+            break
+        case "VISA":
+            if (value > 200) return "VISA transactions cannot exceed 200€"
+            break
+        case "VCARD":
+            break
+        default:
+            return "Invalid payment type"
+    }
+
+    return true // Indicates a valid transaction value
+}
+
 const cancel = () => {
     emit("cancel", editingTransaction.value)
 }
@@ -98,13 +165,12 @@ onMounted(() => {
 <template>
     <h3 class="mt-5 mb-3">{{ transactionTitle }}</h3>
     <div>
-        <h3 class="mt-5 mb-3">Transaction</h3>
         <div v-if="accountBalance !== null">
             <p>Account Balance: {{ accountBalance }}</p>
         </div>
         <hr />
         <form @submit.prevent="save">
-            <div class="row" v-if="inserting">
+            <div class="row" v-if="inserting === 'inserting debit'">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
@@ -128,7 +194,7 @@ onMounted(() => {
                         <input
                             v-model="editingTransaction.payment_reference"
                             type="text"
-                            id="transactionPaymentReferenec"
+                            id="transactionPaymentReference"
                             class="form-control"
                             required
                         />
@@ -137,7 +203,7 @@ onMounted(() => {
             </div>
 
             <div class="row">
-                <div v-if="inserting" class="col-md-6">
+                <div v-if="inserting === 'inserting debit'" class="col-md-6">
                     <div class="form-group">
                         <label for="value">Amount:</label>
                         <input
@@ -149,7 +215,7 @@ onMounted(() => {
                         />
                     </div>
                 </div>
-                <div v-if="inserting" class="col-md-6">
+                <div v-if="inserting === 'inserting debit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Confirmation Code:</label>
                         <input

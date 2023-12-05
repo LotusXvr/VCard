@@ -3,17 +3,17 @@ import { ref, onMounted } from "vue"
 import axios from "axios"
 import TransactionTable from "./TransactionTable.vue"
 import { useUserStore } from "../../stores/user"
-import { useRouter } from "vue-router"
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const transactions = ref([])
 const router = useRouter()
 
 const props = defineProps({
-    usersTitle: {
-        type: String,
-        default: "Transactions",
-    },
+  usersTitle: {
+    type: String,
+    default: 'Transactions'
+  }
 })
 
 const loadTransactions = () => {
@@ -28,16 +28,17 @@ const loadTransactions = () => {
 }
 
 const addTransaction = () => {
-    router.push({ name: "NewTransaction" })
+    router.push({ name: 'NewTransaction' })
 }
 
 const editTransaction = (transaction) => {
-    router.push({ name: "Transaction", params: { id: transaction.id } })
+    router.push({ name: 'Transaction', params: { id: transaction.id } })
 }
 
 onMounted(() => {
     loadTransactions()
 })
+
 </script>
 
 <template>

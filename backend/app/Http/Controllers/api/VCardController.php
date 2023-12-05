@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateVCardRequest;
 use App\Models\Category;
+use App\Models\Default_Category;
 use Illuminate\Http\Request;
 use App\Models\VCard;
 use App\Http\Resources\VCardResource;
@@ -66,7 +67,16 @@ class VCardController extends Controller
         }
 
         $vcard->save();
-        $vcard->phone_number = $dataToSave['phone_number'];
+        //$vcard->phone_number = $dataToSave['phone_number']; acho que esta a mais
+
+        $defaultCategories = Default_Category::all();
+
+        $defaultCategories->each(function ($defaultCategory) use ($dataToSave) {
+            $defaultCategory->vcard = $dataToSave['phone_number'];
+            unset($defaultCategory->id);
+        });
+
+        Category::insert($defaultCategories->toArray());
         return new VCardResource($vcard);
     }
 
@@ -178,4 +188,20 @@ class VCardController extends Controller
         return Category::where('vcard', $vcard->phone_number)->get();
     }
 
+    public function getVCardBalanceDistribution()
+    {
+        // Adjust this query based on your VCard model and logic
+        $vcardDistribution = VCard::selectRaw('FLOOR(balance / 100) * 100 as balance_range, COUNT(*) as vcard_count')
+            ->groupBy('balance_range')
+            ->orderBy('balance_range')
+            ->get();
+
+        $balanceRanges = $vcardDistribution->pluck('balance_range')->toArray();
+        $vcardCounts = $vcardDistribution->pluck('vcard_count')->toArray();
+
+        return response()->json([
+            'balanceRanges' => $balanceRanges,
+            'vcardCounts' => $vcardCounts,
+        ]);
+    }
 }

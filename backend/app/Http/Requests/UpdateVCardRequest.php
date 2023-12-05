@@ -32,7 +32,7 @@ class UpdateVCardRequest extends FormRequest
                 'digits:9',
                 'regex:/^9/',
             ],
-            'name' => 'required|string|max:30',
+            'name' => 'required|string|max:50',
             'email' => [
                 'email',
                 Rule::unique('vcards', 'email')->ignore($vcard->phone_number, 'phone_number'),
@@ -51,7 +51,7 @@ class UpdateVCardRequest extends FormRequest
             'phone_number.digits' => 'Phone number must be 9 digits',
             'phone_number.regex' => 'Phone number must start with 9', // portuguese rules
             'name.required' => 'Name is required',
-            'name.max' => 'Name must be at most 30 characters',
+            'name.max' => 'Name must be at most 50 characters',
             'email.required' => 'Email is required',
             'email.unique' => 'Email already exists',
             'confirmation_code.required' => 'Confirmation code is required',
