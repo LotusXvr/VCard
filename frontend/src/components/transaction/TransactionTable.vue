@@ -1,5 +1,4 @@
 <script setup>
-
 import { useCategoryStore } from "../../stores/category"
 const categoryStore = useCategoryStore()
 import { ref, onMounted, computed, shallowRef } from "vue"
@@ -17,12 +16,12 @@ const emit = defineEmits(["edit"])
 const editClick = (transaction) => {
     emit("edit", transaction)
 }
-const loadCategories= async () => {
-  try {
-    await categoryStore.loadCategory()
-  } catch (error) {
-    console.log(error)
-  }
+const loadCategories = async () => {
+    try {
+        await categoryStore.loadCategory()
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 const transactionsRef = ref([])
@@ -50,6 +49,7 @@ const transactionsByYearMonth = computed(() => {
 
         groupedTransactions[key].push(transaction)
     })
+    console.log(groupedTransactions)
     return groupedTransactions
 })
 
@@ -139,21 +139,24 @@ const loadChart = () => {
         },
     })
 }
-const categoriesValue = categoryStore.categories;
+const categoriesValue = categoryStore.categories
 
+const categoryName = ref(null)
 const getCategoryNameById = (categoryId) => {
-  console.log(categoryId)
+    console.log("read")
     if (categoryId != null) {
-        return categoriesValue.filter((category) => category.id == categoryId)[0].name;
+        categoryName.value = categoriesValue.filter((category) => category.id == categoryId)[0].name
+        return categoryName.value
     } else {
-        return "Sem Categoria";
+        return "Sem Categoria"
     }
-};
-
-const getCategoryNameForTransaction = (transaction) => {
-    const categoryId = transaction.category_id
-    return getCategoryNameById(categoryId)
 }
+
+const getCategoryNames = computed(() => {
+    return transactionsRef.value.map((transaction) => {
+        return getCategoryNameById(transaction.category_id);
+    });
+});
 
 const categoryColorMap = {}
 
@@ -252,12 +255,9 @@ onMounted(async () => {
                         class="d-flex justify-content-between align-items-center"
                     >
                         <div>
-                            {{ getCategoryNameForTransaction(transaction) }}
+                            {{ getCategoryNames[key] }}
                         </div>
-                        <button
-                            class="btn btn-xs btn-light"
-                            @click="editClick(transaction)"
-                        >
+                        <button class="btn btn-xs btn-light" @click="editClick(transaction)">
                             <i class="bi bi-xs bi-pencil"></i>
                         </button>
                     </td>
