@@ -1,7 +1,6 @@
 <script setup>
-import { ref, onMounted, computed } from "vue"
-import { useCategoryStore } from "../../stores/category"
 
+import { useCategoryStore } from "../../stores/category"
 const categoryStore = useCategoryStore()
 import { ref, onMounted, computed, shallowRef } from "vue"
 import Chart from "chart.js/auto"
@@ -140,24 +139,10 @@ const loadChart = () => {
         },
     })
 }
-
-const fetchCategoryNames = async () => {
-    try {
-        const response = await axios.get("category")
-        const categories = response.data
-        for (const category of categories) {
-            categoriesRef.value[category.id] = category.name
-        }
-    } catch (error) {
-        console.error("Error fetching category names:", error)
-    }
-}
+const categoriesValue = categoryStore.categories;
 
 const getCategoryNameById = (categoryId) => {
-    const categoriesValue = categoryStore.categories;
-    console.log("categoriesValue", categoriesValue)
-
-    if (categoriesValue && categoriesValue.name && categoriesValue.name[categoryId]) {
+    if (categoriesValue) {
         return categoriesValue.name[categoryId];
     } else {
         return "Sem Categoria";
