@@ -165,11 +165,21 @@ class TransactionController extends Controller
         elseif ($request->payment_type == 'IBAN' || $request->payment_type == 'PAYPAL' || $request->payment_type == 'VISA' || $request->payment_type == 'MB' || $request->payment_type == 'MBWAY') {
 
             // API call
-            $response = Http::post('https://dad-202324-payments-api.vercel.app/api/credit', [
-                'type' => $request->payment_type,
-                'reference' => $request->payment_reference,
-                'value' => (float) $request->value,
-            ]);
+            if ($request->type == 'D'){
+                $response = Http::post('https://dad-202324-payments-api.vercel.app/api/credit', [
+                    'type' => $request->payment_type,
+                    'reference' => $request->payment_reference,
+                    'value' => (float) $request->value,
+                ]);
+            }
+
+            if ($request->type == 'C'){
+                $response = Http::post('https://dad-202324-payments-api.vercel.app/api/debit', [
+                    'type' => $request->payment_type,
+                    'reference' => $request->payment_reference,
+                    'value' => (float) $request->value,
+                ]);
+            }
 
             // Check the response and handle accordingly
             if (!$response->successful()) {
@@ -185,17 +195,24 @@ class TransactionController extends Controller
                     $transaction->vcard = $request->vcard;
                     $transaction->date = date('Y-m-d');
                     $transaction->datetime = date('Y-m-d H:i:s');
-                    $transaction->type = 'D'; // como o utilizador está a enviar dinheiro, a primeira operação é sempre Debito
+                    $transaction->type = $request->type;
                     $transaction->value = $request->value;
-                    $vcardBalance = VCard::where('phone_number', $request->vcard)->first()->balance;
-                    $transaction->old_balance = $vcardBalance;
-                    $transaction->new_balance = $vcardBalance - $request->value;
+                    if ($request->type == 'C'){
+                        $transaction->old_balance = 0;
+                        $transaction->new_balance = $request->value;
+                    }
+                    else {
+                        $vcardBalance = VCard::where('phone_number', $request->vcard)->first()->balance;
+                        $transaction->old_balance = $vcardBalance;
+                        $transaction->new_balance = $vcardBalance - $request->value;
+                    }
                     $transaction->payment_type = $request->payment_type;
                     $transaction->payment_reference = $request->payment_reference;
                     $transaction->pair_vcard = null;
+                    $transaction->pair_transaction = null;
                     $transaction->category_id = $request->category_id;
                     $transaction->description = $request->description;
-                    $transaction->pair_transaction = null;
+
 
                     $transaction->save();
 

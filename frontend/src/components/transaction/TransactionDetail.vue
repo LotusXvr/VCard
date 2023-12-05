@@ -67,13 +67,13 @@ const save = async () => {
     }
 
     const newTransaction = editingTransaction.value
-    newTransaction.vcard = userStore.userPhoneNumber
 
     if (props.inserting === "debit") {
-        newTransaction.type = 'D'
+        newTransaction.type = "D"
+        newTransaction.vcard = userStore.userPhoneNumber
     }
     if (props.inserting === "credit") {
-        newTransaction.type = 'C'
+        newTransaction.type = "C"
     }
 
     console.log(newTransaction)
@@ -178,7 +178,7 @@ onMounted(() => {
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div v-if="inserting === 'debit'" class="col-md-6">
                     <div class="form-group">
                         <label for="payment_reference">Send money to...</label>
                         <input
@@ -190,6 +190,19 @@ onMounted(() => {
                         />
                     </div>
                 </div>
+                <div v-if="inserting === 'credit'" class="col-md-6">
+                    <div class="form-group">
+                        <label for="vcard">Send money to...</label>
+                        <input
+                            v-model="editingTransaction.vcard"
+                            type="text"
+                            id="transactionPaymentReference"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                </div>
+                
             </div>
 
             <div class="row">
@@ -200,6 +213,18 @@ onMounted(() => {
                             v-model="editingTransaction.value"
                             type="text"
                             id="transactionValue"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                </div>
+                <div v-if="inserting === 'credit'" class="col-md-6">
+                    <div class="form-group">
+                        <label for="payment_reference">From...</label>
+                        <input
+                            v-model="editingTransaction.payment_reference"
+                            type="text"
+                            id="transactionPaymentReference"
                             class="form-control"
                             required
                         />
