@@ -70,10 +70,18 @@ const save = async () => {
 
     if (props.inserting === "debit") {
         newTransaction.type = "D"
-        newTransaction.vcard = userStore.userPhoneNumber
     }
     if (props.inserting === "credit") {
         newTransaction.type = "C"
+        
+        // alterar isto para a componente pai para nao se ver os valores a alterar nos inputs
+        if (newTransaction.payment_type != "VCARD") {
+            const paymentReferenceToVCard = newTransaction.payment_reference
+            newTransaction.payment_reference = newTransaction.vcard
+            newTransaction.vcard = paymentReferenceToVCard
+        } else {
+            newTransaction.vcard = userStore.userPhoneNumber
+        }
     }
 
     console.log(newTransaction)
@@ -194,7 +202,7 @@ onMounted(() => {
                     <div class="form-group">
                         <label for="vcard">Send money to...</label>
                         <input
-                            v-model="editingTransaction.vcard"
+                            v-model="editingTransaction.payment_reference"
                             type="text"
                             id="transactionPaymentReference"
                             class="form-control"
@@ -202,7 +210,6 @@ onMounted(() => {
                         />
                     </div>
                 </div>
-                
             </div>
 
             <div class="row">
@@ -222,7 +229,7 @@ onMounted(() => {
                     <div class="form-group">
                         <label for="payment_reference">From...</label>
                         <input
-                            v-model="editingTransaction.payment_reference"
+                            v-model="editingTransaction.vcard"
                             type="text"
                             id="transactionPaymentReference"
                             class="form-control"
