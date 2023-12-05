@@ -50,10 +50,9 @@ const transactionTitle = computed(() => {
     if (!editingTransaction.value) {
         return ""
     }
-    if (props.inserting == "inserting debit") return "New Debit Transaction"
-    if (props.inserting == "editing debit") return "Transaction #" + editingTransaction.value.id
-    if (props.inserting == "inserting credit") return "New Credit Transaction"
-    return "unknown"
+    return props.inserting === true
+        ? "New Transaction"
+        : "Transaction #" + editingTransaction.value.id
 })
 
 const save = async () => {
@@ -148,6 +147,8 @@ const cancel = () => {
 
 onMounted(() => {
     console.log(props.transaction)
+    console.log(props.inserting)
+    console.log()
     categoriesRef.value = props.categories
 })
 </script>
@@ -160,7 +161,7 @@ onMounted(() => {
         </div>
         <hr />
         <form @submit.prevent="save">
-            <div class="row" v-if="inserting === 'inserting debit'">
+            <div class="row" v-if="inserting">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
@@ -193,7 +194,7 @@ onMounted(() => {
             </div>
 
             <div class="row">
-                <div v-if="inserting === 'inserting debit'" class="col-md-6">
+                <div v-if="inserting" class="col-md-6">
                     <div class="form-group">
                         <label for="value">Amount:</label>
                         <input
@@ -205,7 +206,7 @@ onMounted(() => {
                         />
                     </div>
                 </div>
-                <div v-if="inserting === 'inserting debit'" class="col-md-6">
+                <div v-if="inserting" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Confirmation Code:</label>
                         <input
