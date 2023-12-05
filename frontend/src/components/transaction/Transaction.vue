@@ -53,29 +53,22 @@ const save = async (transactionToSave) => {
     errors.value = null
     if (inserting(props.id)) {
         try {
+            console.log(transactionToSave)
             const response = await axios.post("transactions", transactionToSave)
             toast.success(response.data.message)
             router.back()
         } catch (error) {
             errors.value = error.response.data.message
-            if (error.response.status == 422) {
-                toast.error("422: " + errors.value)
-            } else {
-                toast.error(errors.value)
-            }
+            toast.error(error.value)
         }
     } else {
         try {
             await axios.put("transactions/" + props.id, transactionToSave)
-            toast.success("Transaction # "+transactionToSave.id+" updated successfully")
+            toast.success("Transaction # " + transactionToSave.id + " updated successfully")
             router.back()
         } catch (error) {
             errors.value = error.response.data.message
-            if (error.response.status == 422) {
-                toast.error("422: Transaction #" + props.id + " - " + error.value)
-            } else {
-                toast.error("Transaction #" + props.id + " - " + error.value)
-            }
+            toast.error("Transaction #" + props.id + " - " + error.value)
         }
     }
 }
@@ -93,17 +86,17 @@ watch(
     { immediate: true },
 )
 
-const loadCategories= async () => {
-  try {
-    await categoryStore.loadCategory()
-  } catch (error) {
-    console.log(error)
-  }
+const loadCategories = async () => {
+    try {
+        await categoryStore.loadCategory()
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 onMounted(() => {
     loadCategories()
-    categoriesRef.value = categoryStore.categories 
+    categoriesRef.value = categoryStore.categories
 })
 </script>
 

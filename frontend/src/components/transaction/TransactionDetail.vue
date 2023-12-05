@@ -68,20 +68,22 @@ const save = async () => {
     }
     const newTransaction = editingTransaction.value
     try {
-        if(props.inserting){
-            console.log(newTransaction)
-            if (newTransaction.payment_type != "VCARD") {
-                transactionVerifier.value.type = newTransaction.payment_type
-                transactionVerifier.value.reference = newTransaction.payment_reference
-                transactionVerifier.value.value = parseFloat(newTransaction.value)
-                const response = await axios.post(
-                    "https://dad-202324-payments-api.vercel.app/api/credit",
-                    transactionVerifier.value,
-                )
+        // if(props.inserting){
+        //     console.log(newTransaction)
+        //     if (newTransaction.payment_type != "VCARD") {
 
-                toast.success(response.data.status + " - " + response.data.message)
-            }
-        }
+        //         // // laravel
+        //         // transactionVerifier.value.type = newTransaction.payment_type
+        //         // transactionVerifier.value.reference = newTransaction.payment_reference
+        //         // transactionVerifier.value.value = parseFloat(newTransaction.value)
+        //         // const response = await axios.post(
+        //         //     "https://dad-202324-payments-api.vercel.app/api/credit",
+        //         //     transactionVerifier.value,
+        //         // )
+
+        //         toast.success(response.data.status + " - " + response.data.message)
+        //     }
+        // }
         newTransaction.vcard = userStore.userPhoneNumber
         emit("save", newTransaction)
     } catch (err) {

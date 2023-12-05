@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\VCard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class TransactionController extends Controller
 {
@@ -145,6 +146,21 @@ class TransactionController extends Controller
 
         // ANY OTHER PAYMENT TYPE
         elseif ($request->payment_type == 'IBAN' || $request->payment_type == 'PAYPAL' || $request->payment_type == 'VISA' || $request->payment_type == 'MB' || $request->payment_type == 'MBWAY') {
+
+            // API call
+            $response = Http::post('https://dad-202324-payments-api.vercel.app/api/credit', [
+                'type' => $request->payment_type,
+                'reference' => $request->payment_reference,
+                'value' => (float) $request->value,
+            ]);
+
+            // Check the response and handle accordingly
+            if (!$response->successful()) {
+                $responseData = $response->json(); // Parse JSON response
+                $message = isset($responseData['message']) ? $responseData['message'] : '(api) Error sending transaction';
+                return response()->json(['message' => $message], $response->status());
+            }
+
             try {
                 DB::transaction(function () use ($request) {
                     // Money sending transaction
