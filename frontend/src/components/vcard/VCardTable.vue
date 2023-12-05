@@ -21,7 +21,7 @@ const props = defineProps({
 })
 
 console.log(props.vcards)
-const emit = defineEmits(["completeToggled", "edit", "delete"])
+const emit = defineEmits(["completeToggled", "edit", "delete", "changeStatus"])
 
 const editingVCards = ref(props.vcards)
 
@@ -42,6 +42,11 @@ const editClick = (vcard) => {
 const deleteClick = (vcard) => {
     emit("delete", vcard)
 }
+
+const changeStatus = (vcard) => {
+    emit("changeStatus", vcard)
+}
+
 </script>
 
 <template>
@@ -52,6 +57,7 @@ const deleteClick = (vcard) => {
                 <th>Phone Number</th>
                 <th>Name</th>
                 <th>Balance</th>
+                <th>Blocked</th>
                 <th v-if="showEditButton || showDeleteButton"></th>
             </tr>
         </thead>
@@ -67,21 +73,16 @@ const deleteClick = (vcard) => {
                 <td>
                     <span>{{ vcard.balance }}</span>
                 </td>
+                <td>
+                    <input type="checkbox" :checked="vcard.blocked" @change="changeStatus(vcard)" />
+                </td>
                 <td class="text-end" v-if="showEditButton || showDeleteButton">
                     <div class="d-flex justify-content-end">
-                        <button
-                            class="btn btn-xs btn-light"
-                            @click="editClick(vcard)"
-                            v-if="showEditButton"
-                        >
+                        <button class="btn btn-xs btn-light" @click="editClick(vcard)" v-if="showEditButton">
                             <i class="bi bi-xs bi-pencil"></i>
                         </button>
 
-                        <button
-                            class="btn btn-xs btn-light"
-                            @click="deleteClick(vcard)"
-                            v-if="showDeleteButton"
-                        >
+                        <button class="btn btn-xs btn-light" @click="deleteClick(vcard)" v-if="showDeleteButton">
                             <i class="bi bi-xs bi-x-square-fill"></i>
                         </button>
                     </div>

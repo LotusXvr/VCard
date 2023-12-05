@@ -80,6 +80,18 @@ const getResults = (page) => {
     currentPage.value = page;
     loadVCards();
 };
+
+const handleStatusChange = (vcard) => {
+    axios
+        .patch("vcards/" + vcard.phone_number + "/change-status")
+        .then(() => {
+            toast.success("VCard status changed successfully")
+            loadVCards()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
 </script>
 
 <template>
@@ -99,7 +111,8 @@ const getResults = (page) => {
             </router-link>
         </div>
     </div>
-    <VCardTable :vcards="vcards" :showPhoneNumber="true" @edit="editVCard" @delete="deleteVCard"></VCardTable>
+    <VCardTable :vcards="vcards" :showPhoneNumber="true" @edit="editVCard" @delete="deleteVCard"
+        @changeStatus="handleStatusChange"></VCardTable>
     <div>
         <ul class="pagination">
             <li class="page-item" :class="{ disabled: currentPage === 1 }">

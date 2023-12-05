@@ -34,6 +34,11 @@ class AuthController extends Controller
             return response()->json(["message" => 'User has been deleted'], 401);
         }
 
+        // Check if the user is blocked
+        if ($user->blocked) {
+            return response()->json(["message" => 'User is blocked and cannot login'], 401);
+        }
+
         try {
             request()->request->add(
                 $this->passportAuthenticationData($request->username, $request->password)

@@ -35,6 +35,7 @@ class User extends Authenticatable
         'username',
         'photo_url',
         'password',
+        'blocked',
         'custom_data',
         'custom_options',
     ];
