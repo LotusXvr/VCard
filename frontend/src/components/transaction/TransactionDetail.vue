@@ -151,6 +151,10 @@ const loadCategories = async () => {
     }
 }
 
+const creditShowFromFieldWhenNotVCard = computed(() => {
+    return editingTransaction.value.payment_type !== "VCARD"
+})
+
 onMounted(() => {
     loadCategories()
 })
@@ -221,7 +225,7 @@ onMounted(() => {
                         />
                     </div>
                 </div>
-                <div v-if="inserting === 'credit'" class="col-md-6">
+                <div v-if="inserting === 'credit' && creditShowFromFieldWhenNotVCard" class="col-md-6">
                     <div class="form-group">
                         <label for="payment_reference">From...</label>
                         <input

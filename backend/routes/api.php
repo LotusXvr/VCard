@@ -43,20 +43,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('vcard/{vcard}/category', [VCardController::class, 'getCategoryFromVCard']);
 
     // Statistics
-    Route::get('statistics/vcards/count', [VCardController::class, 'getVCardCount']);
-    Route::get('statistics/vcards/balance', [VCardController::class, 'getVCardBalanceSum']);
-    Route::get('statistics/vcards/active/count', [VCardController::class, 'getActiveVCardCount']);
-    Route::get('statistics/vcards/active/balance', [VCardController::class, 'getActiveVCardBalanceSum']);
-    Route::get('statistics/transactions/count', [TransactionController::class, 'getTransactionsCount']);
-    Route::get('statistics/transactions/sum', [TransactionController::class, 'getTransactionsSum']);
     Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates']);
     Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction']);
     Route::get('statistics/transactions/count-by-type', [TransactionController::class, 'getTransactionsCountByType']);
-    Route::get('statistics/transactions/sum-by-month', [TransactionController::class, 'getTransactionsSumByMonth']);
-    Route::get('statistics/transactions/quantity-by-month', [TransactionController::class, 'getTransactionsCountByMonth']);
-    Route::get('statistics/vcards/balance-distribution', [VCardController::class, 'getVCardBalanceDistribution']);
-    Route::get('statistics/transactions/by-payment-method', [TransactionController::class, 'getTransactionsByPaymentMethod']);
-    Route::get("statistics/transactions/average-amount-by-month", [TransactionController::class, 'getAverageTransactionAmountByMonth']);
+
+    Route::get("statistics/vcards", [VCardController::class, 'getVCardStatistics']);
+    Route::get("statistics/transactions", [TransactionController::class, 'getTransactionStatistics']);
     /*
      * Globais
      */

@@ -110,7 +110,7 @@ class VCardController extends Controller {
         $dataToSave = $request->validated();
 
         $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
-        $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
+            $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
         $deletePhotoOnServer = array_key_exists("deletePhotoOnServer", $dataToSave) && $dataToSave["deletePhotoOnServer"];
         unset($dataToSave["base64ImagePhoto"]);
         unset($dataToSave["deletePhotoOnServer"]);
@@ -156,34 +156,6 @@ class VCardController extends Controller {
         return TransactionResource::collection($transactions);
     }
 
-    // get current count of vcards
-    public function getVCardCount() {
-        $vcardCount = VCard::count();
-
-        return response()->json(['vcardCount' => $vcardCount]);
-    }
-
-    // get current count of active vcards
-    public function getActiveVCardCount() {
-        $activeVCardCount = VCard::where('blocked', 0)->count();
-
-        return response()->json(['activeVCardCount' => $activeVCardCount]);
-    }
-
-    // get sum of all vcard balances
-    public function getVCardBalanceSum() {
-        $vcardBalanceSum = VCard::sum('balance');
-
-        return response()->json(['vcardBalanceSum' => $vcardBalanceSum]);
-    }
-
-    // get sum of all active vcard balances
-    public function getActiveVCardBalanceSum() {
-        $activeVCardBalanceSum = VCard::where('blocked', 0)->sum('balance');
-
-        return response()->json(['activeVCardBalanceSum' => $activeVCardBalanceSum]);
-    }
-
     public function update_password(UpdateUserPasswordRequest $request, VCard $vcard) {
         $vcard->password = bcrypt($request->validated()['password']);
         $vcard->save();
@@ -194,8 +166,12 @@ class VCardController extends Controller {
         return Category::where('vcard', $vcard->phone_number)->get();
     }
 
-    public function getVCardBalanceDistribution() {
-        // Adjust this query based on your VCard model and logic
+    public function getVCardStatistics() {
+        $vcardCount = VCard::count();
+        $activeVCardCount = VCard::where('blocked', 0)->count();
+        $vcardBalanceSum = VCard::sum('balance');
+        $activeVCardBalanceSum = VCard::where('blocked', 0)->sum('balance');
+
         $vcardDistribution = VCard::selectRaw('FLOOR(balance / 100) * 100 as balance_range, COUNT(*) as vcard_count')
             ->groupBy('balance_range')
             ->orderBy('balance_range')
@@ -205,6 +181,10 @@ class VCardController extends Controller {
         $vcardCounts = $vcardDistribution->pluck('vcard_count')->toArray();
 
         return response()->json([
+            'vcardCount' => $vcardCount,
+            'activeVCardCount' => $activeVCardCount,
+            'vcardBalanceSum' => $vcardBalanceSum,
+            'activeVCardBalanceSum' => $activeVCardBalanceSum,
             'balanceRanges' => $balanceRanges,
             'vcardCounts' => $vcardCounts,
         ]);
