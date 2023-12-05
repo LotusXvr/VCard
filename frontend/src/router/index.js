@@ -10,6 +10,7 @@ import Login from "../components/auth/Login.vue"
 import Users from "../components/user/Users.vue"
 import User from "../components/user/User.vue"
 import ChangePassword from "../components/auth/ChangePassword.vue"
+import ConfirmationCode from "../components/vcard/ConfirmationCode.vue"
 
 let handlingFirstRoute = true
 
@@ -52,6 +53,12 @@ const router = createRouter({
             path: "/vcard/:phone_number",
             name: "VCard",
             component: VCard,
+            props: (route) => ({ phone_number: parseInt(route.params.phone_number) }),
+        },
+        {
+            path: "/vcard/:phone_number/confirmation_code",
+            name: "ConfirmationCode",
+            component: ConfirmationCode,
             props: (route) => ({ phone_number: parseInt(route.params.phone_number) }),
         },
         {
