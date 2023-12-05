@@ -214,10 +214,11 @@ onMounted(async () => {
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width: 100px">Date</th>
-                    <th style="width: 100px">Time</th>
+                    <th style="width: 50px">Date</th>
+                    <th style="width: 50px">Time</th>
                     <th style="width: 100px">Value</th>
                     <th style="width: 100px">Balance</th>
+                    <th style="width: 100px">Type</th>
                     <th style="width: 100px">Reference</th>
                     <th style="width: 100px">Description</th>
                     <th style="width: 100px">Category</th>
@@ -232,6 +233,7 @@ onMounted(async () => {
                         {{ wasSent(transaction) ? "-" : "+" }}{{ transaction.value }}
                     </td>
                     <td>{{ transaction.new_balance }}</td>
+                    <td>{{ transaction.payment_type }}</td>
                     <td>{{ transaction.payment_reference }}</td>
                     <td>
                         {{

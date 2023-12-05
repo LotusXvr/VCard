@@ -56,31 +56,28 @@ const transactionTitle = computed(() => {
 })
 
 const save = async () => {
-    if (!validateReference()) {
-        toast.error("Invalid payment reference")
-        return
-    }
-
     if (validateValue() != true) {
         toast.error(validateValue())
         return
     }
 
-    const newTransaction = editingTransaction.value
+    // isto faz um deepcopy da variavel edittingTransaction para que se possa fazer
+    // mutações á variavel newTransaction sem alterar os valores do form
+    const newTransaction = { ...editingTransaction.value }
 
     if (props.inserting === "debit") {
         newTransaction.type = "D"
+        if (!validateReference(newTransaction.payment_reference)) {
+            toast.error("Invalid payment reference")
+            return
+        }
     }
+
     if (props.inserting === "credit") {
         newTransaction.type = "C"
-        
-        // alterar isto para a componente pai para nao se ver os valores a alterar nos inputs
-        if (newTransaction.payment_type != "VCARD") {
-            const paymentReferenceToVCard = newTransaction.payment_reference
-            newTransaction.payment_reference = newTransaction.vcard
-            newTransaction.vcard = paymentReferenceToVCard
-        } else {
-            newTransaction.vcard = userStore.userPhoneNumber
+        if (!validateReference(newTransaction.vcard)) {
+            toast.error("Invalid payment reference")
+            return
         }
     }
 
@@ -88,15 +85,14 @@ const save = async () => {
     emit("save", newTransaction)
 }
 
-const validateReference = () => {
-    const reference = editingTransaction.value.payment_reference
+const validateReference = (reference) => {
     switch (editingTransaction.value.payment_type) {
         case "MBWAY":
             return /^9\d{8}$/.test(reference)
         case "PAYPAL":
-            // Use a more sophisticated email validation if needed
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reference)
         case "IBAN":
+            console.log(reference)
             return /^[A-Z]{2}\d{23}$/.test(reference)
         case "MB":
             return /^\d{5}-\d{9}$/.test(reference)

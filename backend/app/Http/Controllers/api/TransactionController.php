@@ -151,7 +151,7 @@ class TransactionController extends Controller
 
                 });
 
-                return response()->json(['message' => $request->value . '€ sent to ' . $request->payment_reference . ' successfully'], 200);
+
 
             } catch (\Exception $e) {
                 return response()->json([
@@ -216,7 +216,7 @@ class TransactionController extends Controller
                     VCard::where('phone_number', $request->vcard)->update(['balance' => $transaction->new_balance]);
                 });
 
-                return response()->json(['message' => $request->value . '€ sent to ' . $request->payment_reference . ' successfully'], 200);
+
 
             } catch (\Exception $e) {
                 return response()->json([
@@ -228,6 +228,12 @@ class TransactionController extends Controller
         } else {
             return response()->json(['message' => 'Tipo de pagamento inválido'], 401);
         }
+
+        if ($request->type == 'C')
+            return response()->json(['message' => $request->value . '€ sent to ' . $request->vcard . ' successfully'], 200);
+        if ($request->type == 'D')
+            return response()->json(['message' => $request->value . '€ sent to ' . $request->payment_reference . ' successfully'], 200);
+
     }
 
 

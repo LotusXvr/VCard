@@ -6,6 +6,9 @@ import { useToast } from "vue-toastification"
 import axios from "axios"
 import { useCategoryStore } from "../../stores/category"
 const categoryStore = useCategoryStore()
+import { useUserStore } from "../../stores/user"
+
+const userStore = useUserStore()
 
 const toast = useToast()
 const router = useRouter()
@@ -62,13 +65,27 @@ const save = async (transactionToSave) => {
     errors.value = null
     if (inserting(props.id) == "debit" || inserting(props.id) == "credit") {
         try {
+            if (transactionToSave.type == "C") {
+                if (transactionToSave.payment_type != "VCARD") {
+                    // isto é necessario visto a logica do crédito é oposta á de debito portanto existe esta troca
+                    // para facilitar a execuçao do codigo por parte da api
+                    const paymentReferenceToVCard = transactionToSave.payment_reference
+                    transactionToSave.payment_reference = transactionToSave.vcard
+                    transactionToSave.vcard = paymentReferenceToVCard
+                } else {
+                    transactionToSave.vcard = userStore.userPhoneNumber
+                }
+            }
+            if (transactionToSave.type == "D") {
+                transactionToSave.vcard = userStore.userPhoneNumber
+            }
             console.log(transactionToSave)
             const response = await axios.post("transactions", transactionToSave)
             toast.success(response.data.message)
             router.back()
         } catch (error) {
             errors.value = error.response.data.message
-            toast.error(error.value)
+            toast.error(errors.value)
         }
     } else {
         try {
