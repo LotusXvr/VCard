@@ -1,7 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router"
 import { ref, onMounted } from "vue"
-import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "./stores/user"
 import { useRouter } from "vue-router"
@@ -13,7 +12,6 @@ const restoredUser = ref(false)
 
 //color: #17f672 Verde Logo
 //color: #0bbad6 Azul Logo
-const phoneNumber = ref(0)
 
 const logout = async () => {
     if (await userStore.logout()) {
@@ -35,7 +33,6 @@ const formatUserName = (fullName) => {
 
 onMounted(async () => {
     restoredUser.value = await userStore.restoreToken()
-    phoneNumber.value = userStore.userPhoneNumber
 })
 </script>
 

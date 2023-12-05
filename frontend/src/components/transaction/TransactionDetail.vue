@@ -98,6 +98,8 @@ const validateReference = () => {
             return /^\d{5}-\d{9}$/.test(reference)
         case "VISA":
             return /^4\d{15}$/.test(reference)
+        case "VCARD":
+            return true
         default:
             return false
     }
@@ -117,24 +119,18 @@ const validateValue = () => {
             if (value > 50) return "MBWAY transactions cannot exceed 50€"
             break
         case "PAYPAL":
-            if (value > 100) {
-                return "PAYPAL transactions cannot exceed 100€"
-            }
+            if (value > 100) return "PAYPAL transactions cannot exceed 100€"
             break
         case "IBAN":
-            if (value > 1000) {
-                return "IBAN transactions cannot exceed 1000€"
-            }
+            if (value > 1000) return "IBAN transactions cannot exceed 1000€"
             break
         case "MB":
-            if (value > 500) {
-                return "MB transactions cannot exceed 500€"
-            }
+            if (value > 500) return "MB transactions cannot exceed 500€"
             break
         case "VISA":
-            if (value > 200) {
-                return "VISA transactions cannot exceed 200€"
-            }
+            if (value > 200) return "VISA transactions cannot exceed 200€"
+            break
+        case "VCARD":
             break
         default:
             return "Invalid payment type"
