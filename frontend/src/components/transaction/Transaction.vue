@@ -10,7 +10,6 @@ const categoryStore = useCategoryStore()
 const toast = useToast()
 const router = useRouter()
 const errors = ref(null)
-const inserting = (id) => !id || id <= 0
 const error = ref(null)
 const categoriesRef = ref([])
 let originalValueStr = ""
@@ -32,11 +31,20 @@ const newTransaction = () => {
     }
 }
 const transaction = ref(newTransaction())
-
+const inserting = (id) => {
+    switch (id) {
+        case -1:
+            return "debit"
+        case -2:
+            return "credit"
+        default:
+            return "edit"
+    }
+}
 const loadTransaction = async (id) => {
     originalValueStr = ""
     errors.value = null
-    if (inserting(id)) {
+    if (inserting(id) == "debit" || inserting(id) == "credit") {
         transaction.value = newTransaction()
     } else {
         try {
@@ -51,7 +59,7 @@ const loadTransaction = async (id) => {
 
 const save = async (transactionToSave) => {
     errors.value = null
-    if (inserting(props.id)) {
+    if (inserting(props.id) == "debit" || inserting(props.id) == "credit") {
         try {
             console.log(transactionToSave)
             const response = await axios.post("transactions", transactionToSave)

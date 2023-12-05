@@ -189,7 +189,7 @@ onMounted(async () => {
                                 class="nav-link w-100 me-3"
                                 :class="{ active: $route.name === 'NewTransaction' }"
                                 :to="{
-                                    name: 'NewTransaction',
+                                    name: 'NewCreditTransaction',
                                 }"
                             >
                                 <i class="bi bi-send-plus-fill"></i>
