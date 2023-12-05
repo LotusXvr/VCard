@@ -260,21 +260,7 @@ class TransactionController extends Controller
         //
     }
 
-    // Get sum of all transactions
-    public function getTransactionsSum()
-    {
-        $transactionsSum = Transaction::sum('value');
 
-        return response()->json(['transactionsSum' => $transactionsSum]);
-    }
-
-    // get count of all transactions
-    public function getTransactionsCount()
-    {
-        $transactionsCount = Transaction::count();
-
-        return response()->json(['transactionsCount' => $transactionsCount]);
-    }
 
     public function getTransactionsSumBetweenDates(Request $request)
     {
@@ -293,7 +279,6 @@ class TransactionController extends Controller
         $olderTransaction = Transaction::orderBy('date')->first();
 
         return response()->json(['olderTransaction' => $olderTransaction]);
-        ;
     }
 
     public function getTransactionsCountByType(Request $request)
@@ -304,52 +289,42 @@ class TransactionController extends Controller
         return response()->json(['countByPayementType' => $countByPayementType]);
     }
 
-    // get sum of all transaction by month this year
-    public function getTransactionsSumByMonth()
+    public function getTransactionStatistics()
     {
+        $transactionsSum = Transaction::sum('value');
+        $transactionsCount = Transaction::count();
+
         $transactionsSumByMonth = Transaction::select(DB::raw('MONTH(date) as month'), DB::raw('SUM(value) as sum'))
             ->whereYear('date', date('Y'))
             ->groupBy('month')
             ->get();
 
-        return response()->json(['transactionsSumByMonth' => $transactionsSumByMonth]);
-    }
-
-    // get quantity of transaction  by month this year
-    public function getTransactionsCountByMonth()
-    {
         $transactionsCountByMonth = Transaction::select(DB::raw('MONTH(date) as month'), DB::raw('COUNT(*) as count'))
             ->whereYear('date', date('Y'))
             ->groupBy('month')
             ->get();
 
-        return response()->json(['transactionsCountByMonth' => $transactionsCountByMonth]);
-    }
-
-    public function getTransactionsByPaymentMethod()
-    {
-        // Adjust this query based on your Transaction model and logic
         $transactionByPaymentMethod = Transaction::selectRaw('payment_type, COUNT(*) as transaction_count')
             ->groupBy('payment_type')
             ->get();
 
-        $paymentMethods = $transactionByPaymentMethod->pluck('payment_type')->toArray();
-        $transactionCounts = $transactionByPaymentMethod->pluck('transaction_count')->toArray();
-
-        return response()->json([
-            'paymentMethods' => $paymentMethods,
-            'transactionCounts' => $transactionCounts,
-        ]);
-    }
-
-    public function getAverageTransactionAmountByMonth()
-    {
         $averageTransactionAmounts = Transaction::selectRaw('MONTH(date) as month, YEAR(date) as year, AVG(value) as average_amount')
             ->groupBy('year', 'month')
             ->orderBy('year', 'asc')
             ->orderBy('month', 'asc')
             ->get();
 
-        return response()->json($averageTransactionAmounts);
+        $paymentMethods = $transactionByPaymentMethod->pluck('payment_type')->toArray();
+        $transactionCounts = $transactionByPaymentMethod->pluck('transaction_count')->toArray();
+
+        return response()->json([
+            'transactionsSum' => $transactionsSum,
+            'transactionsCount' => $transactionsCount,
+            'transactionsSumByMonth' => $transactionsSumByMonth,
+            'transactionsCountByMonth' => $transactionsCountByMonth,
+            'paymentMethods' => $paymentMethods,
+            'transactionCounts' => $transactionCounts,
+            'averageTransactionAmounts' => $averageTransactionAmounts,
+        ]);
     }
 }

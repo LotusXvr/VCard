@@ -1,99 +1,16 @@
 <script setup>
 import { onMounted, ref, shallowRef } from "vue"
 import axios from "axios"
-import { useUserStore } from "../stores/user"
 import Chart from "chart.js/auto"
-const userStore = useUserStore()
-
-const newVCard = () => {
-    return {
-        phone_number: "",
-        name: "",
-        email: "",
-        photo_url: null,
-        balance: 0,
-        max_debit: 0,
-        password: "",
-        confirmation_code: "",
-    }
-}
-
-const vcard = ref(newVCard())
-const loadVCard = () => {
-    axios
-        .get("vcards/" + userStore.userPhoneNumber)
-        .then((response) => {
-            vcard.value = response.data.data
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
 
 const vcardCount = ref(0)
-const getCountVCards = () => {
-    axios
-        .get("statistics/vcards/count")
-        .then((response) => {
-            console.log(response.data.vcardCount)
-            vcardCount.value = response.data.vcardCount
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
+const vcardCountActive = ref(0)
+const vcardBalanceSum = ref(0)
+const vcardBalanceSumActive = ref(0)
 
-const activeVCardCount = ref(0)
-const getCountActiveVCards = () => {
-    axios
-        .get("statistics/vcards/active/count")
-        .then((response) => {
-            console.log(response.data.activeVCardCount)
-            activeVCardCount.value = response.data.activeVCardCount
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
+const vcardBalanceDistributionChartEl = ref(null)
+const vcardBalanceDistributionChart = shallowRef(null)
 
-const totalVCardBalance = ref(0)
-const getTotalVCardBalance = () => {
-    axios
-        .get("statistics/vcards/balance")
-        .then((response) => {
-            console.log(response.data.vcardBalanceSum)
-            totalVCardBalance.value = response.data.vcardBalanceSum
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
-
-const totalActiveVCardBalance = ref(0)
-const getTotalActiveVCardBalance = () => {
-    axios
-        .get("statistics/vcards/active/balance")
-        .then((response) => {
-            console.log(response.data.activeVCardBalanceSum)
-            totalActiveVCardBalance.value = response.data.activeVCardBalanceSum
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
-
-const transactionsCount = ref(0)
-const getCountTransactions = () => {
-    axios
-        .get("statistics/transactions/count")
-        .then((response) => {
-            console.log(response.data.transactionsCount)
-            transactionsCount.value = response.data.transactionsCount
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
 const startDate = ref("")
 const endDate = ref("")
 const transactionsSumBetweenDates = ref(0)
@@ -103,74 +20,19 @@ const month = String(today.getMonth() + 1).padStart(2, "0") // Months are zero-b
 const day = String(today.getDate()).padStart(2, "0")
 const todayDateString = `${year}-${month}-${day}`
 
-const filterTransactions = async () => {
-    if (startDate.value == "") {
-        await axios
-            .get("statistics/transactions/older", {
-                params: {
-                    startDate: startDate.value,
-                    endDate: endDate.value,
-                },
-            })
-            .then((response) => {
-                startDate.value = response.data.olderTransaction.date
-            })
-            .catch((error) => {
-                console.error(error)
-            })
-    }
-    if (endDate.value == "") {
-        endDate.value = todayDateString
-    }
-    await axios
-        .get("statistics/transactions/sum-between-dates", {
-            params: {
-                startDate: startDate.value,
-                endDate: endDate.value,
-            },
-        })
-        .then((response) => {
-            transactionsSumBetweenDates.value = response.data.sumBetweenDates
-            transactionsCountBetweenDates.value = response.data.countBetweenDates
-        })
-        .catch((error) => {
-            console.error(error)
-        })
-    console.log(transactionsSumBetweenDates.value)
-}
+const transactionsCount = ref(0)
 const transactionsCountBetweenDates = ref(0)
 const paymentType = ref("Vcard")
 const transactionsCountByType = ref(0)
-const filterTransactionByType = async () => {
-    await axios
-        .get("statistics/transactions/count-by-type", {
-            params: {
-                paymentType: paymentType.value,
-            },
-        })
-        .then((response) => {
-            transactionsCountByType.value = response.data.countByPayementType
-        })
-        .catch((error) => {
-            console.error(error)
-        })
-}
-
 const transactionsSum = ref(0)
-const getSumTransactions = () => {
-    axios
-        .get("statistics/transactions/sum")
-        .then((response) => {
-            console.log(response.data.transactionsSum)
-            transactionsSum.value = response.data.transactionsSum
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
-
+const transactionsQuantityByMonth = ref(0)
+const transactionsByPaymentMethodChartEl = ref(null)
+const transactionsByPaymentMethodChart = shallowRef(null)
 const transactionsQuantityChartEl = ref(null)
 const transactionsQuantityChart = shallowRef(null)
+const averageTransactionAmountChartEl = ref(null)
+const averageTransactionAmountChart = shallowRef(null)
+const averageTransactionAmountByMonth = ref([])
 const monthNames = [
     "January",
     "February",
@@ -185,52 +47,17 @@ const monthNames = [
     "November",
     "December",
 ]
-const transactionsQuantityByMonth = ref(0)
-const getTransactionsQuantityByMonthGraph = () => {
+
+const getVCardStatistics = () => {
     axios
-        .get("statistics/transactions/quantity-by-month")
+        .get("statistics/vcards")
         .then((response) => {
-            console.log(response.data.transactionsCountByMonth)
-            transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
+            console.log(response.data)
+            vcardCount.value = response.data.vcardCount
+            vcardCountActive.value = response.data.activeVCardCount
+            vcardBalanceSum.value = response.data.vcardBalanceSum
+            vcardBalanceSumActive.value = response.data.activeVCardBalanceSum
 
-            const months = transactionsQuantityByMonth.value.map(
-                (entry) => monthNames[entry.month - 1],
-            )
-            const transactionsQuantity = transactionsQuantityByMonth.value.map(
-                (entry) => entry.count,
-            )
-
-            transactionsQuantityChart.value = new Chart(
-                transactionsQuantityChartEl.value.getContext("2d"),
-                {
-                    type: "line",
-                    data: {
-                        labels: months,
-                        datasets: [
-                            {
-                                label: "Number of monthly transactions",
-                                data: transactionsQuantity,
-                                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                                borderColor: "rgba(255, 99, 132, 1)",
-                                borderWidth: 1,
-                            },
-                        ],
-                    },
-                },
-            )
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
-
-const vcardBalanceDistributionChartEl = ref(null)
-const vcardBalanceDistributionChart = shallowRef(null)
-
-const getVCardBalanceDistributionGraph = () => {
-    axios
-        .get("statistics/vcards/balance-distribution")
-        .then((response) => {
             const balanceRanges = response.data.balanceRanges
             const vcardCounts = response.data.vcardCounts
 
@@ -258,13 +85,72 @@ const getVCardBalanceDistributionGraph = () => {
         })
 }
 
-const transactionsByPaymentMethodChartEl = ref(null)
-const transactionsByPaymentMethodChart = shallowRef(null)
-
-const getTransactionsByPaymentMethodGraph = () => {
+const getTransactionsStatistics = () => {
     axios
-        .get("statistics/transactions/by-payment-method")
+        .get("statistics/transactions")
         .then((response) => {
+            console.log(response.data)
+            transactionsCount.value = response.data.transactionsCount
+            transactionsSum.value = response.data.transactionsSum
+            transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
+            averageTransactionAmountByMonth.value = response.data.averageTransactionAmounts
+            transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
+
+            // GRAFICO 1
+            const months = transactionsQuantityByMonth.value.map(
+                (entry) => monthNames[entry.month - 1],
+            )
+            const transactionsQuantity = transactionsQuantityByMonth.value.map(
+                (entry) => entry.count,
+            )
+
+            transactionsQuantityChart.value = new Chart(
+                transactionsQuantityChartEl.value.getContext("2d"),
+                {
+                    type: "line",
+                    data: {
+                        labels: months,
+                        datasets: [
+                            {
+                                label: "Number of monthly transactions",
+                                data: transactionsQuantity,
+                                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                                borderColor: "rgba(255, 99, 132, 1)",
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
+                },
+            )
+
+            // GRAFICO 2
+            const monthsWithYear = averageTransactionAmountByMonth.value.map(
+                (entry) => `${monthNames[entry.month - 1]} ${entry.year}`,
+            )
+            const averageAmounts = averageTransactionAmountByMonth.value.map(
+                (entry) => entry.average_amount,
+            )
+
+            averageTransactionAmountChart.value = new Chart(
+                averageTransactionAmountChartEl.value.getContext("2d"),
+                {
+                    type: "line",
+                    data: {
+                        labels: monthsWithYear,
+                        datasets: [
+                            {
+                                label: "Average Transaction Amount",
+                                data: averageAmounts,
+                                backgroundColor: "rgba(0, 128, 0, 0.2)",
+                                borderColor: "rgba(0, 128, 0, 1)",
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
+                },
+            )
+
+            // GRAFICO 3
             const paymentMethods = response.data.paymentMethods
             const transactionCounts = response.data.transactionCounts
 
@@ -326,58 +212,61 @@ const getTransactionsByPaymentMethodGraph = () => {
         })
 }
 
-const averageTransactionAmountChartEl = ref(null)
-const averageTransactionAmountChart = shallowRef(null)
-const averageTransactionAmountByMonth = ref([])
-const getAverageTransactionAmountGraph = () => {
-    axios
-        .get("statistics/transactions/average-amount-by-month")
-        .then((response) => {
-            averageTransactionAmountByMonth.value = response.data
 
-            const months = averageTransactionAmountByMonth.value.map(
-                (entry) => `${monthNames[entry.month - 1]} ${entry.year}`,
-            )
-            const averageAmounts = averageTransactionAmountByMonth.value.map(
-                (entry) => entry.average_amount,
-            )
-
-            averageTransactionAmountChart.value = new Chart(
-                averageTransactionAmountChartEl.value.getContext("2d"),
-                {
-                    type: "line",
-                    data: {
-                        labels: months,
-                        datasets: [
-                            {
-                                label: "Average Transaction Amount",
-                                data: averageAmounts,
-                                backgroundColor: "rgba(0, 128, 0, 0.2)",
-                                borderColor: "rgba(0, 128, 0, 1)",
-                                borderWidth: 1,
-                            },
-                        ],
-                    },
+const filterTransactions = async () => {
+    if (startDate.value == "") {
+        await axios
+            .get("statistics/transactions/older", {
+                params: {
+                    startDate: startDate.value,
+                    endDate: endDate.value,
                 },
-            )
+            })
+            .then((response) => {
+                startDate.value = response.data.olderTransaction.date
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+    }
+    if (endDate.value == "") {
+        endDate.value = todayDateString
+    }
+    await axios
+        .get("statistics/transactions/sum-between-dates", {
+            params: {
+                startDate: startDate.value,
+                endDate: endDate.value,
+            },
+        })
+        .then((response) => {
+            transactionsSumBetweenDates.value = response.data.sumBetweenDates
+            transactionsCountBetweenDates.value = response.data.countBetweenDates
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
+        })
+    console.log(transactionsSumBetweenDates.value)
+}
+
+const filterTransactionByType = async () => {
+    await axios
+        .get("statistics/transactions/count-by-type", {
+            params: {
+                paymentType: paymentType.value,
+            },
+        })
+        .then((response) => {
+            transactionsCountByType.value = response.data.countByPayementType
+        })
+        .catch((error) => {
+            console.error(error)
         })
 }
 
 onMounted(() => {
-    loadVCard()
-    getCountVCards()
-    getCountActiveVCards()
-    getTotalVCardBalance()
-    getTotalActiveVCardBalance()
-    getCountTransactions()
-    getSumTransactions()
-    getTransactionsQuantityByMonthGraph()
-    getVCardBalanceDistributionGraph()
-    getTransactionsByPaymentMethodGraph()
-    getAverageTransactionAmountGraph()
+    getVCardStatistics()
+    getTransactionsStatistics()
 })
 </script>
 
@@ -444,21 +333,21 @@ onMounted(() => {
                     <div class="card mt-4">
                         <div class="card-body">
                             <h4 class="card-title">Current Count of Active VCards</h4>
-                            <p class="card-text">{{ activeVCardCount }}</p>
+                            <p class="card-text">{{ vcardCountActive }}</p>
                         </div>
                     </div>
 
                     <div class="card mt-4">
                         <div class="card-body">
                             <h4>Total Balance of All VCards</h4>
-                            <p>{{ totalVCardBalance }}</p>
+                            <p>{{ vcardBalanceSum }}</p>
                         </div>
                     </div>
 
                     <div class="card mt-4">
                         <div class="card-body">
                             <h4>Total Balance of All Active VCards</h4>
-                            <p>{{ totalActiveVCardBalance }}</p>
+                            <p>{{ vcardBalanceSumActive }}</p>
                         </div>
                     </div>
 
