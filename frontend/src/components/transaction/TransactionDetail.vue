@@ -16,8 +16,8 @@ const props = defineProps({
         required: true,
     },
     inserting: {
-        type: Boolean,
-        default: false,
+        type: String,
+        required: true,
     },
     errors: {
         type: Object,
@@ -30,12 +30,6 @@ const props = defineProps({
 })
 
 const editingTransaction = ref(props.transaction)
-
-const transactionVerifier = ref({
-    type: "",
-    reference: "",
-    value: "",
-})
 
 const emit = defineEmits(["save", "cancel"])
 
@@ -51,9 +45,16 @@ const transactionTitle = computed(() => {
     if (!editingTransaction.value) {
         return ""
     }
-    return props.inserting === true
-        ? "New Transaction"
-        : "Transaction #" + editingTransaction.value.id
+    console.log(editingTransaction.value)
+    console.log(props.transaction)
+    switch (props.inserting){
+        case "debit":
+            return "New Transaction"
+        case "credit":
+            return "New Credit"
+        default:
+            return "Transaction #" + editingTransaction.value.id
+    }
 })
 
 const save = async () => {
@@ -152,7 +153,7 @@ onMounted(() => {
         </div>
         <hr />
         <form @submit.prevent="save">
-            <div class="row" v-if="inserting">
+            <div class="row" v-if="inserting === 'debit'">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
@@ -185,7 +186,7 @@ onMounted(() => {
             </div>
 
             <div class="row">
-                <div v-if="inserting" class="col-md-6">
+                <div v-if="inserting === 'debit'" class="col-md-6">
                     <div class="form-group">
                         <label for="value">Amount:</label>
                         <input
@@ -197,7 +198,7 @@ onMounted(() => {
                         />
                     </div>
                 </div>
-                <div v-if="inserting" class="col-md-6">
+                <div v-if="inserting === 'debit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Confirmation Code:</label>
                         <input
