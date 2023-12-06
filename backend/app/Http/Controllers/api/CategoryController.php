@@ -18,18 +18,13 @@ class CategoryController extends Controller
         return Category::all();
     }
 
+    public function show(Category $category) {
+        return response()->json(['category' => $category], 200);
+    }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(VCard $vcard)
     {
         //
     }

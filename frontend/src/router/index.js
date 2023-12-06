@@ -104,6 +104,12 @@ const router = createRouter({
             props: { id: -1 },
         },
         {
+            path: "/category/:id",
+            name: "Category",
+            component: Category,
+            props: (route) => ({ id: parseInt(route.params.id) }),
+        },
+        {
             path: "/admins", // Altere de '/users' para '/administrators'
             name: "Users",
             component: Users,

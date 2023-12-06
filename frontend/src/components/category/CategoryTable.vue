@@ -16,6 +16,7 @@ const categoriesD = computed(() => categoriesRef.value.filter(category => catego
 const categoriesC = computed(() => categoriesRef.value.filter(category => category.type === 'C').sort((a, b) => a.name.localeCompare(b.name)))
 
 const editClick = (category) => {
+    console.log("editClick", category)
     emit("edit", category)
 }
 
