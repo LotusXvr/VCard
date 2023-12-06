@@ -20,13 +20,11 @@ export const useCategoryStore = defineStore('categories', () => {
     }
 
     async function loadCategory() {
-        console.log("Cheguei")
         try {
             const response = await axios.get("vcard/" + userStore.userPhoneNumber + "/category")
             categories.value = response.data
             return categories.value
         } catch (error) {
-            console.log("Cheguei"+error)
             clearCategories()
             throw error
         }
