@@ -93,8 +93,15 @@ const sumValues = (transactions, type) => {
 }
 
 // Compute the sum of debit and credit values for last month
-const sumDebitValues = computed(() => sumValues(lastMonthTransactions.value, "D"))
-const sumCreditValues = computed(() => sumValues(lastMonthTransactions.value, "C"))
+const sumDebitValues = computed(() => {
+    const rawValue = sumValues(lastMonthTransactions.value, "D");
+    return parseFloat(rawValue.toFixed(2)); // Round to 2 decimal places
+});
+
+const sumCreditValues = computed(() => {
+    const rawValue = sumValues(lastMonthTransactions.value, "C");
+    return parseFloat(rawValue.toFixed(2)); // Round to 2 decimal places
+});
 
 const dateindex = ref(0)
 const dates = computed(() => {

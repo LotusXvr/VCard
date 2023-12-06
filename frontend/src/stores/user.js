@@ -45,7 +45,6 @@ export const useUserStore = defineStore("user", () => {
             await loadUser()
             return true
         } catch (error) {
-
             clearUser()
             toast.error("Login failed - " + error.response.data.message ?? "Unknown error")
             return false
@@ -62,19 +61,17 @@ export const useUserStore = defineStore("user", () => {
     }
     async function changePassword(credentials) {
         if (userId.value < 0) {
-            throw 'Anonymous users cannot change the password!'
+            throw "Anonymous users cannot change the password!"
         }
 
-        if (userType.value == 'A') {
+        if (userType.value == "A") {
             try {
                 await axios.patch(`admins/${user.value.id}/password`, credentials)
                 return true
             } catch (error) {
                 throw error
             }
-        }
-        else {
-
+        } else {
             try {
                 await axios.patch(`vcards/${user.value.id}/password`, credentials)
                 return true
