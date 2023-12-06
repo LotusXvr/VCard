@@ -175,14 +175,14 @@ const cleanPhoto = () => {
                         <img :src="photoFullUrl" class="w-50" />
                     </div>
                     <div class="mt-3 d-flex justify-content-between flex-wrap">
-                        <label for="inputPhoto" class="btn btn-dark flex-grow-1 mx-1">Carregar</label>
+                        <label for="inputPhoto" class="btn btn-dark flex-grow-1 mx-1">Upload</label>
                         <button class="btn btn-secondary flex-grow-1 mx-1" @click.prevent="resetToOriginalPhoto"
                             v-if="editingVCard.photo_url">
-                            Repor
+                            Reset
                         </button>
                         <button class="btn btn-danger flex-grow-1 mx-1" @click.prevent="cleanPhoto"
                             v-show="editingVCard.photo_url || editingImageAsBase64">
-                            Apagar
+                            Delete
                         </button>
                     </div>
                     <div>

@@ -225,7 +225,10 @@ onMounted(() => {
                         />
                     </div>
                 </div>
-                <div v-if="inserting === 'credit' && creditShowFromFieldWhenNotVCard" class="col-md-6">
+                <div
+                    v-if="inserting === 'credit' && creditShowFromFieldWhenNotVCard"
+                    class="col-md-6"
+                >
                     <div class="form-group">
                         <label for="payment_reference">From...</label>
                         <input
@@ -249,6 +252,8 @@ onMounted(() => {
                         />
                     </div>
                 </div>
+
+                <hr style="margin-top: 20px" />
                 <div v-if="inserting != 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
@@ -281,9 +286,9 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div class="mb-3 d-flex justify-content-end" style="margin-top: 10px">
-                <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
+            <div class="mb-3 d-flex justify-content-end" style="margin-top: 25px">
                 <button type="button" class="btn btn-primary px-5" @click="save">Save</button>
+                <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>
             </div>
         </form>
     </div>
