@@ -9,6 +9,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    filtered: {
+        type: Boolean,
+        default: false,
+    },
 })
 const emit = defineEmits(["edit"])
 
@@ -93,14 +97,14 @@ const sumValues = (transactions, type) => {
 
 // Compute the sum of debit and credit values for last month
 const sumDebitValues = computed(() => {
-    const rawValue = sumValues(lastMonthTransactions.value, "D");
-    return parseFloat(rawValue.toFixed(2)); // Round to 2 decimal places
-});
+    const rawValue = sumValues(lastMonthTransactions.value, "D")
+    return parseFloat(rawValue.toFixed(2)) // Round to 2 decimal places
+})
 
 const sumCreditValues = computed(() => {
-    const rawValue = sumValues(lastMonthTransactions.value, "C");
-    return parseFloat(rawValue.toFixed(2)); // Round to 2 decimal places
-});
+    const rawValue = sumValues(lastMonthTransactions.value, "C")
+    return parseFloat(rawValue.toFixed(2)) // Round to 2 decimal places
+})
 
 const dateindex = ref(0)
 const dates = computed(() => {
@@ -148,15 +152,15 @@ const categoriesValue = categoryStore.categories
 
 const getCategoryNameById = (categoryId) => {
     if (categoryId != null) {
-        const matchingCategory = categoriesValue.find(category => category.id == categoryId);
+        const matchingCategory = categoriesValue.find((category) => category.id == categoryId)
 
         if (matchingCategory) {
-            return matchingCategory.name;
+            return matchingCategory.name
         } else {
-            return "Sem Categoria";
+            return "Sem Categoria"
         }
     } else {
-        return "Sem Categoria";
+        return "Sem Categoria"
     }
 }
 
@@ -194,6 +198,7 @@ onMounted(async () => {
     transactionsRef.value = props.transactions
     loadCategories()
     loadChart()
+    console.log(props.filtered)
 })
 </script>
 
