@@ -4,8 +4,10 @@ import HomeView from "../views/HomeView.vue"
 import VCards from "../components/vcard/VCards.vue"
 import Dashboard from "../components/Dashboard.vue"
 import Transaction from "../components/transaction/Transaction.vue"
+import Category from "../components/category/Category.vue"
 import VCard from "../components/vcard/VCard.vue"
 import Transactions from "../components/transaction/Transactions.vue"
+import Categories from "../components/category/Categories.vue"
 import Login from "../components/auth/Login.vue"
 import Users from "../components/user/Users.vue"
 import User from "../components/user/User.vue"
@@ -89,6 +91,17 @@ const router = createRouter({
             path: "/vcard/transactions",
             name: "Transactions",
             component: Transactions,
+        },
+        {
+            path: "/vcard/categories",
+            name: "Categories",
+            component: Categories,
+        },
+        {
+            path: "/categories/new",
+            name: "NewCategory",
+            component: Category,
+            props: { id: -1 },
         },
         {
             path: "/admins", // Altere de '/users' para '/administrators'

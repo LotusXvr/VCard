@@ -3,7 +3,6 @@ import { useCategoryStore } from "../../stores/category"
 const categoryStore = useCategoryStore()
 import { ref, onMounted, computed, shallowRef } from "vue"
 import Chart from "chart.js/auto"
-import axios from "axios"
 
 const props = defineProps({
     transactions: {
@@ -142,9 +141,15 @@ const categoriesValue = categoryStore.categories
 
 const getCategoryNameById = (categoryId) => {
     if (categoryId != null) {
-        return categoriesValue.filter((category) => category.id == categoryId)[0].name
+        const matchingCategory = categoriesValue.find(category => category.id == categoryId);
+
+        if (matchingCategory) {
+            return matchingCategory.name;
+        } else {
+            return "Sem Categoria";
+        }
     } else {
-        return "Sem Categoria"
+        return "Sem Categoria";
     }
 }
 

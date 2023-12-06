@@ -268,6 +268,18 @@ onMounted(async () => {
                                 Transactions
                             </router-link>
                         </li>
+                        <li class="nav-item">
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'Categories' }"
+                                :to="{
+                                    name: 'Categories',
+                                }"
+                            >
+                                <i class="bi bi-tags"></i>
+                                Categorias
+                            </router-link>
+                        </li>
                     </ul>
 
                     <div class="collapse navbar-collapse justify-content-end">

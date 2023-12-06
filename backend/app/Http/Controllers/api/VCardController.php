@@ -166,6 +166,25 @@ class VCardController extends Controller {
         return Category::where('vcard', $vcard->phone_number)->get();
     }
 
+    public function addCategoryFromVCard(VCard $vcard) {
+        return null;
+    }
+
+    public function updateCategoryFromVCard(VCard $vcard) {
+        return null;
+    }
+
+    public function deleteCategoryFromVCard(VCard $vcard, Request $request) {
+        $category = Category::where('vcard', $vcard->phone_number)->where('category_id', $request->category_id)->first();
+
+        if ($category) {
+            $category->delete();
+            return response()->json(['message' => 'Category deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+    }
+
     public function getVCardStatistics() {
         $vcardCount = VCard::count();
         $activeVCardCount = VCard::where('blocked', 0)->count();
