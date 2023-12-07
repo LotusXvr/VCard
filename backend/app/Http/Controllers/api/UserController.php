@@ -31,7 +31,7 @@ class UserController extends Controller
         return new UserResource($request->user());
     }
 
-    public function update(UserRequest $request, User $user)
+ /*   public function update(UserRequest $request, User $user)
     {
         $user->update($request->all());
         return new UserResource($user);
@@ -41,6 +41,6 @@ class UserController extends Controller
     {
         $user->delete();
         return new UserResource($user);
-    }
+    }*/
 
 }

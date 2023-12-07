@@ -55,7 +55,9 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('vcards', VCardController::class);
     Route::apiResource('category', CategoryController::class);
-    Route::apiResource('users', UserController::class);
+    Route::get('users', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
+    Route::get('users/{user}',[UserController::class,'show'])->middleware('can:view,user');
+    //Route::post('users', [UserController::class, 'store'])->middleware('can:create');
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
     Route::apiResource('transactions', TransactionController::class);
 
