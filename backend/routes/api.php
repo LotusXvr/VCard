@@ -30,7 +30,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('users/me', [UserController::class, 'show_me']);
     Route::patch('admins/{admin}/password', [AdminController::class, 'update_password']);
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password'])->middleware('can:updatePassword,vcard');
-    Route::patch('vcards/{vcard}/change-status', [VCardController::class, 'changeStatus'])->middleware('can:updatePassword,vcard');
+    Route::patch('vcards/{vcard}/change-status', [VCardController::class, 'changeStatus']);
     Route::patch('vcards/{vcard}/change-confirmation-code', [VCardController::class, 'update_confirmation_code'])->middleware('can:updatePassword,vcard');
 
     Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
