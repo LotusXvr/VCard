@@ -9,6 +9,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    filtered: {
+        type: Boolean,
+        default: false,
+    },
 })
 const emit = defineEmits(["edit"])
 
@@ -147,12 +151,12 @@ const getCategoryNameById = (categoryId) => {
         const matchingCategory = categoryStore.categories.find(category => category.id == categoryId);
 
         if (matchingCategory) {
-            return matchingCategory.name;
+            return matchingCategory.name
         } else {
-            return "Sem Categoria";
+            return "Sem Categoria"
         }
     } else {
-        return "Sem Categoria";
+        return "Sem Categoria"
     }
 }
 
@@ -188,6 +192,7 @@ onMounted(async () => {
     transactionsRef.value = props.transactions
     loadCategories()
     loadChart()
+    console.log(props.filtered)
 })
 </script>
 

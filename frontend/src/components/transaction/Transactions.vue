@@ -51,6 +51,7 @@ const startDate = ref(null)
 const endDate = ref(null)
 const type = ref(null)
 const method = ref(null)
+const filtered = ref(false)
 
 // Method to apply filters
 const applyFilters = () => {
@@ -67,6 +68,7 @@ const applyFilters = () => {
         const isCorrectMethod = method.value ? transaction.payment_type === method.value : true
         return isAfterStartDate && isBeforeEndDate && isCorrectType && isCorrectMethod
     })
+    filtered.value = true
     forceRerender()
 }
 
@@ -77,6 +79,7 @@ const clearFilters = () => {
     type.value = null
     method.value = null
     filteredTransactions.value = transactions.value
+    filtered.value = false
     forceRerender()
 }
 
@@ -151,7 +154,7 @@ onMounted(() => {
     <div v-if="filteredTransactions.length > 0 && renderComponent">
         <TransactionTable
             :transactions="filteredTransactions"
-            :showUserId="true"
+            :filtered="filtered"
             @edit="editTransaction"
         ></TransactionTable>
     </div>

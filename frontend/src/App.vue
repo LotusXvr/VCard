@@ -216,14 +216,8 @@ onMounted(async () => {
                                 }"
                             >
                                 <i class="bi bi-people"></i>
-                                Enviar dinheiro
+                                Send Money
                             </router-link>
-                        </li>
-                        <li class="nav-item" v-show="userStore.user?.user_type == 'V'">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-files"></i>
-                                Pagar serviço
-                            </a>
                         </li>
                     </ul>
 
@@ -239,7 +233,6 @@ onMounted(async () => {
                             aria-label="Add a new project"
                             v-show="userStore.user?.user_type == 'V'"
                         >
-                            <i class="bi bi-xs bi-plus-circle"></i>
                         </a>
                     </h6>
                     <ul class="nav flex-column mb-2" v-show="userStore.user?.user_type == 'V'">
@@ -277,7 +270,7 @@ onMounted(async () => {
                                 }"
                             >
                                 <i class="bi bi-tags"></i>
-                                Categorias
+                                Categories
                             </router-link>
                         </li>
                     </ul>
