@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Transaction;
 use App\Models\Default_Category;
 use App\Models\VCard;
 use Illuminate\Http\Request;
@@ -46,8 +47,14 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //$category->Transactions()->detach();
-        $category->delete();
+        $hasTransactions = Transaction::where('category_id', $category->id)->exists();
+
+        if ($hasTransactions) {
+            $category->delete();
+        } else {
+            $category->forceDelete();
+        }
+
         return $category;
     }
 }

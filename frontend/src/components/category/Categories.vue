@@ -61,7 +61,7 @@ onMounted(() => {
             </router-link>
         </div>
     </div>
-    <div v-if="categories.length > 0">
+    <div v-if="categories.length > 0 ">
         <CategoryTable
             :categories="categories"
             :showUserId="true"

@@ -1,9 +1,10 @@
 <script setup>
 import { useCategoryStore } from "../../stores/category"
-const categoryStore = useCategoryStore()
 import { ref, onMounted, computed, shallowRef } from "vue"
 import Chart from "chart.js/auto"
+import axios from "axios";
 
+const categories = ref([])
 const props = defineProps({
     transactions: {
         type: Array,
@@ -21,7 +22,10 @@ const editClick = (transaction) => {
 }
 const loadCategories = async () => {
     try {
-        await categoryStore.loadCategory()
+        await axios.get("vcard/" + props.transactions[0].vcard + "/category/all").then((response) => {
+            console.log(response.data)
+            categories.value = response.data
+        })
     } catch (error) {
         console.log(error)
     }
@@ -148,7 +152,7 @@ const loadChart = () => {
 
 const getCategoryNameById = (categoryId) => {
     if (categoryId != null) {
-        const matchingCategory = categoryStore.categories.find(category => category.id == categoryId);
+        const matchingCategory = categories.value.find(category => category.id == categoryId);
 
         if (matchingCategory) {
             return matchingCategory.name

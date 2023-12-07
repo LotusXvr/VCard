@@ -166,6 +166,10 @@ class VCardController extends Controller {
         return Category::where('vcard', $vcard->phone_number)->get();
     }
 
+    public function getCategoryFromVCardWithTrashed(VCard $vcard)
+    {
+        return Category::withTrashed()->where('vcard', $vcard->phone_number)->get();
+    }
 
     public function deleteCategoryFromVCard(VCard $vcard, Request $request) {
         $category = Category::where('vcard', $vcard->phone_number)->where('category_id', $request->category_id)->first();
