@@ -29,18 +29,15 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users/me', [UserController::class, 'show_me']);
     Route::patch('admins/{admin}/password', [AdminController::class, 'update_password']);
-    Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password']);
+    Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password'])->middleware('can:updatePassword,vcard');
     Route::patch('vcards/{vcard}/change-status', [VCardController::class, 'changeStatus']);
-    Route::patch('vcards/{phone_number}/change-confirmation-code', [VCardController::class, 'update_confirmation_code']);
+    Route::patch('vcards/{vcard}/change-confirmation-code', [VCardController::class, 'update_confirmation_code'])->middleware('can:updatePassword,vcard');
 
     Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
 
-    // Get all transactions of last month of a vcard
-    Route::get('vcard/{phone_number}/transactions/lastmonth', [VCardController::class, 'getTransactionsByPhoneNumberLastMonth']);
-
     // List transactions of a specific phone number
-    Route::get('vcard/{phone_number}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber']);
-    Route::get('vcard/{vcard}/category', [VCardController::class, 'getCategoryFromVCard']);
+    Route::get('vcard/{vcard}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber'])->middleware('can:view,vcard');
+    Route::get('vcard/{vcard}/category', [VCardController::class, 'getCategoryFromVCard'])->middleware('can:view,vcard');
 
     // Statistics
     Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates']);
