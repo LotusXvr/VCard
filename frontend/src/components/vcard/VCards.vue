@@ -29,9 +29,7 @@ const orderBy = ref("phone_number")
 
 const loadVCards = (page = 1) => {
     // Change later when authentication is implemented
-    console.log(orderBy.value)
-    console.log(name.value)
-    console.log(blocked.value)
+
     axios
         .get("vcards", {
             params: {
@@ -74,10 +72,6 @@ const deleteVCard = (vcard) => {
         })
 }
 
-onMounted(() => {
-    loadVCards()
-})
-
 const handleStatusChange = (vcard) => {
     axios
         .patch("vcards/" + vcard.phone_number + "/change-status")
@@ -90,57 +84,22 @@ const handleStatusChange = (vcard) => {
         })
 }
 
-const renderComponent = ref(true)
-
-const forceRerender = async () => {
-    // Remove MyComponent from the DOM
-    renderComponent.value = false
-
-    // Wait for the change to get flushed to the DOM
-    await nextTick()
-
-    // Add the component back in
-    renderComponent.value = true
-}
-
 
 const applyFilters = () => {
-    // filteredVCards.value = vcards.value.filter((vcard) => {
-    //     // Check if name on the vcard has the name given
-    //     const nameOnVCard = vcard.name.toLowerCase()
-    //     const nameToSearch = name.value.toLowerCase()
-    //     const hasName = nameToSearch ? nameOnVCard.includes(nameToSearch) : true
-
-    //     // Check if vcard is blocked
-    //     const blockedNumber = blocked.value ? 1 : 0
-    //     const isBlocked = blockedNumber ? vcard.blocked === blockedNumber : true
-
-    //     return isBlocked && hasName
-    // })
-
-    // // Order the filteredVCards based on the selected orderBy parameter
-    // filteredVCards.value.sort((a, b) => {
-    //     if (orderBy.value === "phoneNumber") {
-    //         return a.phoneNumber.localeCompare(b.phoneNumber)
-    //     } else if (orderBy.value === "name") {
-    //         return a.name.localeCompare(b.name)
-    //     } else if (orderBy.value === "balance") {
-    //         return b.balance - a.balance
-    //     } else {
-    //         return 0 // Default order (no change)
-    //     }
-    // })
     loadVCards()
-
-    console.log(filteredVCards.value)
-    forceRerender()
 }
 
 const clearFilters = () => {
     blocked.value = null
-    filteredVCards.value = vcards.value
-    forceRerender()
+    orderBy.value = "phone_number"
+    name.value = ""
+    loadVCards()
 }
+
+
+onMounted(() => {
+    loadVCards()
+})
 </script>
 
 <template>
