@@ -12,7 +12,7 @@ class Default_Category extends Model
     use SoftDeletes;
 
     protected $table = 'default_categories';
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
         'type',

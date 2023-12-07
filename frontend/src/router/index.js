@@ -5,8 +5,10 @@ import VCards from '../components/vcard/VCards.vue'
 import Dashboard from '../components/Dashboard.vue'
 import Transaction from '../components/transaction/Transaction.vue'
 import Category from '../components/category/Category.vue'
+import DefaultCategory from '../components/default-category/DefaultCategory.vue'
 import VCard from '../components/vcard/VCard.vue'
 import Transactions from '../components/transaction/Transactions.vue'
+import DefaultCategories from '../components/default-category/DefaultCategories.vue'
 import Categories from '../components/category/Categories.vue'
 import Login from '../components/auth/Login.vue'
 import Users from '../components/user/Users.vue'
@@ -107,6 +109,23 @@ const router = createRouter({
             path: "/category/:id",
             name: "Category",
             component: Category,
+            props: (route) => ({ id: parseInt(route.params.id) }),
+        },
+        {
+            path: "/default-categories",
+            name: "DefaultCategories",
+            component: DefaultCategories,
+        },
+        {
+            path: "/default-categories/new",
+            name: "NewDefaultCategory",
+            component: DefaultCategory,
+            props: { id: -1 },
+        },
+        {
+            path: "/default-category/:id",
+            name: "DefaultCategory",
+            component: DefaultCategory,
             props: (route) => ({ id: parseInt(route.params.id) }),
         },
         {

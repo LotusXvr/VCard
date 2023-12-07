@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\AdminController;
 use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\DefaultCategoryController;
 use App\Http\Controllers\api\TransactionController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\VCardController;
@@ -53,6 +54,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('vcards', VCardController::class);
     Route::apiResource('category', CategoryController::class);
+    Route::apiResource('default-category', DefaultCategoryController::class);
     Route::get('users', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
     Route::get('users/{user}',[UserController::class,'show'])->middleware('can:view,user');
     //Route::post('users', [UserController::class, 'store'])->middleware('can:create');

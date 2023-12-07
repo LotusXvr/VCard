@@ -287,13 +287,13 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-            <div class="mx-2 mt-2">
-            <router-link class="nav-link w-100 me-3" :to="{ name: 'NewCategory' }">
-                <button type="button" class="btn btn-success px-4 btn-addtask" @click="addCategory">
-                    <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add Category
-                </button>
-            </router-link>
-        </div>
+            <div v-if=" inserting !== 'credit' " class="mx-2 mt-2">
+                <router-link class="nav-link w-100 me-3" :to="{ name: 'NewCategory' }">
+                    <button type="button" class="btn btn-success px-4 btn-addtask" @click="addCategory">
+                        <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add Category
+                    </button>
+                </router-link>
+            </div>
             <div class="mb-3 d-flex justify-content-end" style="margin-top: 25px">
                 <button type="button" class="btn btn-primary px-5" @click="save">Save</button>
                 <button type="button" class="btn btn-light px-5" @click="cancel">Cancel</button>

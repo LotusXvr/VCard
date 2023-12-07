@@ -205,6 +205,18 @@ onMounted(async () => {
                                 VCards
                             </router-link>
                         </li>
+                        <li class="nav-item" v-show="userStore.user?.user_type == 'A'">
+                            <router-link
+                                class="nav-link w-100 me-3"
+                                :class="{ active: $route.name === 'DefaultCategories' }"
+                                :to="{
+                                    name: 'DefaultCategories',
+                                }"
+                            >
+                                <i class="bi bi-tags-fill"></i>
+                                Default Categories
+                            </router-link>
+                        </li>
 
                         <li class="nav-item" v-show="userStore.user?.user_type == 'V'">
                             <router-link
