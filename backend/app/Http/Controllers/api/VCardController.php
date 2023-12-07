@@ -92,8 +92,8 @@ class VCardController extends Controller {
         }
     }
 
-    public function update_confirmation_code(UpdateVcardCodeRequest $request) {
-        $vcard = VCard::where('phone_number', $request->phone_number)->first();
+    public function update_confirmation_code(UpdateVcardCodeRequest $request, VCard $vcard) {
+        //$vcard = VCard::where('phone_number', $request->phone_number)->first();
         if(Hash::check($request->validated()['current_confirmation_code'], $vcard->confirmation_code)) {
             $vcard->confirmation_code = bcrypt($request->validated()['confirmation_code']);
         } else {
@@ -146,8 +146,8 @@ class VCardController extends Controller {
         return response()->json(['message' => 'Phone number is available']);
     }
 
-    public function getTransactionsByPhoneNumber(Request $request) {
-        $phoneNumber = $request->phone_number;
+    public function getTransactionsByPhoneNumber(Request $request, VCard $vcard) {
+        $phoneNumber = $vcard->phone_number;
 
         $transactions = Transaction::where('vcard', $phoneNumber)
             ->orderBy('date', 'desc')
@@ -166,13 +166,6 @@ class VCardController extends Controller {
         return Category::where('vcard', $vcard->phone_number)->get();
     }
 
-    public function addCategoryFromVCard(VCard $vcard) {
-        return null;
-    }
-
-    public function updateCategoryFromVCard(VCard $vcard) {
-        return null;
-    }
 
     public function deleteCategoryFromVCard(VCard $vcard, Request $request) {
         $category = Category::where('vcard', $vcard->phone_number)->where('category_id', $request->category_id)->first();
