@@ -144,10 +144,12 @@ const cancel = () => {
 }
 
 const loadCategories = async () => {
-    try {
-        await categoryStore.loadCategory()
-    } catch (error) {
-        console.log(error)
+    if (props.inserting !== "credit") {
+        try {
+            await categoryStore.loadCategory()
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 

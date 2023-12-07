@@ -20,6 +20,7 @@ export const useCategoryStore = defineStore('categories', () => {
     }
 
     async function loadCategory() {
+        if (userStore.userType == "A") return
         try {
             const response = await axios.get("vcard/" + userStore.userPhoneNumber + "/category")
             categories.value = response.data

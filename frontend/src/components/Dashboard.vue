@@ -372,7 +372,7 @@ onMounted(() => {
                 <div class="col-md-6">
                     <div class="card mt-4">
                         <div class="card-body">
-                            <h7><b>Filter Transactions:</b></h7>
+                            <h5><b>Filter Transactions:</b></h5>
                             <h4>Filter Transactions by Type</h4>
                             <div class="container mt-4">
                                 <div class="row">
