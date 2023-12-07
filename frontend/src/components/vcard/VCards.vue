@@ -1,20 +1,20 @@
 <script setup>
-import axios from 'axios'
-import { ref, onMounted, defineProps, nextTick } from 'vue'
-import VCardTable from './VCardTable.vue'
-import { useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
-import { Bootstrap5Pagination } from 'laravel-vue-pagination'
+import axios from "axios"
+import { ref, onMounted, defineProps, nextTick } from "vue"
+import VCardTable from "./VCardTable.vue"
+import { useRouter } from "vue-router"
+import { useToast } from "vue-toastification"
+import { Bootstrap5Pagination } from "laravel-vue-pagination"
 
 const props = defineProps({
-  vcardsTitle: {
-    type: String,
-    default: 'VCards'
-  },
-  onlyCurrentVCards: {
-    type: Boolean,
-    default: false
-  }
+    vcardsTitle: {
+        type: String,
+        default: "VCards",
+    },
+    onlyCurrentVCards: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 const router = useRouter()
@@ -23,189 +23,199 @@ const vcards = ref([])
 const filteredVCards = ref([])
 const paginationData = ref({})
 
+const blocked = ref(null)
+const name = ref("")
+const orderBy = ref("phone_number")
+
 const loadVCards = (page = 1) => {
-  // Change later when authentication is implemented
-  axios
-    .get('vcards?page=' + page)
-    .then((response) => {
-      const responseData = response.data
-      console.log(responseData)
-      vcards.value = responseData.data
-      filteredVCards.value = vcards.value
-      paginationData.value = responseData
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    // Change later when authentication is implemented
+    console.log(orderBy.value)
+    console.log(name.value)
+    console.log(blocked.value)
+    axios
+        .get("vcards", {
+            params: {
+                page: page,
+                name: name.value,
+                blocked: blocked.value,
+                orderBy: orderBy.value,
+            },
+        })
+        .then((response) => {
+            const responseData = response.data
+            console.log(responseData)
+            vcards.value = responseData.data
+            filteredVCards.value = vcards.value
+            paginationData.value = responseData
+
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 const addVCard = () => {
-  router.push({ name: 'newVCard' })
+    router.push({ name: "newVCard" })
 }
 
 const editVCard = (vcard) => {
-  router.push({ name: 'VCardUpdate', params: { phone_number: vcard.phone_number } })
+    router.push({ name: "VCardUpdate", params: { phone_number: vcard.phone_number } })
 }
 
 const deleteVCard = (vcard) => {
-  axios
-    .delete('vcards/' + vcard.phone_number)
-    .then(() => {
-      toast.success('VCard deleted successfully')
-      loadVCards()
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    axios
+        .delete("vcards/" + vcard.phone_number)
+        .then(() => {
+            toast.success("VCard deleted successfully")
+            loadVCards()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 onMounted(() => {
-  loadVCards()
+    loadVCards()
 })
 
 const handleStatusChange = (vcard) => {
-  axios
-    .patch('vcards/' + vcard.phone_number + '/change-status')
-    .then(() => {
-      toast.success('VCard status changed successfully')
-      loadVCards()
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    axios
+        .patch("vcards/" + vcard.phone_number + "/change-status")
+        .then(() => {
+            toast.success("VCard status changed successfully")
+            loadVCards()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 const renderComponent = ref(true)
 
 const forceRerender = async () => {
-  // Remove MyComponent from the DOM
-  renderComponent.value = false
+    // Remove MyComponent from the DOM
+    renderComponent.value = false
 
-  // Wait for the change to get flushed to the DOM
-  await nextTick()
+    // Wait for the change to get flushed to the DOM
+    await nextTick()
 
-  // Add the component back in
-  renderComponent.value = true
+    // Add the component back in
+    renderComponent.value = true
 }
 
-const blocked = ref(null)
-const name = ref('')
-const orderBy = ref('phoneNumber')
 
 const applyFilters = () => {
-  filteredVCards.value = vcards.value.filter((vcard) => {
-    // Check if name on the vcard has the name given
-    const nameOnVCard = vcard.name.toLowerCase()
-    const nameToSearch = name.value.toLowerCase()
-    const hasName = nameToSearch ? nameOnVCard.includes(nameToSearch) : true
+    // filteredVCards.value = vcards.value.filter((vcard) => {
+    //     // Check if name on the vcard has the name given
+    //     const nameOnVCard = vcard.name.toLowerCase()
+    //     const nameToSearch = name.value.toLowerCase()
+    //     const hasName = nameToSearch ? nameOnVCard.includes(nameToSearch) : true
 
-    // Check if vcard is blocked
-    const blockedNumber = blocked.value ? 1 : 0
-    const isBlocked = blockedNumber ? vcard.blocked === blockedNumber : true
+    //     // Check if vcard is blocked
+    //     const blockedNumber = blocked.value ? 1 : 0
+    //     const isBlocked = blockedNumber ? vcard.blocked === blockedNumber : true
 
-    return isBlocked && hasName
-  })
+    //     return isBlocked && hasName
+    // })
 
-  // Order the filteredVCards based on the selected orderBy parameter
-  filteredVCards.value.sort((a, b) => {
-    if (orderBy.value === 'phoneNumber') {
-      return a.phoneNumber.localeCompare(b.phoneNumber)
-    } else if (orderBy.value === 'name') {
-      return a.name.localeCompare(b.name)
-    } else if (orderBy.value === 'balance') {
-      return b.balance - a.balance
-    } else {
-      return 0 // Default order (no change)
-    }
-  })
+    // // Order the filteredVCards based on the selected orderBy parameter
+    // filteredVCards.value.sort((a, b) => {
+    //     if (orderBy.value === "phoneNumber") {
+    //         return a.phoneNumber.localeCompare(b.phoneNumber)
+    //     } else if (orderBy.value === "name") {
+    //         return a.name.localeCompare(b.name)
+    //     } else if (orderBy.value === "balance") {
+    //         return b.balance - a.balance
+    //     } else {
+    //         return 0 // Default order (no change)
+    //     }
+    // })
+    loadVCards()
 
-  console.log(filteredVCards.value)
-  forceRerender()
+    console.log(filteredVCards.value)
+    forceRerender()
 }
 
 const clearFilters = () => {
-  blocked.value = null
-  filteredVCards.value = vcards.value
-  forceRerender()
+    blocked.value = null
+    filteredVCards.value = vcards.value
+    forceRerender()
 }
 </script>
 
 <template>
-  <div class="container mt-4">
-    <div class="row">
-      <div class="col-md-3">
-        <!-- Filter inputs -->
-        <div class="mb-3">
-          <label for="type" class="form-label">Name:</label>
-          <input type="text" class="form-control" v-model="name" />
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Filter inputs -->
+                <div class="mb-3">
+                    <label for="type" class="form-label">Name:</label>
+                    <input type="text" class="form-control" v-model="name" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <!-- Filter inputs -->
+                <div class="mb-3">
+                    <label for="orderBy" class="form-label">Order by:</label>
+                    <select class="form-select" v-model="orderBy">
+                        <option value="phone_number">Phone Number</option>
+                        <option value="name">Name</option>
+                        <option value="balance">Balance</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <!-- Filter inputs -->
+                <div class="mb-3">
+                    <label for="blocked" class="form-label">Block status:</label>
+                    <select class="form-select" v-model="blocked">
+                        <option value="">All</option>
+                        <option value="0">Not Blocked</option>
+                        <option value="1">Blocked</option>
+                    </select>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-md-3">
-        <!-- Filter inputs -->
-        <div class="mb-3">
-          <label for="orderBy" class="form-label">Order by:</label>
-          <select class="form-select" v-model="orderBy">
-            <option value="phoneNumber">Phone Number</option>
-            <option value="name">Name</option>
-            <option value="balance">Balance</option>
-          </select>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <!-- Filter inputs -->
-        <div class="mb-3 form-check">
-          <input
-            class="form-check-input custom-checkbox"
-            type="checkbox"
-            id="flexCheckDefault"
-            v-model="blocked"
-            true-value="true"
-            false-value="false"
-          />
-          <label class="form-check-label" for="flexCheckDefault"> Blocked </label>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-3">
-        <!-- Button to apply filters -->
-        <div class="mb-3">
-          <button @click="applyFilters" class="btn btn-primary">Apply Filters</button>
-        </div>
-      </div>
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Button to apply filters -->
+                <div class="mb-3">
+                    <button @click="applyFilters" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </div>
 
-      <div class="col-md-3">
-        <!-- Button to clear filters and show all transactions -->
-        <div class="mb-3">
-          <button @click="clearFilters" class="btn btn-secondary">Clear Filters</button>
+            <div class="col-md-3">
+                <!-- Button to clear filters and show all transactions -->
+                <div class="mb-3">
+                    <button @click="clearFilters" class="btn btn-secondary">Clear Filters</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <hr />
-  <div v-if="!onlyCurrentVCards" class="mb-3 d-flex justify-content-between flex-wrap">
-    <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
-    <div class="mx-2 mt-2">
-      <router-link class="nav-link w-100 me-3" :to="{ name: 'NewVCard' }">
-        <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">
-          <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
-        </button>
-      </router-link>
+    <hr />
+    <div v-if="!onlyCurrentVCards" class="mb-3 d-flex justify-content-between flex-wrap">
+        <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
+        <div class="mx-2 mt-2">
+            <router-link class="nav-link w-100 me-3" :to="{ name: 'NewVCard' }">
+                <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">
+                    <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
+                </button>
+            </router-link>
+        </div>
     </div>
-  </div>
-  <VCardTable
-    :vcards="filteredVCards"
-    :showPhoneNumber="true"
-    @edit="editVCard"
-    @delete="deleteVCard"
-    @changeStatus="handleStatusChange"
-  ></VCardTable>
+    <VCardTable
+        :vcards="filteredVCards"
+        :showPhoneNumber="true"
+        @edit="editVCard"
+        @delete="deleteVCard"
+        @changeStatus="handleStatusChange"
+    ></VCardTable>
 
-  <Bootstrap5Pagination
-    :data="paginationData"
-    @pagination-change-page="loadVCards"
-    :limit="3"
-    :show-disabled="true"
-  ></Bootstrap5Pagination>
+    <Bootstrap5Pagination
+        :data="paginationData"
+        @pagination-change-page="loadVCards"
+        :limit="3"
+        :show-disabled="true"
+    ></Bootstrap5Pagination>
 </template>
