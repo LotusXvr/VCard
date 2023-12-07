@@ -135,7 +135,6 @@ onMounted(async () => {
                                             name: 'VCard',
                                             params: { phone_number: userStore.userPhoneNumber },
                                         }"
-                                        @click="clickMenuOption"
                                     >
                                         <i class="bi bi-person-square"></i>
                                         Profile
@@ -349,7 +348,6 @@ onMounted(async () => {
                                                         phone_number: userStore.userPhoneNumber,
                                                     },
                                                 }"
-                                                @click="clickMenuOption"
                                             >
                                                 <i class="bi bi-person-square"></i>
                                                 Profile

@@ -128,7 +128,7 @@ const cleanPhoto = () => {
             :class="{ 'is-invalid': errors ? errors['phone_number'] : false }"
             required
           />
-          <field-error-message :errors="errors" fieldName="phone_number"></field-error-message>
+          <!-- <field-error-message :errors="errors" fieldName="phone_number"></field-error-message> -->
         </div>
 
         <div class="mb-3 px-1">
@@ -140,7 +140,7 @@ const cleanPhoto = () => {
             :class="{ 'is-invalid': errors ? errors['name'] : false }"
             required
           />
-          <field-error-message :errors="errors" fieldName="name"></field-error-message>
+          <!-- <field-error-message :errors="errors" fieldName="name"></field-error-message> -->
         </div>
 
         <div class="form-group">
@@ -152,7 +152,7 @@ const cleanPhoto = () => {
             :class="{ 'is-invalid': errors ? errors['email'] : false }"
             required
           />
-          <field-error-message :errors="errors" fieldName="email"></field-error-message>
+          <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
         </div>
 
         <div class="mb-3" v-if="inserting">
@@ -221,10 +221,10 @@ const cleanPhoto = () => {
             </button>
           </div>
           <div>
-            <field-error-message
+            <!-- <field-error-message
               :errors="errors"
               fieldName="base64ImagePhoto"
-            ></field-error-message>
+            ></field-error-message> -->
           </div>
         </div>
       </div>
