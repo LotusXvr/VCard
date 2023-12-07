@@ -29,7 +29,7 @@ const editCategory = (category) => {
 
 const deleteCategory = (category) => {
     axios
-        .delete("categories/" + category.id)
+        .delete("category/" + category.id)
         .then(() => {
             loadCategories()
         })

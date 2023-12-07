@@ -12,10 +12,10 @@ class Category extends Model
     use SoftDeletes;
 
     protected $table = 'categories';
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
-        'v_card',
+        'vcard',
         'type',
         'name',
         'custom_data',

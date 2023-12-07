@@ -13,7 +13,6 @@ const userStore = useUserStore()
 const toast = useToast()
 const router = useRouter()
 const errors = ref(null)
-const categoriesRef = ref([])
 let originalValueStr = ""
 
 const props = defineProps({
@@ -25,29 +24,19 @@ const props = defineProps({
 
 const newCategory = () => {
     return {
-        payment_type: "",
-        vcard: "",
-        confirmation_code: "",
-        payment_reference: "",
-        value: "",
+        id: null,
+        vcard: userStore.userPhoneNumber,
+        name: "",
         type: "",
     }
 }
 const category = ref(newCategory())
-const inserting = (id) => {
-    switch (id) {
-        case -1:
-            return "debit"
-        case -2:
-            return "credit"
-        default:
-            return "edit"
-    }
-}
+const inserting = (id) => !id || id < 0
+
 const loadCategory = async (id) => {
     originalValueStr = ""
     errors.value = null
-    if (inserting(id) == "debit" || inserting(id) == "credit") {
+    if (inserting(id)) {
         category.value = newCategory()
     } else {
         try {
@@ -58,30 +47,38 @@ const loadCategory = async (id) => {
             console.error("Error loading category:", error)
         }
     }
-
 }
 
 const save = async (categoryToSave) => {
-    errors.value = null
-    if (inserting(props.id) == "debit" || inserting(props.id) == "credit") {
+    if (inserting(props.id)) {
         try {
-            categoryToSave.vcard = userStore.userPhoneNumber    
-            console.log(categoryToSave)
             const response = await axios.post("category", categoryToSave)
-            toast.success(response.data.message)
+            category.value = response.data
+            console.log("category.value", category.value)
+            originalValueStr = JSON.stringify(category.value)
+            toast.success("Category #" + category.value.name + " was registered successfully.")
             router.back()
         } catch (error) {
-            errors.value = error.response.data.message
-            toast.error(errors.value)
+            if (error.response.status == 422) {
+                toast.error(error.response.data.errors.name[0])
+            } else {
+                toast.error(error.response.data.errors.name[0])
+            }
         }
     } else {
         try {
-            await axios.put("categories/" + props.id, categoryToSave)
-            toast.success("Categorie # " + categoryToSave.id + " updated successfully")
+            const response = await axios.put("category/" + props.id, categoryToSave)
+            category.value = response.data
+            originalValueStr = JSON.stringify(category.value)
+            toast.success("Category #" + category.value.id + " was updated successfully.")
             router.back()
         } catch (error) {
-            errors.value = error.response.data.message
-            toast.error("Category #" + props.id + " - " + error.value)
+            if (error.response.status == 422) {
+                errors.value = error.response.data.errors
+                toast.error("Category #" + props.id + " was not updated due to validation errors!")
+            } else {
+                toast.error("Category #" + props.id + " was not updated due to unknown server error!")
+            }
         }
     }
 }
@@ -102,11 +99,11 @@ watch(
 </script>
 
 <template>
-    <category-detail
+    <categoryDetail
         :category="category"
         :errors="errors"
         :inserting="inserting(id)"
         @save="save"
         @cancel="cancel"
-    ></category-detail>
+    ></categoryDetail>
 </template>

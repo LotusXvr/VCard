@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Default_Category;
 use App\Models\VCard;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreUpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -19,22 +20,25 @@ class CategoryController extends Controller
     }
 
     public function show(Category $category) {
-        return response()->json(['category' => $category], 200);
+        return $category;
     }
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUpdateCategoryRequest $request)
     {
-        //
+        $newCategory = Category::create($request->except('id'));
+        return $newCategory;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(StoreUpdateCategoryRequest $request, Category $category)
     {
-        //
+        $category->update($request->validated());
+        return $category;
     }
 
     /**
@@ -42,6 +46,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        //$category->Transactions()->detach();
+        $category->delete();
+        return $category;
     }
 }
