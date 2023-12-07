@@ -9,11 +9,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(["edit", "delete"])
-const categoriesRef = ref(props.categories)
 
 // Separate categories into debit (D) and credit (C)
-const categoriesD = computed(() => categoriesRef.value.filter(category => category.type === 'D').sort((a, b) => a.name.localeCompare(b.name)))
-const categoriesC = computed(() => categoriesRef.value.filter(category => category.type === 'C').sort((a, b) => a.name.localeCompare(b.name)))
+const categoriesD = computed(() => props.categories.filter(category => category.type === 'D').sort((a, b) => a.name.localeCompare(b.name)))
+const categoriesC = computed(() => props.categories.filter(category => category.type === 'C').sort((a, b) => a.name.localeCompare(b.name)))
 
 const editClick = (category) => {
     emit("edit", category)

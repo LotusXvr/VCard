@@ -17,110 +17,116 @@ import ConfirmationCode from '../components/vcard/ConfirmationCode.vue'
 let handlingFirstRoute = true
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'Home',
-      component: HomeView
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/password',
-      name: 'ChangePassword',
-      component: ChangePassword
-    },
-    {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: Dashboard
-    },
-    {
-      path: '/vcards',
-      name: 'VCards',
-      component: VCards,
-      props: { onlyCurrentVCards: false, vcardsTitle: 'VCards' }
-    },
-    {
-      path: '/vcard/new',
-      name: 'NewVCard',
-      component: VCard,
-      props: { id: -1 }
-    },
-    {
-      path: '/vcard/:phone_number',
-      name: 'VCard',
-      component: VCard,
-      props: (route) => ({ phone_number: parseInt(route.params.phone_number) })
-    },
-    {
-      path: '/vcard/:phone_number/confirmation_code',
-      name: 'ConfirmationCode',
-      component: ConfirmationCode,
-      props: (route) => ({ phone_number: parseInt(route.params.phone_number) })
-    },
-    {
-      path: '/vcards/admin/:phone_number',
-      name: 'VCardUpdate',
-      component: VCard,
-      props: (route) => ({ phone_number: parseInt(route.params.phone_number) })
-    },
-    {
-      path: '/transaction/new',
-      name: 'NewTransaction',
-      component: Transaction,
-      props: { id: -1 }
-    },
-    {
-      path: '/transaction/credit',
-      name: 'NewCreditTransaction',
-      component: Transaction,
-      props: { id: -2 }
-    },
-    {
-      path: '/transaction/:id',
-      name: 'Transaction',
-      component: Transaction,
-      props: (route) => ({ id: parseInt(route.params.id) })
-    },
-    {
-      path: '/vcard/transactions',
-      name: 'Transactions',
-      component: Transactions
-    },
-    {
-      path: '/vcard/categories',
-      name: 'Categories',
-      component: Categories
-    },
-    {
-      path: '/categories/new',
-      name: 'NewCategory',
-      component: Category,
-      props: { id: -1 }
-    },
-    {
-      path: '/admins', // Altere de '/users' para '/administrators'
-      name: 'Users',
-      component: Users
-    },
-    {
-      path: '/admins/:id', // Altere de '/users/:id' para '/administrators/:id'
-      name: 'User',
-      component: User,
-      props: (route) => ({ id: parseInt(route.params.id) })
-    },
-    {
-      path: '/admins/new', // Altere de '/users/new' para '/administrators/new'
-      name: 'NewUser',
-      component: User,
-      props: { id: -1 }
-    }
-  ]
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: [
+        {
+            path: "/",
+            name: "Home",
+            component: HomeView,
+        },
+        {
+            path: "/login",
+            name: "Login",
+            component: Login,
+        },
+        {
+            path: "/password",
+            name: "ChangePassword",
+            component: ChangePassword,
+        },
+        {
+            path: "/dashboard",
+            name: "Dashboard",
+            component: Dashboard,
+        },
+        {
+            path: "/vcards",
+            name: "VCards",
+            component: VCards,
+            props: { onlyCurrentVCards: false, vcardsTitle: "VCards" },
+        },
+        {
+            path: "/vcard/new",
+            name: "NewVCard",
+            component: VCard,
+            props: { id: -1 },
+        },
+        {
+            path: "/vcard/:phone_number",
+            name: "VCard",
+            component: VCard,
+            props: (route) => ({ phone_number: parseInt(route.params.phone_number) }),
+        },
+        {
+            path: "/vcard/:phone_number/confirmation_code",
+            name: "ConfirmationCode",
+            component: ConfirmationCode,
+            props: (route) => ({ phone_number: parseInt(route.params.phone_number) }),
+        },
+        {
+            path: "/vcards/admin/:phone_number",
+            name: "VCardUpdate",
+            component: VCard,
+            props: (route) => ({ phone_number: parseInt(route.params.phone_number) }),
+        },
+        {
+            path: "/transaction/new",
+            name: "NewTransaction",
+            component: Transaction,
+            props: { id: -1 },
+        },
+        {
+            path: "/transaction/credit",
+            name: "NewCreditTransaction",
+            component: Transaction,
+            props: { id: -2 },
+        },
+        {
+            path: "/transaction/:id",
+            name: "Transaction",
+            component: Transaction,
+            props: (route) => ({ id: parseInt(route.params.id) }),
+        },
+        {
+            path: "/vcard/transactions",
+            name: "Transactions",
+            component: Transactions,
+        },
+        {
+            path: "/vcard/categories",
+            name: "Categories",
+            component: Categories,
+        },
+        {
+            path: "/categories/new",
+            name: "NewCategory",
+            component: Category,
+            props: { id: -1 },
+        },
+        {
+            path: "/category/:id",
+            name: "Category",
+            component: Category,
+            props: (route) => ({ id: parseInt(route.params.id) }),
+        },
+        {
+            path: "/admins", // Altere de '/users' para '/administrators'
+            name: "Users",
+            component: Users,
+        },
+        {
+            path: "/admins/:id", // Altere de '/users/:id' para '/administrators/:id'
+            name: "User",
+            component: User,
+            props: (route) => ({ id: parseInt(route.params.id) }),
+        },
+        {
+            path: "/admins/new", // Altere de '/users/new' para '/administrators/new'
+            name: "NewUser",
+            component: User,
+            props: { id: -1 },
+        },
+    ],
 })
 
 router.beforeEach(async (to, from, next) => {

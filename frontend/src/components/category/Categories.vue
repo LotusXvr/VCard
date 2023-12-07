@@ -24,12 +24,12 @@ const addCategory = () => {
 }   
 
 const editCategory = (category) => {
-    router.push({ name: "Category", params: { id: category.id } }) // Certifique-se de ter uma rota chamada 'User'
+    router.push({ name: "Category", params: { id: category.id } })
 }
 
 const deleteCategory = (category) => {
     axios
-        .delete("categories/" + category.id)
+        .delete("category/" + category.id)
         .then(() => {
             loadCategories()
         })

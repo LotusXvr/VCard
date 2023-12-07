@@ -36,7 +36,7 @@ const formatDateTime = (dateTimeString) => {
     const [date, time] = dateTimeString.split(" ")
     const options = { month: "short", day: "numeric" }
     const formattedDate = new Date(date).toLocaleDateString("en-GB", options)
-    return { date: formattedDate, time: time.slice(0, 5) } // Extract only hours and minutes
+    return { date: formattedDate, time: time.slice(0, 5) }
 }
 
 const transactionsByYearMonth = computed(() => {
@@ -69,15 +69,14 @@ const monthNames = [
     "November",
     "December",
 ]
-// Get the current date
-const currentDate = new Date()
-// Calculate the first day of the current month
-const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-// Extract the year and month of the current month
-const lastMonthYear = lastMonthDate.getFullYear()
-const lastMonthMonth = lastMonthDate.getMonth() + 1 // Months are zero-indexed
 
-// Compute last month's transactions
+const currentDate = new Date()
+
+const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+
+const lastMonthYear = lastMonthDate.getFullYear()
+const lastMonthMonth = lastMonthDate.getMonth() + 1
+
 const lastMonthTransactions = computed(() => {
     return transactionsRef.value.filter((transaction) => {
         const transactionDate = new Date(transaction.datetime)
@@ -88,23 +87,21 @@ const lastMonthTransactions = computed(() => {
     })
 })
 
-// Function to calculate the sum of values for a given type ("D" or "C")
 const sumValues = (transactions, type) => {
     return transactions
         .filter((transaction) => transaction.type === type)
         .reduce((sum, transaction) => sum + parseFloat(transaction.value), 0)
 }
 
-// Compute the sum of debit and credit values for last month
 const sumDebitValues = computed(() => {
-    const rawValue = sumValues(lastMonthTransactions.value, "D")
-    return parseFloat(rawValue.toFixed(2)) // Round to 2 decimal places
-})
+    const rawValue = sumValues(lastMonthTransactions.value, "D");
+    return parseFloat(rawValue.toFixed(2));
+});
 
 const sumCreditValues = computed(() => {
-    const rawValue = sumValues(lastMonthTransactions.value, "C")
-    return parseFloat(rawValue.toFixed(2)) // Round to 2 decimal places
-})
+    const rawValue = sumValues(lastMonthTransactions.value, "C");
+    return parseFloat(rawValue.toFixed(2));
+});
 
 const dateindex = ref(0)
 const dates = computed(() => {
@@ -113,7 +110,7 @@ const dates = computed(() => {
             dateindex.value += 1
             return "(" + dateindex.value + ") " + formatDateTime(transaction.datetime).date
         })
-        .reverse() // Reverse the array so that the oldest transaction is first
+        .reverse() 
 
     return dates
 })
@@ -123,7 +120,7 @@ const balances = computed(() => {
         .map((transaction) => {
             return transaction.new_balance
         })
-        .reverse() // Reverse the array so that the oldest transaction is first
+        .reverse()
 
     return balances
 })
@@ -148,11 +145,10 @@ const loadChart = () => {
         },
     })
 }
-const categoriesValue = categoryStore.categories
 
 const getCategoryNameById = (categoryId) => {
     if (categoryId != null) {
-        const matchingCategory = categoriesValue.find((category) => category.id == categoryId)
+        const matchingCategory = categoryStore.categories.find(category => category.id == categoryId);
 
         if (matchingCategory) {
             return matchingCategory.name
@@ -167,11 +163,9 @@ const getCategoryNameById = (categoryId) => {
 const categoryColorMap = {}
 
 const getCategoryColor = (categoryId) => {
-    // Ensure categoryId is a string
     const categoryIdString = String(categoryId)
 
     if (!categoryColorMap[categoryIdString]) {
-        // If not, generate a color based on the category ID
         const hash = categoryIdString.split("").reduce((acc, char) => char.charCodeAt(0) + acc, 0)
         const hue = (hash % 160) + 100
         categoryColorMap[categoryIdString] = `hsl(${hue}, 70%, 80%)`
