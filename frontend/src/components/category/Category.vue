@@ -59,10 +59,10 @@ const save = async (categoryToSave) => {
             toast.success("Category #" + category.value.name + " was registered successfully.")
             router.back()
         } catch (error) {
-            if (error.response.status == 422) {
-                toast.error(error.response.data.errors.name[0])
-            } else {
-                toast.error(error.response.data.errors.name[0])
+            if (error.response.status === 422){
+                error.response.data.message == null ? toast.error(error.response.data.errors.name[0]) : toast.error(error.response.data.message);
+            }else {
+                toast.error("An error occurred while processing the request.");
             }
         }
     } else {

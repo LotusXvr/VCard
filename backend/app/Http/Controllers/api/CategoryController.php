@@ -29,6 +29,18 @@ class CategoryController extends Controller
      */
     public function store(StoreUpdateCategoryRequest $request)
     {
+        $category = Category::where('name', $request->name)->first();
+
+        if ($category) {
+            return response()->json([
+                'message' => 'Category name already exists',
+            ], 422);
+        }
+        $category = Category::onlyTrashed()->where('name', $request->name)->first();
+        if($category) {
+            $category->restore();
+            return $category;
+        }
         $newCategory = Category::create($request->except('id'));
         return $newCategory;
     }

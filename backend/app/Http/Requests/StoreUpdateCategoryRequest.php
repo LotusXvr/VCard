@@ -26,7 +26,7 @@ class StoreUpdateCategoryRequest extends FormRequest
         return [
             'vcard' => 'required|exists:vcards,phone_number',
             'type' => 'required|in:D,C',
-            'name' => 'required|unique:categories,name|string|max:50',
+            'name' => 'required|string|max:50',
         ];
     }
     public function messages()
