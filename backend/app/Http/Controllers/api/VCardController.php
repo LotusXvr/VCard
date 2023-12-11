@@ -135,16 +135,20 @@ class VCardController extends Controller
         }
 
         // se tiver transações fazemos um soft delete, se não tiver fazemos um hard delete
-        if (count(Transaction::where('vcard', $vcard->phone_number)->get()) > 0) {
-            // delete transactions
+        if ($vcard->transactions()->count() > 0) {
+
             Transaction::where('vcard', $vcard->phone_number)->delete();
-            // delete categories
             Category::where('vcard', $vcard->phone_number)->delete();
+
             // delete vcard
             $vcard->delete();
         } else {
             // delete categories
+            // foreach ($vcard->categories() as $category) {
+            //     $category->forceDelete();
+            // }
             Category::where('vcard', $vcard->phone_number)->forceDelete();
+
             // delete vcard
             $vcard->forceDelete();
         }

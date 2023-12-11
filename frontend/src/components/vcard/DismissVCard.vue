@@ -18,19 +18,15 @@ const codes = ref({
 const errors = ref(null)
 
 const deleteVcard = async () => {
-    try {
-        const response = await axios.delete("vcards/" + userStore.userPhoneNumber + "/dismiss", { data: codes.value });
-
-        if (response.status === 200) {
+    axios
+        .delete("vcards/" + userStore.userPhoneNumber + "/dismiss", { data: codes.value })
+        .then((response) => {
             toast.success("Vcard has been deleted successfully!")
-            useUserStore.logout()
-            router.push({ name: "Home" })
-        } else {
-            toast.error("Failed to delete Vcard");
-        }
-    } catch (error) {
-        toast.error(error.response?.data?.message || "An error occurred");
-    }
+            router.refresh()
+        }).catch((error) => {
+            toast.error(error.response.data.message)
+        })
+
 }
 </script>
 

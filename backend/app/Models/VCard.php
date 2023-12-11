@@ -34,19 +34,18 @@ class VCard extends Model
 
     public function categories()
     {
-        return $this->hasMany(Category::class, 'phone_number');
+        return $this->hasMany(Category::class, 'vcard');
     }
 
     public function transactions()
     {
-        return $this->hasMany(Transaction::class, 'v_card');
+        return $this->hasMany(Transaction::class, 'vcard', 'phone_number');
     }
 
     public function transactionsPairVcard()
     {
         return $this->hasMany(Category::class, 'pair_vcard');
     }
-
 
 }
 

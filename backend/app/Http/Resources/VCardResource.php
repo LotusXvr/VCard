@@ -14,7 +14,7 @@ class VCardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return[
+        return [
             'phone_number' => $this->phone_number,
             'name' => $this->name,
             'email' => $this->email,
