@@ -109,6 +109,50 @@ class VCardController extends Controller
         return new VCardResource($vcard);
     }
 
+    public function dismissVCard(Request $request, VCard $vcard)
+    {
+        if (!$request->confirmation_code || !$request->password) {
+            return response()->json(['message' => 'Confirmation Code and Password are required'], 422);
+        }
+
+        if (!Hash::check($request->confirmation_code, $vcard->confirmation_code)) {
+            return response()->json(['message' => 'Confirmation Code is incorrect'], 422);
+        }
+
+        if (!Hash::check($request->password, $vcard->password)) {
+            return response()->json(['message' => 'Password is incorrect'], 422);
+        }
+
+        if ($vcard->balance > 0) {
+            return response()->json(['message' => 'VCard balance must be 0 to be dismissed'], 422);
+        }
+
+        // Delete photo file from storage
+        if ($vcard->photo_url) {
+            if (Storage::exists('public/fotos/' . $vcard->photo_url)) {
+                Storage::delete('public/fotos/' . $vcard->photo_url);
+            }
+        }
+
+        // se tiver transações fazemos um soft delete, se não tiver fazemos um hard delete
+        if (count(Transaction::where('vcard', $vcard->phone_number)->get()) > 0) {
+            // delete transactions
+            Transaction::where('vcard', $vcard->phone_number)->delete();
+            // delete categories
+            Category::where('vcard', $vcard->phone_number)->delete();
+            // delete vcard
+            $vcard->delete();
+        } else {
+            // delete categories
+            Category::where('vcard', $vcard->phone_number)->forceDelete();
+            // delete vcard
+            $vcard->forceDelete();
+        }
+
+        return response()->json(['message' => 'VCard dismissed successfully']);
+    }
+
+
     public function changeStatus(VCard $vcard)
     {
         try {

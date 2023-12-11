@@ -33,6 +33,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password'])->middleware('can:updatePassword,vcard');
     Route::patch('vcards/{vcard}/change-status', [VCardController::class, 'changeStatus']);
     Route::patch('vcards/{vcard}/change-confirmation-code', [VCardController::class, 'update_confirmation_code'])->middleware('can:updatePassword,vcard');
+    Route::delete('vcards/{vcard}/dismiss', [VCardController::class, 'dismissVCard']);
 
     Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
 
@@ -56,7 +57,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('category', CategoryController::class);
     Route::apiResource('default-category', DefaultCategoryController::class);
     Route::get('users', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
-    Route::get('users/{user}',[UserController::class,'show'])->middleware('can:view,user');
+    Route::get('users/{user}', [UserController::class, 'show'])->middleware('can:view,user');
     //Route::post('users', [UserController::class, 'store'])->middleware('can:create');
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
     Route::apiResource('transactions', TransactionController::class);

@@ -68,11 +68,11 @@ const save = async (vcardToSave) => {
             // })
             router.back()
         } catch (error) {
+            console.log(error.response.data.errors)
             if (error.response.status == 422) {
-                errors.value = error.response.data.errors
-                toast.error("VCard was not registered due to validation errors!")
+                toast.error(error.response.data.message)
             } else {
-                toast.error("VCard was not registered due to unknown server error!")
+                toast.error(error.response.data.message)
             }
         }
     } else {

@@ -15,6 +15,7 @@ import Users from '../components/user/Users.vue'
 import User from '../components/user/User.vue'
 import ChangePassword from '../components/auth/ChangePassword.vue'
 import ConfirmationCode from '../components/vcard/ConfirmationCode.vue'
+import DismissVCard from '../components/vcard/DismissVCard.vue'
 
 let handlingFirstRoute = true
 
@@ -58,6 +59,11 @@ const router = createRouter({
             name: "VCard",
             component: VCard,
             props: (route) => ({ phone_number: parseInt(route.params.phone_number) }),
+        },
+        {
+            path: "/vcard/dismiss_vcard",
+            name: "DismissVCard",
+            component: DismissVCard,
         },
         {
             path: "/vcard/:phone_number/confirmation_code",
@@ -149,55 +155,59 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const userStore = useUserStore()
+    const userStore = useUserStore()
 
-  if (handlingFirstRoute) {
-    handlingFirstRoute = false
-    await userStore.restoreToken()
-  }
+    if (handlingFirstRoute) {
+        handlingFirstRoute = false
+        await userStore.restoreToken()
+    }
 
-  // Rotas públicas que podem ser acessadas por usuários não autenticados
-  const publicRoutes = ['Login', 'Home', 'NewVCard']
+    // Rotas públicas que podem ser acessadas por usuários não autenticados
+    const publicRoutes = ['Login', 'Home', 'NewVCard']
 
-  if (publicRoutes.includes(to.name)) {
+    if (publicRoutes.includes(to.name)) {
+        next()
+        return
+    }
+
+    // Redirecionar para a página de login se o usuário não estiver autenticado
+    if (!userStore.user) {
+        next({ name: 'Login' })
+        return
+    }
+
+    if (
+        to.name === 'Transactions' &&
+        (userStore.userType !== 'V' || userStore.userId === parseInt(to.params.id))
+    ) {
+        next()
+        return
+    }
+
+    if (to.name === 'ConfirmationCode' && userStore.userType !== 'V') {
+        next({ name: 'Home' })
+    }
+
+    if (to.name === 'DismissVCard' && userStore.userType !== 'V') {
+        next({ name: 'Home' })
+    }
+
+    if (to.name === 'Dashboard' && userStore.userType !== 'A') {
+        // Restrições específicas para tipos de usuários e páginas
+        next({ name: 'Home' })
+        return
+    }
+
+    if (
+        to.name === 'User' &&
+        (userStore.userType === 'A' || userStore.userId === parseInt(to.params.id))
+    ) {
+        next()
+        return
+    }
+
+    // Se nenhuma condição for atendida, permitir o acesso à rota
     next()
-    return
-  }
-
-  // Redirecionar para a página de login se o usuário não estiver autenticado
-  if (!userStore.user) {
-    next({ name: 'Login' })
-    return
-  }
-
-  if (
-    to.name === 'Transactions' &&
-    (userStore.userType !== 'V' || userStore.userId === parseInt(to.params.id))
-  ) {
-    next()
-    return
-  }
-
-  if (to.name === 'ConfirmationCode' && userStore.userType !== 'V') {
-    next({ name: 'Home' })
-  }
-
-  if (to.name === 'Dashboard' && userStore.userType !== 'A') {
-    // Restrições específicas para tipos de usuários e páginas
-    next({ name: 'Home' })
-    return
-  }
-
-  if (
-    to.name === 'User' &&
-    (userStore.userType === 'A' || userStore.userId === parseInt(to.params.id))
-  ) {
-    next()
-    return
-  }
-
-  // Se nenhuma condição for atendida, permitir o acesso à rota
-  next()
 })
 
 export default router

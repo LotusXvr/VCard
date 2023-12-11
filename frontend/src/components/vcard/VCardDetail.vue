@@ -121,64 +121,37 @@ const cleanPhoto = () => {
       <div class="w-75 pe-4">
         <div class="mb-3">
           <label for="phone_number">Phone Number:</label>
-          <input
-            v-model="editingVCard.phone_number"
-            type="text"
-            id="VCardPhoneNumber"
-            :class="{ 'is-invalid': errors ? errors['phone_number'] : false }"
-            required
-          />
+          <input v-model.lazy="editingVCard.phone_number" type="text" id="VCardPhoneNumber"
+            :class="{ 'is-invalid': errors ? errors['phone_number'] : false }" required />
           <!-- <field-error-message :errors="errors" fieldName="phone_number"></field-error-message> -->
         </div>
 
         <div class="mb-3 px-1">
           <label for="name">Name:</label>
-          <input
-            v-model="editingVCard.name"
-            type="text"
-            id="VCardName"
-            :class="{ 'is-invalid': errors ? errors['name'] : false }"
-            required
-          />
+          <input v-model="editingVCard.name" type="text" id="VCardName"
+            :class="{ 'is-invalid': errors ? errors['name'] : false }" required />
           <!-- <field-error-message :errors="errors" fieldName="name"></field-error-message> -->
         </div>
 
         <div class="form-group">
           <label for="email">Email:</label>
-          <input
-            v-model="editingVCard.email"
-            type="email"
-            id="VCardEmail"
-            :class="{ 'is-invalid': errors ? errors['email'] : false }"
-            required
-          />
+          <input v-model="editingVCard.email" type="email" id="VCardEmail"
+            :class="{ 'is-invalid': errors ? errors['email'] : false }" required />
           <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
         </div>
 
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
             <label for="password">Password:</label>
-            <input
-              v-model="editingVCard.password"
-              type="password"
-              id="VCardPassword"
-              class="form-control"
-              required
-            />
+            <input v-model="editingVCard.password" type="password" id="VCardPassword" class="form-control" required />
           </div>
           <br />
           <div class="form-group">
             <label for="confirmPassword">Confirm Password:</label>
-            <input
-              v-model="editingVCard.password_confirmation"
-              type="password"
-              id="VCardConfirmPassword"
-              class="form-control"
-              :class="{
+            <input v-model="editingVCard.password_confirmation" type="password" id="VCardConfirmPassword"
+              class="form-control" :class="{
                 'is-invalid': errors ? errors['password_confirmation'] : false
-              }"
-              required
-            />
+              }" required />
             <div class="invalid-feedback">Passwords do not match.</div>
           </div>
         </div>
@@ -186,13 +159,8 @@ const cleanPhoto = () => {
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
             <label for="confirmation_code">Confirmation Code:</label>
-            <input
-              v-model="editingVCard.confirmation_code"
-              type="text"
-              id="VCard_confirmation_code"
-              class="form-control"
-              required
-            />
+            <input v-model="editingVCard.confirmation_code" type="text" id="VCard_confirmation_code" class="form-control"
+              required />
           </div>
         </div>
       </div>
@@ -205,18 +173,12 @@ const cleanPhoto = () => {
           </div>
           <div class="mt-3 d-flex justify-content-between flex-wrap">
             <label for="inputPhoto" class="btn btn-dark flex-grow-1 mx-1">Upload</label>
-            <button
-              class="btn btn-secondary flex-grow-1 mx-1"
-              @click.prevent="resetToOriginalPhoto"
-              v-if="editingVCard.photo_url"
-            >
+            <button class="btn btn-secondary flex-grow-1 mx-1" @click.prevent="resetToOriginalPhoto"
+              v-if="editingVCard.photo_url">
               Reset
             </button>
-            <button
-              class="btn btn-danger flex-grow-1 mx-1"
-              @click.prevent="cleanPhoto"
-              v-show="editingVCard.photo_url || editingImageAsBase64"
-            >
+            <button class="btn btn-danger flex-grow-1 mx-1" @click.prevent="cleanPhoto"
+              v-show="editingVCard.photo_url || editingImageAsBase64">
               Delete
             </button>
           </div>
@@ -230,27 +192,26 @@ const cleanPhoto = () => {
       </div>
     </div>
     <hr />
-    <div class="d-flex justify-content-between">
-      <div class="mt-2" v-if="!inserting && userStore.userPhoneNumber == editingVCard.phone_number">
-        <RouterLink
-          :to="{ name: 'ConfirmationCode', params: { phone_number: editingVCard.phone_number } }"
-          class="btn btn-success px-5 mx-2"
-          >Change confirmation code</RouterLink
-        >
+    <div>
+      <div class="d-flex justify-content-between">
+        <div class="mt-2" v-if="!inserting && userStore.userPhoneNumber == editingVCard.phone_number">
+          <RouterLink :to="{ name: 'ConfirmationCode', params: { phone_number: editingVCard.phone_number } }"
+            class="btn btn-success px-5 mx-2">Change confirmation code</RouterLink>
+
+
+        </div>
+        <div class="mt-2">
+          <button type="button" class="btn btn-primary px-5 mx-2" @click="save">Save</button>
+          <button type="button" class="btn btn-light px-5 mx-2" @click="cancel">Cancel</button>
+        </div>
       </div>
-      <div class="mt-2">
-        <button type="button" class="btn btn-primary px-5 mx-2" @click="save">Save</button>
-        <button type="button" class="btn btn-light px-5 mx-2" @click="cancel">Cancel</button>
-      </div>
+      <RouterLink v-if="!inserting && userStore.userPhoneNumber == editingVCard.phone_number"
+        :to="{ name: 'DismissVCard' }" class="btn btn-danger px-5 mx-2 mt-2">Dismiss VCard</RouterLink>
+
     </div>
+
   </form>
-  <input
-    type="file"
-    style="visibility: hidden"
-    id="inputPhoto"
-    ref="inputPhotoFile"
-    @change="changePhotoFile"
-  />
+  <input type="file" style="visibility: hidden" id="inputPhoto" ref="inputPhotoFile" @change="changePhotoFile" />
 </template>
 
 <style scoped>
