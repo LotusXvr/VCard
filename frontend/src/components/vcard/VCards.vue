@@ -6,17 +6,6 @@ import { useRouter } from "vue-router"
 import { useToast } from "vue-toastification"
 import { Bootstrap5Pagination } from "laravel-vue-pagination"
 
-const props = defineProps({
-    vcardsTitle: {
-        type: String,
-        default: "VCards",
-    },
-    onlyCurrentVCards: {
-        type: Boolean,
-        default: false,
-    },
-})
-
 const router = useRouter()
 const toast = useToast()
 const vcards = ref([])

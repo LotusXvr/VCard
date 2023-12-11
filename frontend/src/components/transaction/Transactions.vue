@@ -12,18 +12,16 @@ const transactions = ref([])
 const router = useRouter()
 const paginationData = ref({})
 
-const props = defineProps({
-    usersTitle: {
-        type: String,
-        default: "Transactions",
-    },
-})
 
 const loadTransactions = (page = 1) => {
     axios
         .get("vcard/" + userStore.userPhoneNumber + "/transactions", {
             params: {
                 page: page,
+                startDate: startDate.value,
+                endDate: endDate.value,
+                type: type.value,
+                method: method.value,
             },
         })
         .then((response) => {
@@ -31,6 +29,20 @@ const loadTransactions = (page = 1) => {
             transactions.value = response.data.data
             filteredTransactions.value = transactions.value
             console.log(filteredTransactions.value)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
+const lastMonthTransactions = ref([])
+const loadLastMonthTransactions = () => {
+    axios
+        .get("vcard/" + userStore.userPhoneNumber + "/transactions/lastmonth", {
+        })
+        .then((response) => {
+            lastMonthTransactions.value = response.data
+            console.log(lastMonthTransactions.value)
         })
         .catch((error) => {
             console.log(error)
@@ -46,26 +58,12 @@ const startDate = ref(null)
 const endDate = ref(null)
 const type = ref(null)
 const method = ref(null)
-const filtered = ref(false)
 const filteredTransactions = ref([])
 
 
 // Method to apply filters
 const applyFilters = () => {
-    filteredTransactions.value = transactions.value.filter((transaction) => {
-        // Check if transaction is between start and end date
-        const transactionDate = new Date(transaction.datetime)
-        const isAfterStartDate = startDate.value
-            ? transactionDate >= new Date(startDate.value)
-            : true
-        const isBeforeEndDate = endDate.value ? transactionDate <= new Date(endDate.value) : true
-        // Check if transaction type is correct
-        const isCorrectType = type.value ? transaction.type === type.value : true
-        // Check if transaction method is correct
-        const isCorrectMethod = method.value ? transaction.payment_type === method.value : true
-        return isAfterStartDate && isBeforeEndDate && isCorrectType && isCorrectMethod
-    })
-    filtered.value = true
+    loadTransactions()
 }
 
 // Method to clear filters
@@ -74,12 +72,12 @@ const clearFilters = () => {
     endDate.value = null
     type.value = null
     method.value = null
-    filteredTransactions.value = transactions.value
-    filtered.value = false
+    loadTransactions()
 }
 
 onMounted(() => {
     loadTransactions()
+    loadLastMonthTransactions()
 })
 </script>
 
@@ -147,7 +145,7 @@ onMounted(() => {
 
     <hr />
     <div v-if="filteredTransactions.length > 0">
-        <TransactionTable :transactions="filteredTransactions" :filtered="filtered" @edit="editTransaction">
+        <TransactionTable :transactions="filteredTransactions" :lastMonthTransactions="lastMonthTransactions" @edit="editTransaction">
         </TransactionTable>
         <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadTransactions" :limit="3">
         </Bootstrap5Pagination>
