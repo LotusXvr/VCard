@@ -23,7 +23,6 @@ const editClick = (transaction) => {
 const loadCategories = async () => {
     try {
         await axios.get("vcard/" + props.transactions[0].vcard + "/category/all").then((response) => {
-            console.log(response.data)
             categories.value = response.data
         })
     } catch (error) {
@@ -52,12 +51,12 @@ const transactionsByYearMonth = computed(() => {
 
         if (!groupedTransactions[key]) {
             groupedTransactions[key] = []
-        }   
+        }
 
         groupedTransactions[key].push(transaction)
     })
 
-     // Sort transactions within each day by time
+    // Sort transactions within each day by time
     Object.keys(groupedTransactions).forEach((key) => {
         groupedTransactions[key] = groupedTransactions[key].sort((a, b) => {
             const timeA = new Date(a.datetime).getTime()
@@ -68,7 +67,7 @@ const transactionsByYearMonth = computed(() => {
         groupedTransactions[key].reverse();
     })
 
-    
+
     return groupedTransactions
 })
 
@@ -208,7 +207,6 @@ onMounted(async () => {
     transactionsRef.value = props.transactions
     loadCategories()
     loadChart()
-    console.log(props.filtered)
 })
 </script>
 
@@ -218,12 +216,7 @@ onMounted(async () => {
 
         <div class="container">
             <h4>Your balance in {{ monthNames[lastMonthMonth - 1] }}</h4>
-            <canvas
-                ref="balanceChartEl"
-                height="200px"
-                width="200px"
-                style="height: 200px; width: 200px"
-            ></canvas>
+            <canvas ref="balanceChartEl" height="200px" width="200px" style="height: 200px; width: 200px"></canvas>
 
             <div class="row mt-3">
                 <div class="col-md-6">
@@ -265,14 +258,12 @@ onMounted(async () => {
                     <td>
                         {{
                             transaction.description
-                                ? truncateDescription(transaction.description)
-                                : ""
+                            ? truncateDescription(transaction.description)
+                            : ""
                         }}
                     </td>
-                    <td
-                        :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }"
-                        class="d-flex justify-content-between align-items-center"
-                    >
+                    <td :style="{ backgroundColor: getCategoryColorForTransaction(transaction) }"
+                        class="d-flex justify-content-between align-items-center">
                         <div>
                             {{ getCategoryNameById(transaction.category_id) }}
                         </div>

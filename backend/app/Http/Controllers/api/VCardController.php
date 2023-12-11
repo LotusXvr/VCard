@@ -76,7 +76,7 @@ class VCardController extends Controller
         $dataToSave = $request->validated();
 
         $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
-        $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
+            $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
         unset($dataToSave["base64ImagePhoto"]);
 
         $vcard = new VCard();
@@ -146,7 +146,7 @@ class VCardController extends Controller
         $dataToSave = $request->validated();
 
         $base64ImagePhoto = array_key_exists("base64ImagePhoto", $dataToSave) ?
-        $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
+            $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
         $deletePhotoOnServer = array_key_exists("deletePhotoOnServer", $dataToSave) && $dataToSave["deletePhotoOnServer"];
         unset($dataToSave["base64ImagePhoto"]);
         unset($dataToSave["deletePhotoOnServer"]);
@@ -184,15 +184,17 @@ class VCardController extends Controller
         return response()->json(['message' => 'Phone number is available']);
     }
 
-    public function getTransactionsByPhoneNumber(Request $request, VCard $vcard) {
+    public function getTransactionsByPhoneNumber(Request $request, VCard $vcard)
+    {
         $phoneNumber = $vcard->phone_number;
 
         $transactions = Transaction::where('vcard', $phoneNumber)
             ->orderBy('date', 'desc')
-            ->get();
+            ->paginate(10);  // Utiliza paginate em vez de get
 
-        return TransactionResource::collection($transactions);
+        return response()->json($transactions);
     }
+
 
     public function update_password(UpdateUserPasswordRequest $request, VCard $vcard)
     {

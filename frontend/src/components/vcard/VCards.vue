@@ -28,8 +28,6 @@ const name = ref("")
 const orderBy = ref("phone_number")
 
 const loadVCards = (page = 1) => {
-    // Change later when authentication is implemented
-
     axios
         .get("vcards", {
             params: {
@@ -41,7 +39,6 @@ const loadVCards = (page = 1) => {
         })
         .then((response) => {
             const responseData = response.data
-            console.log(responseData)
             vcards.value = responseData.data
             filteredVCards.value = vcards.value
             paginationData.value = responseData
@@ -163,18 +160,8 @@ onMounted(() => {
             </router-link>
         </div>
     </div>
-    <VCardTable
-        :vcards="filteredVCards"
-        :showPhoneNumber="true"
-        @edit="editVCard"
-        @delete="deleteVCard"
-        @changeStatus="handleStatusChange"
-    ></VCardTable>
+    <VCardTable :vcards="filteredVCards" :showPhoneNumber="true" @edit="editVCard" @delete="deleteVCard"
+        @changeStatus="handleStatusChange"></VCardTable>
 
-    <Bootstrap5Pagination
-        :data="paginationData"
-        @pagination-change-page="loadVCards"
-        :limit="3"
-        :show-disabled="true"
-    ></Bootstrap5Pagination>
+    <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadVCards" :limit="1"></Bootstrap5Pagination>
 </template>

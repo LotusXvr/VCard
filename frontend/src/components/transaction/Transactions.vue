@@ -4,11 +4,13 @@ import axios from "axios"
 import TransactionTable from "./TransactionTable.vue"
 import { useUserStore } from "../../stores/user"
 import { useRouter } from "vue-router"
+import { Bootstrap5Pagination } from "laravel-vue-pagination"
+
 
 const userStore = useUserStore()
 const transactions = ref([])
-const filteredTransactions = ref([])
 const router = useRouter()
+const paginationData = ref({})
 
 const props = defineProps({
     usersTitle: {
@@ -17,10 +19,17 @@ const props = defineProps({
     },
 })
 
-const loadTransactions = () => {
+const loadTransactions = (page = 1) => {
     axios
-        .get("vcard/" + userStore.userPhoneNumber + "/transactions")
+        .get("vcard/" + userStore.userPhoneNumber + "/transactions", {
+            params: {
+                page: page,
+            },
+        })
         .then((response) => {
+            console.log(response.data)
+            console.log(response.data.data)
+            paginationData.value = response.data
             transactions.value = response.data.data
             filteredTransactions.value = transactions.value
         })
@@ -33,25 +42,14 @@ const editTransaction = (transaction) => {
     router.push({ name: "Transaction", params: { id: transaction.id } })
 }
 
-const renderComponent = ref(true)
-
-const forceRerender = async () => {
-    // Remove MyComponent from the DOM
-    renderComponent.value = false
-
-    // Wait for the change to get flushed to the DOM
-    await nextTick()
-
-    // Add the component back in
-    renderComponent.value = true
-}
-
 // Reactive filter properties
 const startDate = ref(null)
 const endDate = ref(null)
 const type = ref(null)
 const method = ref(null)
 const filtered = ref(false)
+const filteredTransactions = ref([])
+
 
 // Method to apply filters
 const applyFilters = () => {
@@ -69,7 +67,6 @@ const applyFilters = () => {
         return isAfterStartDate && isBeforeEndDate && isCorrectType && isCorrectMethod
     })
     filtered.value = true
-    forceRerender()
 }
 
 // Method to clear filters
@@ -80,7 +77,6 @@ const clearFilters = () => {
     method.value = null
     filteredTransactions.value = transactions.value
     filtered.value = false
-    forceRerender()
 }
 
 onMounted(() => {
@@ -151,12 +147,12 @@ onMounted(() => {
     </div>
 
     <hr />
-    <div v-if="filteredTransactions.length > 0 && renderComponent">
-        <TransactionTable
-            :transactions="filteredTransactions"
-            :filtered="filtered"
-            @edit="editTransaction"
-        ></TransactionTable>
+    <div v-if="filteredTransactions.length > 0">
+        <TransactionTable :transactions="filteredTransactions" :filtered="filtered" @edit="editTransaction">
+        </TransactionTable>
+        <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadTransactions" :limit="3">
+        </Bootstrap5Pagination>
+
     </div>
     <div v-else>No Transactions yet</div>
 </template>
