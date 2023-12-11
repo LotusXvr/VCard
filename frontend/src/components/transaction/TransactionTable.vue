@@ -125,8 +125,6 @@ const balanceChartEl = ref(null)
 let balanceChart = null
 
 const loadChart = () => {
-
-    console.log("last month transactions " + lastMonthTransactionsArray.value)
     if (!balanceChartEl.value) {
         // O elemento do gráfico ainda não está disponível
         return
@@ -196,19 +194,33 @@ const truncateDescription = (description) => {
     }
 }
 
+const hideStatisticsState = ref(false)
+const hideStatistics = () => {
+    hideStatisticsState.value = !hideStatisticsState.value
+}
+
 // Assista a alterações em props.transactions
 watchEffect(() => {
     transactionsRef.value = props.transactions
-    loadCategories()
     loadChart()
+})
+
+onMounted(() => {
+    loadChart()
+    loadCategories()
 })
 </script>
 
 <template>
     <div>
         <h1>Transactions</h1>
+        <div class="btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input @click="hideStatistics" type="checkbox" checked autocomplete="off" /> Show this month statistics
+            </label>
+        </div>
 
-        <div class="container">
+        <div v-if="hideStatisticsState == false" class="container">
             <h4>Your balance in {{ monthNames[lastMonthMonth - 1] }}</h4>
             <canvas
                 ref="balanceChartEl"

@@ -28,7 +28,6 @@ const loadTransactions = (page = 1) => {
             paginationData.value = response.data
             transactions.value = response.data.data
             filteredTransactions.value = transactions.value
-            console.log(filteredTransactions.value)
         })
         .catch((error) => {
             console.log(error)
@@ -42,7 +41,6 @@ const loadLastMonthTransactions = () => {
         })
         .then((response) => {
             lastMonthTransactions.value = response.data
-            console.log(lastMonthTransactions.value)
         })
         .catch((error) => {
             console.log(error)
