@@ -22,6 +22,10 @@ const props = defineProps({
   errors: {
     type: Object,
     required: false
+  },
+  details: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -114,7 +118,7 @@ const cleanPhoto = () => {
 </script>
 
 <template>
-  <form class="row g-3 needs-validation" novalidate @submit.prevent="save">
+  <form class="row g-3 needs-validation" novalidate @submit.prevent="save" v-if="!props.details">
     <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
     <hr />
     <div class="d-flex flex-wrap justify-content-between">
@@ -155,6 +159,7 @@ const cleanPhoto = () => {
             <div class="invalid-feedback">Passwords do not match.</div>
           </div>
         </div>
+        
 
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
@@ -212,6 +217,42 @@ const cleanPhoto = () => {
 
   </form>
   <input type="file" style="visibility: hidden" id="inputPhoto" ref="inputPhotoFile" @change="changePhotoFile" />
+
+  <div v-if="props.details" style="font-size: 15px;">
+    <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
+    <hr />
+
+    <div class="d-flex flex-wrap justify-content-between">
+      <div class="w-75 pe-4">
+        <div class="mb-3">
+          <p style="font-size: 20px;"><b>Balance: </b>{{ editingVCard.balance }}€</p>
+        </div>
+
+        <div class="mb-3">
+          <p><b>Phone Number: </b>{{ editingVCard.phone_number }}</p>
+        </div>
+
+        <div class="mb-3 px-1">
+          <p><b>Name: </b>{{ editingVCard.name }}</p>
+        </div>
+
+        <div class="form-group">
+          <p><b>Email: </b>{{ editingVCard.email }}</p>
+        </div>
+      </div>
+
+      <div class="w-25">
+        <div class="d-flex flex-column">
+          <label class="form-label">Photo</label>
+          <div class="form-control text-center">
+            <img :src="photoFullUrl" class="w-50" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+  </div>
 </template>
 
 <style scoped>

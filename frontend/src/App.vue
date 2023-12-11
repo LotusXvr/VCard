@@ -132,7 +132,7 @@ onMounted(async () => {
                                                     userStore.userPhoneNumber,
                                         }"
                                         :to="{
-                                            name: 'VCard',
+                                            name: 'ProfileVCard',
                                             params: { phone_number: userStore.userPhoneNumber },
                                         }"
                                     >
@@ -253,7 +253,7 @@ onMounted(async () => {
                                 :class="{ active: $route.name === 'VCard' }"
                                 :to="{
                                     name: 'VCard',
-                                    params: { phone_number: userStore.userPhoneNumber },
+                                    params: { phone_number: userStore.userPhoneNumber},
                                 }"
                             >
                                 <i class="bi bi-credit-card"></i>
@@ -355,7 +355,7 @@ onMounted(async () => {
                                                             userStore.userPhoneNumber,
                                                 }"
                                                 :to="{
-                                                    name: 'VCard',
+                                                    name: 'ProfileVCard',
                                                     params: {
                                                         phone_number: userStore.userPhoneNumber,
                                                     },
