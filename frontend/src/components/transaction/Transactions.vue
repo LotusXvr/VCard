@@ -27,11 +27,10 @@ const loadTransactions = (page = 1) => {
             },
         })
         .then((response) => {
-            console.log(response.data)
-            console.log(response.data.data)
             paginationData.value = response.data
             transactions.value = response.data.data
             filteredTransactions.value = transactions.value
+            console.log(filteredTransactions.value)
         })
         .catch((error) => {
             console.log(error)

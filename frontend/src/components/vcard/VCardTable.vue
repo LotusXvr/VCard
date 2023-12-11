@@ -20,7 +20,6 @@ const props = defineProps({
     },
 })
 
-console.log(props.vcards)
 const emit = defineEmits(["completeToggled", "edit", "delete", "changeStatus"])
 
 const editingVCards = ref(props.vcards)
