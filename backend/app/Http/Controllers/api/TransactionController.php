@@ -10,11 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
-class TransactionController extends Controller {
+class TransactionController extends Controller
+{
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index()
+    {
         return Transaction::all();
 
     }
@@ -22,17 +24,20 @@ class TransactionController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Transaction $transaction) {
+    public function show(Transaction $transaction)
+    {
         return new TransactionResource($transaction);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         /*
          * - recebe:
          * vcard, value, confirmation_code e payment_reference(vcard destino ou referencia)
+         * posteriormente adiconou-se o type (C ou D) e payment_type (VCARD, IBAN, PAYPAL, VISA, MB, MBWAY)
          * - precisa de preencher:
          * vcard, date, datetime, type, value, old_balance, new_balamce, payment_type,
          * payment_reference, pair_transaction, pair_vcard, category_id, description (nao obrigatorio)
@@ -45,45 +50,46 @@ class TransactionController extends Controller {
         // FIRST VALIDATIONS
 
         // credit transactions are only handled by admins so they dont have balance nor do they have confirmation_codes
-        if($request->type != 'C') {
-            // verify if confirmation code is the correct one
-            // having in mind the confirmation_code on the database is hashed
+        // this makes so that only debit transations (the one made by users) validate the confirmation_code
+        // and the balance of the user (adminds dont have balance)
+        if ($request->type != 'C') {
+            // verify if confirmation code is the correct one of the user
             $vcardOrigin = VCard::where('phone_number', $request->vcard)->first();
-            if(!password_verify($request->confirmation_code, $vcardOrigin->confirmation_code)) {
+            if (!password_verify($request->confirmation_code, $vcardOrigin->confirmation_code)) {
                 return response()->json(['message' => 'Código de confirmação inválido'], 401);
             }
 
             // verify if sender has enough money on account balance
-            if($vcardOrigin->balance < $request->value) {
+            if ($vcardOrigin->balance < $request->value) {
                 return response()->json(['message' => 'Saldo insuficiente'], 401);
             }
 
-            // verify if value being sent is less than max_debit
-            if($request->value > $vcardOrigin->max_debit) {
+            // verify if value being sent is higher than max_debit (invalid)
+            if ($request->value > $vcardOrigin->max_debit) {
                 return response()->json(['message' => 'Valor superior ao máximo permitido'], 401);
             }
         }
 
         // verify if value being sent is at least 0.01€
-        if($request->value < 0.01) {
+        if ($request->value < 0.01) {
             return response()->json(['message' => 'Valor mínimo de transferência é de 0.01€'], 401);
         }
 
         // VCARD
 
-        if($request->payment_type == 'VCARD') {
+        if ($request->payment_type == 'VCARD') {
             // Verify if destination vcard exists
             $destinVCardExists = VCard::where('phone_number', $request->payment_reference)
                 ->whereNull('deleted_at')
                 ->first();
-            if(!$destinVCardExists) {
+            if (!$destinVCardExists) {
                 return response()->json(['message' => 'VCard de destino não existe'], 404);
             }
 
             try {
                 DB::transaction(function () use ($request) {
                     // Money sending transaction
-                    if($request->type != 'C') {
+                    if ($request->type != 'C') {
                         $transaction1 = new Transaction();
                         $transaction1->vcard = $request->vcard;
                         $transaction1->date = date('Y-m-d');
@@ -113,18 +119,13 @@ class TransactionController extends Controller {
                     $transaction2->new_balance = $payment_referenceBalance + $request->value;
                     $transaction2->payment_type = $request->payment_type;
                     $transaction2->payment_reference = $request->vcard;
-                    if($request->type != 'C') {
-                        $transaction2->pair_transaction = $transaction1->id;
-                        $transaction2->pair_vcard = $request->vcard;
-                    } else {
-                        $transaction2->pair_transaction = null;
-                        $transaction2->pair_vcard = null;
-                    }
+                    $transaction2->pair_transaction = ($request->type != 'C') ? $transaction1->id : null;
+                    $transaction2->pair_vcard = ($request->type != 'C') ? $request->vcard : null;
                     $transaction2->category_id = $request->category_id;
                     $transaction2->description = $request->description;
 
 
-                    if($request->type != 'C') {
+                    if ($request->type != 'C') {
                         // Save transactions to get their id's
                         $transaction1->save();
                         $transaction2->save();
@@ -158,27 +159,19 @@ class TransactionController extends Controller {
         }
 
         // ANY OTHER PAYMENT TYPE
-        elseif($request->payment_type == 'IBAN' || $request->payment_type == 'PAYPAL' || $request->payment_type == 'VISA' || $request->payment_type == 'MB' || $request->payment_type == 'MBWAY') {
+        elseif (in_array($request->payment_type, ['IBAN', 'PAYPAL', 'VISA', 'MB', 'MBWAY'])) {
+
+            $endpoint = ($request->type == 'D') ? 'credit' : 'debit';
 
             // API call
-            if($request->type == 'D') {
-                $response = Http::post('https://dad-202324-payments-api.vercel.app/api/credit', [
-                    'type' => $request->payment_type,
-                    'reference' => $request->payment_reference,
-                    'value' => (float)$request->value,
-                ]);
-            }
-
-            if($request->type == 'C') {
-                $response = Http::post('https://dad-202324-payments-api.vercel.app/api/debit', [
-                    'type' => $request->payment_type,
-                    'reference' => $request->payment_reference,
-                    'value' => (float)$request->value,
-                ]);
-            }
+            $response = Http::post("https://dad-202324-payments-api.vercel.app/api/{$endpoint}", [
+                'type' => $request->payment_type,
+                'reference' => $request->payment_reference,
+                'value' => (float) $request->value,
+            ]);
 
             // Check the response and handle accordingly
-            if(!$response->successful()) {
+            if (!$response->successful()) {
                 $responseData = $response->json(); // Parse JSON response
                 $message = isset($responseData['message']) ? $responseData['message'] : '(api) Error sending transaction';
                 return response()->json(['message' => $message], $response->status());
@@ -188,6 +181,7 @@ class TransactionController extends Controller {
                 DB::transaction(function () use ($request) {
                     // Money sending transaction
                     $transaction = new Transaction();
+
                     $transaction->vcard = $request->vcard;
                     $transaction->date = date('Y-m-d');
                     $transaction->datetime = date('Y-m-d H:i:s');
@@ -195,17 +189,13 @@ class TransactionController extends Controller {
                     $transaction->value = $request->value;
                     $vcardBalance = VCard::where('phone_number', $request->vcard)->first()->balance;
                     $transaction->old_balance = $vcardBalance;
-                    if($request->type == 'D')
-                        $transaction->new_balance = $vcardBalance - $request->value;
-                    if($request->type == 'C')
-                        $transaction->new_balance = $vcardBalance + $request->value;
+                    $transaction->new_balance = ($request->type == 'D') ? $vcardBalance - $request->value : $vcardBalance + $request->value;
                     $transaction->payment_type = $request->payment_type;
                     $transaction->payment_reference = $request->payment_reference;
                     $transaction->pair_vcard = null;
                     $transaction->pair_transaction = null;
                     $transaction->category_id = $request->category_id;
                     $transaction->description = $request->description;
-
 
                     $transaction->save();
 
@@ -225,10 +215,13 @@ class TransactionController extends Controller {
             return response()->json(['message' => 'Tipo de pagamento inválido'], 401);
         }
 
-        if($request->type == 'C')
-            return response()->json(['message' => $request->value.'€ sent to '.$request->vcard.' successfully'], 200);
-        if($request->type == 'D')
-            return response()->json(['message' => $request->value.'€ sent to '.$request->payment_reference.' successfully'], 200);
+        $message = ($request->type == 'C')
+            ? "{$request->value}€ sent to {$request->vcard} successfully"
+            : "{$request->value}€ sent to {$request->payment_reference} successfully";
+
+        return response()->json(['message' => $message], 200);
+
+
 
     }
 
@@ -237,7 +230,8 @@ class TransactionController extends Controller {
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction $transaction) {
+    public function update(Request $request, Transaction $transaction)
+    {
         $data = $request->all();
 
         // Update the transaction with the extracted data
@@ -250,12 +244,14 @@ class TransactionController extends Controller {
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transaction $transaction) {
+    public function destroy(Transaction $transaction)
+    {
         //
     }
 
 
-    public function getTransactionsSumBetweenDates(Request $request) {
+    public function getTransactionsSumBetweenDates(Request $request)
+    {
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
 
@@ -265,21 +261,24 @@ class TransactionController extends Controller {
         return response()->json(['sumBetweenDates' => $sumBetweenDates, 'countBetweenDates' => $countBetweenDates]);
     }
 
-    public function getOlderTransaction(Request $request) {
+    public function getOlderTransaction(Request $request)
+    {
 
         $olderTransaction = Transaction::orderBy('date')->first();
 
         return response()->json(['olderTransaction' => $olderTransaction]);
     }
 
-    public function getTransactionsCountByType(Request $request) {
+    public function getTransactionsCountByType(Request $request)
+    {
         $paymentType = $request->input('paymentType');
 
         $countByPayementType = Transaction::where('payment_type', $paymentType)->count();
         return response()->json(['countByPayementType' => $countByPayementType]);
     }
 
-    public function getTransactionStatistics() {
+    public function getTransactionStatistics()
+    {
         $transactionsSum = Transaction::sum('value');
         $transactionsCount = Transaction::count();
 
