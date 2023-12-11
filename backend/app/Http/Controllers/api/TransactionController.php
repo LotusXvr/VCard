@@ -88,12 +88,16 @@ class TransactionController extends Controller
 
             try {
                 DB::transaction(function () use ($request) {
+
+                    $date = date('Y-m-d');
+                    $datetime = date('Y-m-d H:i:s');
+
                     // Money sending transaction
                     if ($request->type != 'C') {
                         $transaction1 = new Transaction();
                         $transaction1->vcard = $request->vcard;
-                        $transaction1->date = date('Y-m-d');
-                        $transaction1->datetime = date('Y-m-d H:i:s');
+                        $transaction1->date = $date;
+                        $transaction1->datetime = $datetime;
                         $transaction1->type = 'D'; // como o utilizador está a enviar dinheiro, a primeira operação é sempre Debito
                         $transaction1->value = $request->value;
                         $vcardBalance = VCard::where('phone_number', $request->vcard)->first()->balance;
@@ -110,8 +114,8 @@ class TransactionController extends Controller
                     // Money reception transaction
                     $transaction2 = new Transaction();
                     $transaction2->vcard = $request->payment_reference;
-                    $transaction2->date = date('Y-m-d');
-                    $transaction2->datetime = date('Y-m-d H:i:s');
+                    $transaction2->date = $date;
+                    $transaction2->datetime = $datetime;
                     $transaction2->type = 'C'; // tendo em conta esta operaçao ser a inversa, esta será de Crédito
                     $transaction2->value = $request->value;
                     $payment_referenceBalance = VCard::where('phone_number', $request->payment_reference)->first()->balance;
@@ -121,8 +125,8 @@ class TransactionController extends Controller
                     $transaction2->payment_reference = $request->vcard;
                     $transaction2->pair_transaction = ($request->type != 'C') ? $transaction1->id : null;
                     $transaction2->pair_vcard = ($request->type != 'C') ? $request->vcard : null;
-                    $transaction2->category_id = $request->category_id;
-                    $transaction2->description = $request->description;
+                    $transaction2->category_id = null;
+                    $transaction2->description = null;
 
 
                     if ($request->type != 'C') {
