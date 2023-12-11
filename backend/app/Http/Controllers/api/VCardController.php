@@ -232,11 +232,45 @@ class VCardController extends Controller
     {
         $phoneNumber = $vcard->phone_number;
 
-        $transactions = Transaction::where('vcard', $phoneNumber)
-            ->orderBy('date', 'desc')
-            ->paginate(10);  // Utiliza paginate em vez de get
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+        $type = $request->type;
+        $method = $request->method;
+
+        $query = Transaction::where('vcard', $phoneNumber);
+
+        $query->when($startDate, function ($query, $startDate) {
+            return $query->where('date', '>=', $startDate);
+        });
+
+        $query->when($endDate, function ($query, $endDate) {
+            return $query->where('date', '<=', $endDate);
+        });
+
+        $query->when($type, function ($query, $type) {
+            return $query->where('type', $type);
+        });
+
+        $query->when($method, function ($query, $method) {
+            return $query->where('payment_type', $method);
+        });
+
+        $transactions = $query->orderBy('date', 'desc')->paginate(20);  // Utiliza paginate em vez de get
 
         return response()->json($transactions);
+    }
+
+    public function getLastMonthTransactionsByPhoneNumber(VCard $vcard)
+    {
+        $phoneNumber = $vcard->phone_number;
+
+        $lastMonthTransactions = Transaction::where('vcard', $phoneNumber)
+            ->whereYear('datetime', '=', now()->year)
+            ->whereMonth('datetime', '=', now()->month)
+            ->orderBy('datetime', 'desc')
+            ->get();
+
+        return response()->json($lastMonthTransactions);
     }
 
 
