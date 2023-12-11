@@ -5,13 +5,14 @@ import TransactionTable from "./TransactionTable.vue"
 import { useUserStore } from "../../stores/user"
 import { useRouter } from "vue-router"
 import { Bootstrap5Pagination } from "laravel-vue-pagination"
-
+import { useCategoryStore } from "../../stores/category"
 
 const userStore = useUserStore()
 const transactions = ref([])
 const router = useRouter()
 const paginationData = ref({})
-
+const categoryStore = useCategoryStore()
+const categories = ref([])
 
 const loadTransactions = (page = 1) => {
     axios
@@ -22,6 +23,7 @@ const loadTransactions = (page = 1) => {
                 endDate: endDate.value,
                 type: type.value,
                 method: method.value,
+                category: category.value,
             },
         })
         .then((response) => {
@@ -32,6 +34,9 @@ const loadTransactions = (page = 1) => {
         .catch((error) => {
             console.log(error)
         })
+}
+const loadCategories = async () => {
+    categories.value = await categoryStore.loadCategory()
 }
 
 const lastMonthTransactions = ref([])
@@ -56,6 +61,7 @@ const startDate = ref(null)
 const endDate = ref(null)
 const type = ref(null)
 const method = ref(null)
+const category = ref(null)
 const filteredTransactions = ref([])
 
 
@@ -76,6 +82,7 @@ const clearFilters = () => {
 onMounted(() => {
     loadTransactions()
     loadLastMonthTransactions()
+    loadCategories()
 })
 </script>
 
@@ -120,6 +127,17 @@ onMounted(() => {
                         <option value="MB">MB</option>
                         <option value="VISA">VISA</option>
                         <option value="PAYPAL">PAYPAL</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <!-- Filter inputs -->
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category:</label>
+                    <select v-model="category" class="form-select">
+                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
+                    </option>
                     </select>
                 </div>
             </div>

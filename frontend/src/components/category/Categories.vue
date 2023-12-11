@@ -4,12 +4,13 @@ import axios from "axios"
 import { useUserStore } from "../../stores/user"
 import { useRouter } from 'vue-router'
 import CategoryTable from "./CategoryTable.vue"
+import { useCategoryStore } from "../../stores/category"
 
-const userStore = useUserStore()
+const categoryStore = useCategoryStore()
 const router = useRouter()
 const categories = ref([])
 
-const loadCategories = () => {
+/* const loadCategories = () => {
     axios
         .get("vcard/" + userStore.userPhoneNumber + "/category")
         .then((response) => {
@@ -18,7 +19,12 @@ const loadCategories = () => {
         .catch((error) => {
             console.log(error)
         })
+} */
+
+const loadCategories = async () => {
+    categories.value = await categoryStore.loadCategory()
 }
+
 const addCategory = () => {
     router.push({ name: "NewCategory" })
 }   

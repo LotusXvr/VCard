@@ -4,6 +4,7 @@ import { ref, onMounted, computed, watchEffect } from "vue"
 import Chart from "chart.js/auto"
 import axios from "axios"
 
+const categoryStore = useCategoryStore()
 const categories = ref([])
 const props = defineProps({
     transactions: {
@@ -17,19 +18,12 @@ const props = defineProps({
 })
 const emit = defineEmits(["edit"])
 
+const loadCategories = async () => {
+    categories.value = await categoryStore.loadCategory()
+}
+
 const editClick = (transaction) => {
     emit("edit", transaction)
-}
-const loadCategories = async () => {
-    try {
-        await axios
-            .get("vcard/" + props.transactions[0].vcard + "/category/all")
-            .then((response) => {
-                categories.value = response.data
-            })
-    } catch (error) {
-        console.log(error)
-    }
 }
 
 const transactionsRef = ref([])

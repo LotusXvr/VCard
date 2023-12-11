@@ -240,6 +240,7 @@ class VCardController extends Controller
         $endDate = $request->endDate;
         $type = $request->type;
         $method = $request->method;
+        $category = $request->category;
 
         $query = Transaction::where('vcard', $phoneNumber);
 
@@ -257,6 +258,9 @@ class VCardController extends Controller
 
         $query->when($method, function ($query, $method) {
             return $query->where('payment_type', $method);
+        });
+        $query->when($category, function ($query, $category) {
+            return $query->where('category_id', $category);
         });
 
         $transactions = $query->orderBy('date', 'desc')->paginate(20);  // Utiliza paginate em vez de get
