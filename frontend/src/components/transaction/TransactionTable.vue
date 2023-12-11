@@ -52,10 +52,23 @@ const transactionsByYearMonth = computed(() => {
 
         if (!groupedTransactions[key]) {
             groupedTransactions[key] = []
-        }
+        }   
 
         groupedTransactions[key].push(transaction)
     })
+
+     // Sort transactions within each day by time
+    Object.keys(groupedTransactions).forEach((key) => {
+        groupedTransactions[key] = groupedTransactions[key].sort((a, b) => {
+            const timeA = new Date(a.datetime).getTime()
+            const timeB = new Date(b.datetime).getTime()
+            return timeA - timeB;
+        });
+
+        groupedTransactions[key].reverse();
+    })
+
+    
     return groupedTransactions
 })
 
@@ -113,8 +126,7 @@ const dates = computed(() => {
         .map((transaction) => {
             dateindex.value += 1
             return "(" + dateindex.value + ") " + formatDateTime(transaction.datetime).date
-        })
-        .reverse() 
+        }).reverse()
 
     return dates
 })
