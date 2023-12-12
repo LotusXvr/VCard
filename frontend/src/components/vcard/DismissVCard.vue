@@ -20,7 +20,7 @@ const deleteVcard = async () => {
   axios
     .delete('vcards/' + userStore.userPhoneNumber + '/dismiss', { data: codes.value })
     .then(() => {
-      userStore.user = null
+      userStore.clearUser()
       router.push({ name: 'Home' })
       toast.success('Vcard has been deleted successfully!')
     })
