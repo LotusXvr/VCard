@@ -42,8 +42,7 @@ const loadCategories = async () => {
 const lastMonthTransactions = ref([])
 const loadLastMonthTransactions = () => {
     axios
-        .get("vcard/" + userStore.userPhoneNumber + "/transactions/lastmonth", {
-        })
+        .get("vcard/" + userStore.userPhoneNumber + "/transactions/lastmonth", {})
         .then((response) => {
             lastMonthTransactions.value = response.data
         })
@@ -64,7 +63,6 @@ const method = ref(null)
 const category = ref(null)
 const filteredTransactions = ref([])
 
-
 // Method to apply filters
 const applyFilters = () => {
     loadTransactions()
@@ -76,6 +74,7 @@ const clearFilters = () => {
     endDate.value = null
     type.value = null
     method.value = null
+    category.value = null
     loadTransactions()
 }
 
@@ -130,17 +129,6 @@ onMounted(() => {
                     </select>
                 </div>
             </div>
-            <div class="col-md-3">
-                <!-- Filter inputs -->
-                <div class="mb-3">
-                    <label for="category" class="form-label">Category:</label>
-                    <select v-model="category" class="form-select">
-                    <option v-for="category in categories" :key="category.id" :value="category.id">
-                        {{ category.name }}
-                    </option>
-                    </select>
-                </div>
-            </div>
         </div>
         <div class="row">
             <div class="col-md-3">
@@ -156,16 +144,31 @@ onMounted(() => {
                     <button @click="clearFilters" class="btn btn-secondary">Clear Filters</button>
                 </div>
             </div>
+            <div class="col-md-3">
+                <label for="category" class="form-label">Category:</label>
+                <select v-model="category" class="form-select">
+                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
+                    </option>
+                </select>
+            </div>
         </div>
     </div>
 
     <hr />
     <div v-if="filteredTransactions.length > 0">
-        <TransactionTable :transactions="filteredTransactions" :lastMonthTransactions="lastMonthTransactions" @edit="editTransaction">
+        <TransactionTable
+            :transactions="filteredTransactions"
+            :lastMonthTransactions="lastMonthTransactions"
+            @edit="editTransaction"
+        >
         </TransactionTable>
-        <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadTransactions" :limit="3">
+        <Bootstrap5Pagination
+            :data="paginationData"
+            @pagination-change-page="loadTransactions"
+            :limit="3"
+        >
         </Bootstrap5Pagination>
-
     </div>
     <div v-else>No Transactions yet</div>
 </template>

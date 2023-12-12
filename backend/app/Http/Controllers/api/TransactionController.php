@@ -56,23 +56,23 @@ class TransactionController extends Controller
             // verify if confirmation code is the correct one of the user
             $vcardOrigin = VCard::where('phone_number', $request->vcard)->first();
             if (!password_verify($request->confirmation_code, $vcardOrigin->confirmation_code)) {
-                return response()->json(['message' => 'Código de confirmação inválido'], 401);
+                return response()->json(['message' => 'Invalid confirmation code'], 401);
             }
 
             // verify if sender has enough money on account balance
             if ($vcardOrigin->balance < $request->value) {
-                return response()->json(['message' => 'Saldo insuficiente'], 401);
+                return response()->json(['message' => 'Insuficient balance'], 401);
             }
 
             // verify if value being sent is higher than max_debit (invalid)
             if ($request->value > $vcardOrigin->max_debit) {
-                return response()->json(['message' => 'Valor superior ao máximo permitido'], 401);
+                return response()->json(['message' => 'Value higher than maximum debit allowed'], 401);
             }
         }
 
         // verify if value being sent is at least 0.01€
         if ($request->value < 0.01) {
-            return response()->json(['message' => 'Valor mínimo de transferência é de 0.01€'], 401);
+            return response()->json(['message' => 'Minimum transfer amount is 0.01€'], 401);
         }
 
         // VCARD
@@ -83,7 +83,7 @@ class TransactionController extends Controller
                 ->whereNull('deleted_at')
                 ->first();
             if (!$destinVCardExists) {
-                return response()->json(['message' => 'VCard de destino não existe'], 404);
+                return response()->json(['message' => 'Destin VCard does not exist'], 404);
             }
 
             try {
@@ -156,7 +156,7 @@ class TransactionController extends Controller
 
             } catch (\Exception $e) {
                 return response()->json([
-                    'message' => 'Erro ao criar transação',
+                    'message' => 'Error creating transaction',
                     'error' => $e->getMessage()
                 ], 500);
             }
@@ -210,13 +210,13 @@ class TransactionController extends Controller
 
             } catch (\Exception $e) {
                 return response()->json([
-                    'message' => 'Erro ao criar transação',
+                    'message' => 'Error creating transaction',
                     'error' => $e->getMessage()
                 ], 500);
             }
 
         } else {
-            return response()->json(['message' => 'Tipo de pagamento inválido'], 401);
+            return response()->json(['message' => 'Invalid payment type'], 401);
         }
 
         $message = ($request->type == 'C')
@@ -224,8 +224,6 @@ class TransactionController extends Controller
             : "{$request->value}€ sent to {$request->payment_reference} successfully";
 
         return response()->json(['message' => $message], 200);
-
-
 
     }
 
