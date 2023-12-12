@@ -66,7 +66,7 @@ class TransactionController extends Controller
 
             // verify if value being sent is higher than max_debit (invalid)
             if ($request->value > $vcardOrigin->max_debit) {
-                return response()->json(['message' => 'Value higher than allowed maximum debit'], 401);
+                return response()->json(['message' => 'Value higher than maximum debit allowed'], 401);
             }
         }
 

@@ -351,7 +351,7 @@ class VCardController extends Controller
         }
 
         if ($request->valor <= 0) {
-            return response()->json(['message' => 'Valor inválido.'], 422);
+            return response()->json(['message' => 'Invalid value'], 422);
         }
         return response()->json(['message' => 'Not enough balance to reinforce savings.'], 422);
 
