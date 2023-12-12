@@ -46,12 +46,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('vcard/{vcard}/transactions/lastmonth', [VCardController::class, 'getLastMonthTransactionsByPhoneNumber'])->middleware('can:view,vcard');
 
     // Statistics
-    Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates']);
-    Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction']);
-    Route::get('statistics/transactions/count-by-type', [TransactionController::class, 'getTransactionsCountByType']);
+    Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates'])->middleware('can:viewAny,App\Models\User');
+    Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction'])->middleware('can:viewAny,App\Models\User');
+    Route::get('statistics/transactions/count-by-type', [TransactionController::class, 'getTransactionsCountByType'])->middleware('can:viewAny,App\Models\User');
 
-    Route::get("statistics/vcards", [VCardController::class, 'getVCardStatistics']);
-    Route::get("statistics/transactions", [TransactionController::class, 'getTransactionStatistics']);
+    Route::get("statistics/vcards", [VCardController::class, 'getVCardStatistics'])->middleware('can:viewAny,App\Models\User');
+    Route::get("statistics/transactions", [TransactionController::class, 'getTransactionStatistics'])->middleware('can:viewAny,App\Models\User');
     /*
      * Globais
      */
