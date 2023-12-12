@@ -143,7 +143,7 @@ onMounted(async () => {
                                                     userStore.userPhoneNumber,
                                         }"
                                         :to="{
-                                            name: 'VCard',
+                                            name: 'ProfileVCard',
                                             params: { phone_number: userStore.userPhoneNumber },
                                         }"
                                     >

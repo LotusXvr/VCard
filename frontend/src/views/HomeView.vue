@@ -101,7 +101,7 @@ const retirarPoupanca = async () => {
 </script>
 
 <template>
-    <div class="container mt-5" v-if="userStore.userType == 'V'">
+    <div class="container mt-5" v-if="userStore.userType === 'V'">
       <h1 class="display-4">Welcome</h1>
       <hr class="my-4">
       <h2>{{ vcard.name }}</h2>
