@@ -136,6 +136,7 @@ const validateValue = () => {
     return true // Indicates a valid transaction value
 }
 
+
 const cancel = () => {
     emit("cancel", editingTransaction.value)
 }

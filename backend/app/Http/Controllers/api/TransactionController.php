@@ -86,6 +86,13 @@ class TransactionController extends Controller
                 return response()->json(['message' => 'Destin VCard does not exist'], 404);
             }
 
+            $destinVCardIsBlocked = VCard::where('phone_number', $request->payment_reference)
+                ->where('blocked', 1)
+                ->first();
+            if ($destinVCardIsBlocked) {
+                return response()->json(['message' => "Destin VCard is currently blocked"], 404);
+            }
+
             try {
                 DB::transaction(function () use ($request) {
 
