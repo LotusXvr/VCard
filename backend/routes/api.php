@@ -36,6 +36,8 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('vcards/{vcard}/dismiss', [VCardController::class, 'dismissVCard']);
 
     Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
+    Route::post('vcards/{vcard}/reforcarPoupanca', [VCardController::class, 'reforcarPoupanca']);
+    Route::post('vcards/{vcard}/retirarPoupanca', [VCardController::class, 'retirarPoupanca']);
 
     // List transactions of a specific phone number
     Route::get('vcard/{vcard}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber'])->middleware('can:view,vcard');

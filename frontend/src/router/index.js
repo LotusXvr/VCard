@@ -41,6 +41,7 @@ const router = createRouter({
             path: "/dashboard",
             name: "Dashboard",
             component: Dashboard,
+            props: (route) => ({ phone_number: parseInt(route.params.phone_number)}),
         },
         {
             path: "/vcards",
