@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios"
-import { ref, onMounted, defineProps, nextTick } from "vue"
+import { ref, onMounted } from "vue"
 import VCardTable from "./VCardTable.vue"
 import { useRouter } from "vue-router"
 import { useToast } from "vue-toastification"

@@ -1,11 +1,9 @@
 <script setup>
-import { onMounted, ref, watch } from "vue"
+import {  ref, watch } from "vue"
 import CategoryDetail from "./CategoryDetail.vue"
 import { useRouter } from "vue-router"
 import { useToast } from "vue-toastification"
 import axios from "axios"
-import { useCategoryStore } from "../../stores/category"
-const categoryStore = useCategoryStore()
 import { useUserStore } from "../../stores/user"
 
 const userStore = useUserStore()

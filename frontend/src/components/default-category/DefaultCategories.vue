@@ -1,11 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import axios from "axios"
-import { useUserStore } from "../../stores/user"
 import { useRouter } from 'vue-router'
 import DefaultCategoryTable from "./DefaultCategoryTable.vue"
 
-const userStore = useUserStore()
 const router = useRouter()
 const categories = ref([])
 

@@ -1,5 +1,4 @@
 <script setup>
-import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useRouter } from "vue-router"
 import { ref } from "vue"
