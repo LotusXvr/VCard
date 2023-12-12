@@ -14,7 +14,6 @@ const paginationData = ref({})
 const categoryStore = useCategoryStore()
 const categories = ref([])
 
-
 const loadTransactions = (page = 1) => {
     axios
         .get("vcard/" + userStore.userPhoneNumber + "/transactions", {
@@ -40,29 +39,8 @@ const loadCategories = async () => {
     categories.value = await categoryStore.loadCategory()
 }
 
-const lastMonthTransactions = ref([])
-const loadLastMonthTransactions = () => {
-    axios
-        .get("vcard/" + userStore.userPhoneNumber + "/transactions/lastmonth", {})
-        .then((response) => {
-            lastMonthTransactions.value = response.data
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-}
-
 const editTransaction = (transaction) => {
     router.push({ name: "Transaction", params: { id: transaction.id } })
-}
-
-
-const showLastMonthStatistics = ref(true)
-
-const changeStateOfLastMonthStatistics = (showLastMonthStatistics) => {
-    console.log("emited succesfuly")
-    showLastMonthStatistics = !showLastMonthStatistics
-    console.log(showLastMonthStatistics)
 }
 
 // Reactive filter properties
@@ -90,7 +68,6 @@ const clearFilters = () => {
 
 onMounted(() => {
     loadTransactions()
-    loadLastMonthTransactions()
     loadCategories()
 })
 </script>
@@ -167,13 +144,7 @@ onMounted(() => {
 
     <hr />
     <div v-if="filteredTransactions.length > 0">
-        <TransactionTable
-            :transactions="filteredTransactions"
-            :lastMonthTransactions="lastMonthTransactions"
-            :showLastMonthStatistics="showLastMonthStatistics"
-            @hideStatistics="changeStateOfLastMonthStatistics"
-            @edit="editTransaction"
-        >
+        <TransactionTable :transactions="filteredTransactions" @edit="editTransaction">
         </TransactionTable>
         <Bootstrap5Pagination
             :data="paginationData"

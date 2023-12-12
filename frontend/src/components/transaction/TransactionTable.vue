@@ -1,7 +1,6 @@
 <script setup>
 import { useCategoryStore } from "../../stores/category"
 import { ref, onMounted, computed, watchEffect } from "vue"
-import Chart from "chart.js/auto"
 
 const categoryStore = useCategoryStore()
 const categories = ref([])
@@ -59,97 +58,6 @@ const transactionsByYearMonth = computed(() => {
     return groupedTransactions
 })
 
-const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-]
-
-const currentDate = new Date()
-
-const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-
-const lastMonthMonth = lastMonthDate.getMonth() + 1
-const lastMonthTransactionsArray = ref(props.lastMonthTransactions)
-
-const sumValues = (transactions, type) => {
-    return transactions
-        .filter((transaction) => transaction.type === type)
-        .reduce((sum, transaction) => sum + parseFloat(transaction.value), 0)
-}
-
-const sumDebitValues = computed(() => {
-    const rawValue = sumValues(lastMonthTransactionsArray.value, "D")
-    return parseFloat(rawValue.toFixed(2))
-})
-
-const sumCreditValues = computed(() => {
-    const rawValue = sumValues(lastMonthTransactionsArray.value, "C")
-    return parseFloat(rawValue.toFixed(2))
-})
-
-const dateindex = ref(0)
-const dates = computed(() => {
-    const dates = lastMonthTransactionsArray.value
-        .map((transaction) => {
-            dateindex.value += 1
-            return "(" + dateindex.value + ") " + formatDateTime(transaction.datetime).date
-        })
-        .reverse()
-
-    return dates
-})
-
-const balances = computed(() => {
-    const balances = lastMonthTransactionsArray.value
-        .map((transaction) => {
-            return transaction.new_balance
-        })
-        .reverse()
-
-    return balances
-})
-
-const balanceChartEl = ref(null)
-let balanceChart = null
-
-const loadChart = () => {
-    if (!balanceChartEl.value) {
-        // O elemento do gráfico ainda não está disponível
-        return
-    }
-
-    if (balanceChart) {
-        // Destruir o gráfico anterior para evitar problemas de duplicação
-        balanceChart.destroy()
-    }
-
-    balanceChart = new Chart(balanceChartEl.value.getContext("2d"), {
-        type: "line",
-        data: {
-            labels: dates.value,
-            datasets: [
-                {
-                    label: "Balance (€)",
-                    data: balances.value,
-                    backgroundColor: "rgba(255, 99, 132, 0.2)",
-                    borderColor: "rgba(255, 99, 132, 1)",
-                    borderWidth: 1,
-                },
-            ],
-        },
-    })
-}
-
 const getCategoryNameById = (categoryId) => {
     if (categoryId != null) {
         const matchingCategory = categories.value.find((category) => category.id == categoryId)
@@ -201,12 +109,9 @@ const hideStatistics = (hideStatisticsState) => {
 // Assista a alterações em props.transactions
 watchEffect(() => {
     transactionsRef.value = props.transactions
-    hideStatisticsState.value = props.showLastMonthStatistics
-    loadChart()
 })
 
 onMounted(() => {
-    loadChart()
     loadCategories()
 })
 </script>
@@ -214,32 +119,6 @@ onMounted(() => {
 <template>
     <div>
         <h1>Transactions</h1>
-        <div class="btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-secondary active">
-                <input @click="hideStatistics(hideStatisticsState)" type="checkbox" checked autocomplete="off" /> Show this month statistics
-            </label>
-        </div>
-
-        <div v-if="hideStatisticsState == false" class="container">
-            <h4>Your balance in {{ monthNames[lastMonthMonth - 1] }}</h4>
-            <canvas
-                ref="balanceChartEl"
-                height="200px"
-                width="200px"
-                style="height: 200px; width: 200px"
-            ></canvas>
-
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <h5>Your earnings:</h5>
-                    <p class="h5 text-success">{{ sumCreditValues }}€</p>
-                </div>
-                <div class="col-md-6">
-                    <h5>Your expenses:</h5>
-                    <p class="h5 text-danger">{{ sumDebitValues }}€</p>
-                </div>
-            </div>
-        </div>
 
         <hr />
         <table class="table table-striped">
