@@ -293,14 +293,16 @@ class TransactionController extends Controller
         $transactionsSum = Transaction::sum('value');
         $transactionsCount = Transaction::count();
 
-        $transactionsSumByMonth = Transaction::select(DB::raw('MONTH(date) as month'), DB::raw('SUM(value) as sum'))
-            ->whereYear('date', date('Y'))
-            ->groupBy('month')
+        $transactionsSumByMonth = Transaction::selectRaw('MONTH(date) as month, YEAR(date) as year, SUM(value) as sum')
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
             ->get();
 
-        $transactionsCountByMonth = Transaction::select(DB::raw('MONTH(date) as month'), DB::raw('COUNT(*) as count'))
-            ->whereYear('date', date('Y'))
-            ->groupBy('month')
+        $transactionsCountByMonth = Transaction::selectRaw('MONTH(date) as month, YEAR(date) as year, COUNT(*) as count')
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
             ->get();
 
         $transactionByPaymentMethod = Transaction::selectRaw('payment_type, COUNT(*) as transaction_count')

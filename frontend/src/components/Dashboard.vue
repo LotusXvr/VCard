@@ -43,10 +43,13 @@ const transactionsCountBetweenDates = ref(0)
 const transactionsCountByType = ref(0)
 const transactionsSum = ref(0)
 const transactionsQuantityByMonth = ref(0)
+const transactionsSumByMonth = ref(0)
 const averageTransactionAmountByMonth = ref([])
 // graficos
 const transactionsByPaymentMethodChartEl = ref(null)
 const transactionsByPaymentMethodChart = shallowRef(null)
+const transactionsSumChartEl = ref(null)
+const transactionsSumChart = shallowRef(null)
 const transactionsQuantityChartEl = ref(null)
 const transactionsQuantityChart = shallowRef(null)
 const averageTransactionAmountChartEl = ref(null)
@@ -95,14 +98,14 @@ const getTransactionsStatistics = () => {
         .then((response) => {
             console.log(response.data)
             transactionsCount.value = response.data.transactionsCount
-            transactionsSum.value = response.data.transactionsSum
+            transactionsSumByMonth.value = response.data.transactionsSumByMonth
             transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
             averageTransactionAmountByMonth.value = response.data.averageTransactionAmounts
             transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
 
             // GRAFICO DE QUANTIDADE DE TRANSAÇOES POR MES
             const months = transactionsQuantityByMonth.value.map(
-                (entry) => monthNames[entry.month - 1],
+                (entry) => `${monthNames[entry.month - 1]} ${entry.year}`,
             )
             const transactionsQuantity = transactionsQuantityByMonth.value.map(
                 (entry) => entry.count,
@@ -126,6 +129,28 @@ const getTransactionsStatistics = () => {
                     },
                 },
             )
+
+            // GRAFICO DA SOMA DE TRANSAÇOES POR MES
+            const monthsArray = transactionsSumByMonth.value.map(
+                (entry) => `${monthNames[entry.month - 1]} ${entry.year}`,
+            )
+            const transactionsSumArray = transactionsSumByMonth.value.map((entry) => entry.sum)
+
+            transactionsSumChart.value = new Chart(transactionsSumChartEl.value.getContext("2d"), {
+                type: "line",
+                data: {
+                    labels: monthsArray,
+                    datasets: [
+                        {
+                            label: "Sum of transactions' value",
+                            data: transactionsSumArray,
+                            backgroundColor: "rgba(255, 215, 0, 0.2)",
+                            borderColor: "rgba(255, 215, 0, 1)",
+                            borderWidth: 1,
+                        },
+                    ],
+                },
+            })
 
             // GRAFICO DE MEDIA DE VOLUME DE TRANSAÇOES POR MES
             const monthsWithYear = averageTransactionAmountByMonth.value.map(
@@ -304,8 +329,8 @@ onMounted(() => {
                     <canvas ref="transactionsQuantityChartEl"></canvas>
                 </div>
                 <div class="col-md-6">
-                    <h4>Average Transaction Amount</h4>
-                    <canvas ref="averageTransactionAmountChartEl"></canvas>
+                    <h4>Sum of transaction value amount</h4>
+                    <canvas ref="transactionsSumChartEl"></canvas>
                 </div>
             </div>
             <div class="row mt-4">
@@ -313,6 +338,12 @@ onMounted(() => {
                     <h4>VCard Balance Distribution</h4>
                     <canvas ref="vcardBalanceDistributionChartEl"></canvas>
                 </div>
+                <div class="col-md-6">
+                    <h4>Average Transaction Amount</h4>
+                    <canvas ref="averageTransactionAmountChartEl"></canvas>
+                </div>
+            </div>
+            <div class="row mt-4">
                 <div class="col-md-6">
                     <h4>Transactions By Payment Method</h4>
                     <canvas ref="transactionsByPaymentMethodChartEl"></canvas>
