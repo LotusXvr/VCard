@@ -171,8 +171,12 @@ router.beforeEach(async (to, from, next) => {
 
   // Rotas públicas que podem ser acessadas por usuários não autenticados
   if (to.name === 'Login' && userStore.user) {
-    next({ name: 'Home' })
-    return
+    if (userStore.userType === 'A') {
+      next({ name: 'Dashboard', params: { phone_number: userStore.phone_number } })
+    } else {
+      next({ name: 'Home' })
+      return
+    }
   }
 
   if (to.name === 'NewVCard' && userStore.userType !== 'A') {
