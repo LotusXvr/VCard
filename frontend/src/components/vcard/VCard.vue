@@ -29,7 +29,6 @@ const newVCard = () => {
   }
 }
 
-// const confirmationLeaveDialog = ref({})
 const vcard = ref(newVCard())
 const errors = ref(null)
 
@@ -38,7 +37,7 @@ let originalValueStr = ''
 const inserting = (phone_number) => !phone_number || phone_number < 0
 
 const loadVCard = async (phone_number) => {
-  originalValueStr = ''
+  originalValueStr
   errors.value = null
   if (inserting(phone_number)) {
     vcard.value = newVCard()

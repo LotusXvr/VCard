@@ -9,7 +9,6 @@ import Chart from "chart.js/auto"
 const toast = useToast()
 const userStore = useUserStore()
 
-
 const newVCard = () => {
     return {
         phone_number: null,
@@ -53,6 +52,9 @@ const reforcarPoupanca = async () => {
         toast.error("Transfer amount must be greater than 0.")
         return
     }
+
+    transferAmount.value = parseFloat(transferAmount.value).toFixed(2)
+
     try {
         await axios.post("vcards/" + userStore.userPhoneNumber + "/reforcarPoupanca", {
             vcard: userStore.userPhoneNumber,
@@ -60,9 +62,9 @@ const reforcarPoupanca = async () => {
         })
 
         toast.success("Savings reinforced sucessfully!")
-        vcard.value.balance = parseFloat((vcard.value.balance - transferAmount.value)).toFixed(2)
+        vcard.value.balance = parseFloat(vcard.value.balance - transferAmount.value).toFixed(2)
         const savings = parseFloat(vcard.value.savings)
-        vcard.value.savings = parseFloat((savings + transferAmount.value)).toFixed(2)
+        vcard.value.savings = parseFloat(savings + transferAmount.value).toFixed(2)
     } catch (error) {
         toast.error(error.response.data.message || "An error occurred.")
     }
@@ -73,6 +75,9 @@ const retirarPoupanca = async () => {
         toast.error("Transfer amount must be greater than 0.")
         return
     }
+
+    transferAmount.value = parseFloat(transferAmount.value).toFixed(2)
+
     try {
         await axios.post("vcards/" + userStore.userPhoneNumber + "/retirarPoupanca", {
             vcard: userStore.userPhoneNumber,
@@ -182,10 +187,6 @@ const loadChart = () => {
         balanceChart.destroy()
     }
 
-    console.log(balances)
-    console.log(dates)
-    console.log(lastMonthTransactions)
-
     balanceChart = new Chart(balanceChartEl.value.getContext("2d"), {
         type: "line",
         data: {
@@ -218,7 +219,10 @@ onMounted(() => {
 
             <div class="row justify-content-center" style="margin-top: 25px">
                 <div class="col-md-3">
-                    <div class="card text-white mb-3" style="background-color: #15BA58; max-width: 18rem">
+                    <div
+                        class="card text-white mb-3"
+                        style="background-color: #15ba58; max-width: 18rem"
+                    >
                         <div class="card-header text-center">Balance</div>
                         <div class="card-body text-center">
                             <h2 class="card-title">{{ vcard.balance }}€</h2>
@@ -227,7 +231,10 @@ onMounted(() => {
                 </div>
 
                 <div class="col-md-3">
-                    <div class="card text-white mb-3" style="background-color: #15BAAA; max-width: 18rem">
+                    <div
+                        class="card text-white mb-3"
+                        style="background-color: #15baaa; max-width: 18rem"
+                    >
                         <div class="card-header text-center">Savings</div>
                         <div class="card-body text-center">
                             <h2 class="card-title">{{ vcard.savings }}€</h2>

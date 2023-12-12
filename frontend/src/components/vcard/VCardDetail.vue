@@ -70,7 +70,7 @@ const save = () => {
     const vcardToSave = editingVCard.value
     vcardToSave.deletePhotoOnServer = deletePhotoOnTheServer.value
     vcardToSave.base64ImagePhoto = editingImageAsBase64.value
-    // Adicionando a validação de senha
+
     if (
         props.inserting &&
         editingVCard.value.password !== editingVCard.value.password_confirmation
@@ -157,6 +157,17 @@ const cleanPhoto = () => {
                         type="email"
                         id="VCardEmail"
                         :class="{ 'is-invalid': errors ? errors['email'] : false }"
+                        required
+                    />
+                    <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
+                </div>
+                <div class="form-group">
+                    <label for="email">Max Debit:</label>
+                    <input
+                        v-model="editingVCard.max_debit"
+                        type="text"
+                        id="VCardDebit"
+                        :class="{ 'is-invalid': errors ? errors['max_debit'] : false }"
                         required
                     />
                     <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->

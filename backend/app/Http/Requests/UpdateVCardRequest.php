@@ -39,6 +39,7 @@ class UpdateVCardRequest extends FormRequest
             ],
             'base64ImagePhoto' => 'nullable|string',
             'deletePhotoOnServer' => 'nullable|boolean',
+            'max_debit' => 'nullable|numeric'
         ];
 
     }
