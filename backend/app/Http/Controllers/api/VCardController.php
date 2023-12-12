@@ -32,16 +32,17 @@ class VCardController extends Controller
         $name = $request->name;
         $blocked = $request->blocked;
         $orderBy = $request->orderBy;
-        $page = $request->page ?? 1;
+        // $page = $request->page ?? 1;
 
         // Apply filters conditionally
         $query->when($name, function ($query, $name) {
             return $query->where('name', 'like', "%$name%");
         });
 
-        $query->when($blocked !== null, function ($query, $blocked) {
-            return $query->where('blocked', $blocked);
-        });
+        // if blocked is not null, then we filter by blocked status
+        if ($blocked !== null) {
+            $query->where('blocked', $blocked);
+        }
 
         // Apply order by
         if ($orderBy == "balance") {
