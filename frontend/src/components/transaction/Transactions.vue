@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, computed } from "vue"
 import axios from "axios"
 import TransactionTable from "./TransactionTable.vue"
 import { useUserStore } from "../../stores/user"
@@ -37,8 +37,13 @@ const loadTransactions = (page = 1) => {
 }
 
 const loadCategories = async () => {
-    categories.value = await categoryStore.loadCategory()
-}
+    categories.value = await categoryStore.loadCategory();
+    categories.value.sort((a, b) => {
+        const typeComparison = a.type.localeCompare(b.type);
+        return typeComparison === 0 ? a.name.localeCompare(b.name) : typeComparison;
+    });
+};
+
 
 const editTransaction = (transaction) => {
     router.push({ name: "Transaction", params: { id: transaction.id } })
@@ -51,6 +56,23 @@ const type = ref(null)
 const method = ref(null)
 const category = ref(null)
 const filteredTransactions = ref([])
+
+const filteredCategories = computed(() => {
+    return categories.value.filter((category) => {
+        return type.value ? category.type === type.value : true;
+    });
+});
+
+
+const updateType = () => {
+    const selectedCategory = categories.value.find((cat) => cat.id === category.value);
+    if (selectedCategory) {
+        type.value = selectedCategory.type;
+    } else {
+        // Handle the case when no category is selected
+        type.value = null;
+    }
+}
 
 // Method to apply filters
 const applyFilters = () => {
@@ -121,10 +143,10 @@ onMounted(() => {
         <div class="row">
             <div class="col-md-3">
                 <label for="category" class="form-label">Category:</label>
-                <select v-model="category" class="form-select">
+                <select v-model="category" class="form-select" @change="updateType">
                     <option value="">All</option>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">
-                        {{ category.name }}
+                    <option v-for="category in filteredCategories" :key="category.id" :value="category.id">
+                        ({{ category.type }}) {{ category.name }}
                     </option>
                 </select>
             </div>

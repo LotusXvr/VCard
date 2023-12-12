@@ -2,7 +2,6 @@ import axios from 'axios'
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from "./user.js"
-import { useToast } from "vue-toastification"
 
 export const useCategoryStore = defineStore('categories', () => {
     const userStore = useUserStore()
