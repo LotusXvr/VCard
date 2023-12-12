@@ -66,9 +66,9 @@ const reforcarPoupanca = async () => {
         })
 
         toast.success("Savings reinforced sucessfully!")
-        vcard.value.balance = parseFloat((vcard.value.balance - transferAmount.value).toFixed(2))
+        vcard.value.balance = parseFloat((vcard.value.balance - transferAmount.value)).toFixed(2)
         const savings = parseFloat(vcard.value.savings)
-        vcard.value.savings = parseFloat((savings + transferAmount.value).toFixed(2))
+        vcard.value.savings = parseFloat((savings + transferAmount.value)).toFixed(2)
     } catch (error) {
         toast.error(error.response.data.message || "An error occurred.")
     }
@@ -217,38 +217,57 @@ onMounted(() => {
 
 <template>
     <div class="container mt-5" v-if="userStore.userType === 'V'">
-        <h1 class="display-4">Welcome</h1>
-        <hr class="my-4" />
-        <h2>{{ vcard.name }}</h2>
+        <div class="container mt-4 text-center">
+            <h1 class="display-4">Welcome</h1>
+            <hr class="my-4" />
+            <h2>{{ vcard.name }}</h2>
 
-        <div class="container mt-4">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
+            <div class="row justify-content-center" style="margin-top: 25px">
+                <div class="col-md-3">
+                    <div class="card text-white mb-3" style="background-color: #15BA58; max-width: 18rem">
+                        <div class="card-header text-center">Balance</div>
                         <div class="card-body text-center">
-                            <h5 class="card-title">Balance</h5>
-                            <p class="card-text">
-                                <strong>{{ vcard.balance }}</strong>
-                            </p>
+                            <h2 class="card-title">{{ vcard.balance }}€</h2>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card">
+                <div class="col-md-3">
+                    <div class="card text-white mb-3" style="background-color: #15BAAA; max-width: 18rem">
+                        <div class="card-header text-center">Savings</div>
                         <div class="card-body text-center">
-                            <h5 class="card-title">Savings</h5>
-                            <p class="card-text">
-                                <strong>{{ vcard.savings }}</strong>
-                            </p>
+                            <h2 class="card-title">{{ vcard.savings }}€</h2>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- Input for transfer amount -->
+            <div class="mb-3" style="margin: 0px 40%">
+                <label for="transferAmount" class="form-label">Transfer Amount:</label>
+                <input
+                    v-model="transferAmount"
+                    type="number"
+                    class="form-control"
+                    id="transferAmount"
+                />
+            </div>
+
+            <!-- Buttons to initiate transfer -->
+            <div class="mb-3">
+                <button @click.prevent="reforcarPoupanca" class="btn btn-success me-2">
+                    Reinforce Savings
+                </button>
+                <button @click.prevent="retirarPoupanca" class="btn btn-danger">
+                    Withdraw Savings
+                </button>
+            </div>
         </div>
 
-        <div class="container">
-            <h4>Your balance in {{ monthNames[lastMonthMonth - 1] }}</h4>
+        <hr />
+
+        <div class="container text-center">
+            <h3>{{ monthNames[lastMonthMonth - 1] }}</h3>
+            <h4>Your balance last month</h4>
             <canvas
                 ref="balanceChartEl"
                 height="200px"
@@ -256,37 +275,16 @@ onMounted(() => {
                 style="height: 200px; width: 200px"
             ></canvas>
 
-            <div class="row mt-3">
+            <div class="row mt-3" style="margin-bottom: 100px">
                 <div class="col-md-6">
-                    <h5>Your earnings:</h5>
+                    <h5>Earnings:</h5>
                     <p class="h5 text-success">{{ sumCreditValues }}€</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Your expenses:</h5>
+                    <h5>Expenses:</h5>
                     <p class="h5 text-danger">{{ sumDebitValues }}€</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Input for transfer amount -->
-        <div class="mb-3">
-            <label for="transferAmount" class="form-label">Transfer Amount:</label>
-            <input
-                v-model="transferAmount"
-                type="number"
-                class="form-control"
-                id="transferAmount"
-            />
-        </div>
-
-        <!-- Buttons to initiate transfer -->
-        <div class="mb-3">
-            <button @click.prevent="reforcarPoupanca" class="btn btn-success me-2">
-                Reinforce Savings
-            </button>
-            <button @click.prevent="retirarPoupanca" class="btn btn-danger">
-                Withdraw Savings
-            </button>
         </div>
     </div>
 </template>
