@@ -338,7 +338,7 @@ class VCardController extends Controller
             'vcardCounts' => $vcardCounts,
         ]);
     }
-
+    
     public function reforcarPoupanca(Request $request, VCard $vcard)
     {
         if ($vcard->balance >= $request->valor) {
@@ -353,7 +353,7 @@ class VCardController extends Controller
         if ($request->valor <= 0) {
             return response()->json(['message' => 'Invalid value'], 422);
         }
-        return response()->json(['message' => 'Not enough balance to reinforce savings.'], 422);
+        return response()->json(['message' => 'Not enough balance to reinforce savings'], 422);
 
 
     }
