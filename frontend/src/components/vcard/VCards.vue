@@ -54,7 +54,7 @@ const deleteVCard = (vcard) => {
             loadVCards()
         })
         .catch((error) => {
-            console.log(error)
+            toast.error(error.response.data.message)
         })
 }
 
