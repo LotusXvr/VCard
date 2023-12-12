@@ -1,8 +1,5 @@
 <script setup>
 import { ref, watch, computed } from "vue"
-import { useToast } from "vue-toastification"
-
-const toast = useToast()
 
 const props = defineProps({
     category: {

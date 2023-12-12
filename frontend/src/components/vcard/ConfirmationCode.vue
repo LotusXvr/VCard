@@ -22,7 +22,7 @@ const errors = ref(null)
 const changeCode = async () => {
     axios
         .patch("vcards/" + userStore.userPhoneNumber + "/change-confirmation-code", codes.value)
-        .then((response) => {
+        .then(() => {
             toast.success("Code has been changed successfully!")
             router.back()
         }).catch((error) => {

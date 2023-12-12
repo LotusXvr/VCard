@@ -13,7 +13,6 @@ const userStore = useUserStore()
 const toast = useToast()
 const router = useRouter()
 const errors = ref(null)
-const error = ref(null)
 const categoriesRef = ref([])
 let originalValueStr = ""
 

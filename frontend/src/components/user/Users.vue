@@ -6,12 +6,6 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 
-const props = defineProps({
-    usersTitle: {
-        type: String,
-        default: "Users",
-    },
-})
 
 const users = ref([])
 

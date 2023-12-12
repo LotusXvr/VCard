@@ -2,19 +2,13 @@
 import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../stores/user"
-import { ref, watch, onMounted, computed } from "vue"
+import { ref, onMounted, computed } from "vue"
 
 import Chart from "chart.js/auto"
 
 const toast = useToast()
 const userStore = useUserStore()
 
-const props = defineProps({
-    phone_number: {
-        type: Number,
-        default: null,
-    },
-})
 
 const newVCard = () => {
     return {

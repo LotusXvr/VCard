@@ -1,12 +1,9 @@
 <script setup>
-import axios from "axios"
 import { ref, watch, computed, onMounted } from "vue"
 import { useToast } from "vue-toastification"
-import { useUserStore } from "../../stores/user"
 import { useCategoryStore } from "../../stores/category"
 
 const toast = useToast()
-const userStore = useUserStore()
 const accountBalance = ref(null)
 const categoryStore = useCategoryStore()
 
