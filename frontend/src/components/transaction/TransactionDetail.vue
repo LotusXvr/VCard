@@ -58,6 +58,8 @@ const save = async () => {
         return
     }
 
+    editingTransaction.value.value = parseFloat(editingTransaction.value.value).toFixed(2)
+
     // isto faz um deepcopy da variavel edittingTransaction para que se possa fazer
     // mutações á variavel newTransaction sem alterar os valores do form
     const newTransaction = { ...editingTransaction.value }
