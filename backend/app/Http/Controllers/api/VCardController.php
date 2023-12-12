@@ -32,6 +32,7 @@ class VCardController extends Controller
         $name = $request->name;
         $blocked = $request->blocked;
         $orderBy = $request->orderBy;
+        $orderFormat = $request->orderFormat;
         // $page = $request->page ?? 1;
 
         // Apply filters conditionally
@@ -44,12 +45,7 @@ class VCardController extends Controller
             $query->where('blocked', $blocked);
         }
 
-        // Apply order by
-        if ($orderBy == "balance") {
-            $query->orderBy('balance', 'desc');
-        } else {
-            $query->orderBy($orderBy);
-        }
+        $query->orderBy($orderBy, $orderFormat);
 
         // Get paginated results
         $filteredVCards = $query->paginate(10);

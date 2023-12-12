@@ -12,9 +12,10 @@ const vcards = ref([])
 const filteredVCards = ref([])
 const paginationData = ref({})
 
-const blocked = ref(null)
+const blocked = ref('')
 const name = ref('')
 const orderBy = ref('phone_number')
+const orderFormat = ref('asc')
 
 const loadVCards = (page = 1) => {
   console.log(blocked.value)
@@ -24,7 +25,8 @@ const loadVCards = (page = 1) => {
         page: page,
         name: name.value,
         blocked: blocked.value,
-        orderBy: orderBy.value
+        orderBy: orderBy.value,
+        orderFormat: orderFormat.value
       }
     })
     .then((response) => {
@@ -75,9 +77,10 @@ const applyFilters = () => {
 }
 
 const clearFilters = () => {
-  blocked.value = null
+  blocked.value = ''
   orderBy.value = 'phone_number'
   name.value = ''
+  orderFormat.value = 'asc'
   loadVCards()
 }
 
@@ -104,6 +107,13 @@ onMounted(() => {
             <option value="phone_number">Phone Number</option>
             <option value="name">Name</option>
             <option value="balance">Balance</option>
+          </select>
+        </div>
+        <div class="mb-3 mt-3">
+          <label for="orderBy" class="form-label">Order format:</label>
+          <select class="form-select" v-model="orderFormat">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descendig</option>
           </select>
         </div>
       </div>
@@ -147,17 +157,8 @@ onMounted(() => {
       </router-link>
     </div>
   </div>
-  <VCardTable
-    :vcards="filteredVCards"
-    :showPhoneNumber="true"
-    @edit="editVCard"
-    @delete="deleteVCard"
-    @changeStatus="handleStatusChange"
-  ></VCardTable>
+  <VCardTable :vcards="filteredVCards" :showPhoneNumber="true" @edit="editVCard" @delete="deleteVCard"
+    @changeStatus="handleStatusChange"></VCardTable>
 
-  <Bootstrap5Pagination
-    :data="paginationData"
-    @pagination-change-page="loadVCards"
-    :limit="1"
-  ></Bootstrap5Pagination>
+  <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadVCards" :limit="1"></Bootstrap5Pagination>
 </template>
