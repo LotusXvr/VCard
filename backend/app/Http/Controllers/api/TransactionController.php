@@ -226,11 +226,7 @@ class TransactionController extends Controller
             return response()->json(['message' => 'Invalid payment type'], 401);
         }
 
-        $message = ($request->type == 'C')
-            ? "{$request->value}€ sent to {$request->vcard} successfully"
-            : "{$request->value}€ sent to {$request->payment_reference} successfully";
-
-        return response()->json(['message' => $message], 200);
+        return response()->json(['message' => "{$request->value}€ sent to {$request->payment_reference} successfully"], 200);
 
     }
 
