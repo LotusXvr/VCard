@@ -126,7 +126,7 @@ class TransactionController extends Controller
                     $transaction2->pair_transaction = ($request->type != 'C') ? $transaction1->id : null;
                     $transaction2->pair_vcard = ($request->type != 'C') ? $request->vcard : null;
                     $transaction2->category_id = null;
-                    $transaction2->description = $request->description;
+                    $transaction2->description = null;
 
 
                     if ($request->type != 'C') {
