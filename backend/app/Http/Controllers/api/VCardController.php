@@ -33,7 +33,6 @@ class VCardController extends Controller
         $blocked = $request->blocked;
         $orderBy = $request->orderBy;
         $orderFormat = $request->orderFormat;
-        // $page = $request->page ?? 1;
 
         // Apply filters conditionally
         $query->when($name, function ($query, $name) {

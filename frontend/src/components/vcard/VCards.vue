@@ -71,10 +71,6 @@ const handleStatusChange = (vcard) => {
     })
 }
 
-const applyFilters = () => {
-  loadVCards()
-}
-
 const clearFilters = () => {
   blocked.value = ''
   orderBy.value = 'phone_number'
@@ -132,7 +128,7 @@ onMounted(() => {
       <div class="col-md-3">
         <!-- Button to apply filters -->
         <div class="mb-3">
-          <button @click="applyFilters" class="btn btn-primary">Apply Filters</button>
+          <button @click="loadVCards" class="btn btn-primary">Apply Filters</button>
         </div>
       </div>
 

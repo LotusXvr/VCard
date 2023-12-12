@@ -15,11 +15,23 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $admins = Admin::paginate(10);
+        $query = Admin::query();
+        $name = $request->name;
+        $orderBy = $request->orderBy;
+        $orderFormat = $request->orderFormat;
+
+        $query->when($name, function ($query, $name) {
+            return $query->where('name', 'like', "%$name%");
+        });
+
+        $query->orderBy($orderBy, $orderFormat);
+
+        $admins = $query->paginate(10);
         // não quero listar-me a mim próprio
         $admins = $admins->except(auth()->user()->id);
+
         return AdminResource::collection($admins);
     }
 
