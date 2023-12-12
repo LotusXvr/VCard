@@ -291,7 +291,7 @@ const cleanPhoto = () => {
                     <p><b>Phone Number: </b>{{ editingVCard.phone_number }}</p>
                 </div>
 
-                <div class="mb-3 px-1">
+                <div class="mb-3">
                     <p><b>Name: </b>{{ editingVCard.name }}</p>
                 </div>
 

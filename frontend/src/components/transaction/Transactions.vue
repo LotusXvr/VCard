@@ -120,6 +120,15 @@ onMounted(() => {
         </div>
         <div class="row">
             <div class="col-md-3">
+                <label for="category" class="form-label">Category:</label>
+                <select v-model="category" class="form-select">
+                    <option value="">All</option>
+                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <!-- Button to apply filters -->
                 <div class="mb-3">
                     <button @click="applyFilters" class="btn btn-primary">Apply Filters</button>
@@ -131,15 +140,6 @@ onMounted(() => {
                 <div class="mb-3">
                     <button @click="clearFilters" class="btn btn-secondary">Clear Filters</button>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label for="category" class="form-label">Category:</label>
-                <select v-model="category" class="form-select">
-                    <option value="">All</option>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">
-                        {{ category.name }}
-                    </option>
-                </select>
             </div>
         </div>
     </div>
