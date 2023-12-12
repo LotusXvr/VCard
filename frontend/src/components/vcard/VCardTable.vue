@@ -56,6 +56,7 @@ const changeStatus = (vcard) => {
                 <th>Phone Number</th>
                 <th>Name</th>
                 <th>Balance</th>
+                <th>Max Debit</th>
                 <th>Blocked</th>
                 <th v-if="showEditButton || showDeleteButton"></th>
             </tr>
@@ -71,6 +72,9 @@ const changeStatus = (vcard) => {
                 </td>
                 <td>
                     <span>{{ vcard.balance }}</span>
+                </td>
+                <td>
+                    <span>{{ vcard.max_debit }}</span>
                 </td>
                 <td>
                     <input type="checkbox" :checked="vcard.blocked" @change="changeStatus(vcard)" />
