@@ -62,10 +62,14 @@ const save = async (vcardToSave) => {
             vcard.value = response.data.data
             originalValueStr = JSON.stringify(vcard.value)
             toast.success("VCard #" + vcard.value.phone_number + " was registered successfully.")
-            // await userStore.login({
-            //   username: vcard.value.phone_number,
-            //   password: vcardToSave.password
-            // })
+            if (userStore.login != true) {
+                await userStore.login({
+                    username: vcard.value.phone_number.toString(),
+                    password: vcardToSave.password,
+                })
+                router.push({ name: "Home" })
+            }
+
             router.back()
         } catch (error) {
             console.log(error.response.data.errors)
@@ -99,8 +103,8 @@ const save = async (vcardToSave) => {
             } else {
                 toast.error(
                     "VCard #" +
-                    props.phone_number +
-                    " was not updated due to unknown server error!",
+                        props.phone_number +
+                        " was not updated due to unknown server error!",
                 )
             }
         }
@@ -150,6 +154,12 @@ onMounted(() => {
     <!-- <confirmation-dialog ref="confirmationLeaveDialog" confirmationBtn="Discard changes and leave"
         msg="Do you really want to leave? You have unsaved changes!" @confirmed="leaveConfirmed">
     </confirmation-dialog> -->
-    <VCardDetail :vcard="vcard" :errors="errors" :inserting="inserting(phone_number)" @save="save" @cancel="cancel">
+    <VCardDetail
+        :vcard="vcard"
+        :errors="errors"
+        :inserting="inserting(phone_number)"
+        @save="save"
+        @cancel="cancel"
+    >
     </VCardDetail>
 </template>
