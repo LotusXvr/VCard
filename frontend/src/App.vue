@@ -39,7 +39,18 @@ onMounted(async () => {
 <template>
     <nav class="navbar navbar-expand-md navbar-light bg-dark sticky-top flex-md-nowrap p-0 shadow">
         <div class="container-fluid">
-            <router-link
+            <router-link v-if="userStore.user?.user_type == 'A'"
+                class="col-md-3 col-lg-2 me-0 d-flex align-items-center justify-content-center"
+                :to="{ name: 'Dashboard' }"
+            >
+                <img
+                    src="@/assets/vcard.png"
+                    alt=""
+                    class="d-inline-block align-text-top"
+                    style="max-height: 30px; max-width: 100px"
+                />
+            </router-link>
+            <router-link v-else
                 class="col-md-3 col-lg-2 me-0 d-flex align-items-center justify-content-center"
                 :to="{ name: 'Home' }"
             >
@@ -132,7 +143,7 @@ onMounted(async () => {
                                                     userStore.userPhoneNumber,
                                         }"
                                         :to="{
-                                            name: 'ProfileVCard',
+                                            name: 'VCard',
                                             params: { phone_number: userStore.userPhoneNumber },
                                         }"
                                     >
@@ -177,7 +188,6 @@ onMounted(async () => {
                                 :class="{ active: $route.name === 'Dashboard' }"
                                 :to="{
                                     name: 'Dashboard',
-                                    params: { phone_number: userStore.userPhoneNumber},
                                 }"
                             >
                                 <i class="bi bi-house"></i>
@@ -356,7 +366,7 @@ onMounted(async () => {
                                                             userStore.userPhoneNumber,
                                                 }"
                                                 :to="{
-                                                    name: 'ProfileVCard',
+                                                    name: 'VCard',
                                                     params: {
                                                         phone_number: userStore.userPhoneNumber,
                                                     },

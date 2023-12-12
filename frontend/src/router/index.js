@@ -200,11 +200,10 @@ router.beforeEach(async (to, from, next) => {
     }
 
     if (to.name === 'Dashboard' && userStore.userType !== 'A') {
-        // Restrições específicas para tipos de usuários e páginas
         next({ name: 'Home' })
         return
     }
-
+    
     if (
         to.name === 'User' &&
         (userStore.userType === 'A' || userStore.userId === parseInt(to.params.id))
@@ -213,7 +212,6 @@ router.beforeEach(async (to, from, next) => {
         return
     }
 
-    // Se nenhuma condição for atendida, permitir o acesso à rota
     next()
 })
 
