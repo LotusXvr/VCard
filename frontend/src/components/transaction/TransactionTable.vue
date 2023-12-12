@@ -2,7 +2,6 @@
 import { useCategoryStore } from "../../stores/category"
 import { ref, onMounted, computed, watchEffect } from "vue"
 import Chart from "chart.js/auto"
-import axios from "axios"
 
 const categoryStore = useCategoryStore()
 const categories = ref([])
@@ -15,8 +14,13 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    showLastMonthStatistics: {
+        type: Boolean,
+        default: true,
+    },
 })
-const emit = defineEmits(["edit"])
+
+const emit = defineEmits(["edit", "hideStatistics"])
 
 const loadCategories = async () => {
     categories.value = await categoryStore.loadCategory()
@@ -188,14 +192,16 @@ const truncateDescription = (description) => {
     }
 }
 
-const hideStatisticsState = ref(false)
-const hideStatistics = () => {
-    hideStatisticsState.value = !hideStatisticsState.value
+const hideStatisticsState = ref(props.showLastMonthStatistics)
+const hideStatistics = (hideStatisticsState) => {
+    console.log(hideStatisticsState)
+    emit("hideStatistics", hideStatisticsState)
 }
 
 // Assista a alterações em props.transactions
 watchEffect(() => {
     transactionsRef.value = props.transactions
+    hideStatisticsState.value = props.showLastMonthStatistics
     loadChart()
 })
 
@@ -210,7 +216,7 @@ onMounted(() => {
         <h1>Transactions</h1>
         <div class="btn-group-toggle" data-toggle="buttons">
             <label class="btn btn-secondary active">
-                <input @click="hideStatistics" type="checkbox" checked autocomplete="off" /> Show this month statistics
+                <input @click="hideStatistics(hideStatisticsState)" type="checkbox" checked autocomplete="off" /> Show this month statistics
             </label>
         </div>
 

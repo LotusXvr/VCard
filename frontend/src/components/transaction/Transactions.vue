@@ -14,6 +14,7 @@ const paginationData = ref({})
 const categoryStore = useCategoryStore()
 const categories = ref([])
 
+
 const loadTransactions = (page = 1) => {
     axios
         .get("vcard/" + userStore.userPhoneNumber + "/transactions", {
@@ -53,6 +54,15 @@ const loadLastMonthTransactions = () => {
 
 const editTransaction = (transaction) => {
     router.push({ name: "Transaction", params: { id: transaction.id } })
+}
+
+
+const showLastMonthStatistics = ref(true)
+
+const changeStateOfLastMonthStatistics = (showLastMonthStatistics) => {
+    console.log("emited succesfuly")
+    showLastMonthStatistics = !showLastMonthStatistics
+    console.log(showLastMonthStatistics)
 }
 
 // Reactive filter properties
@@ -160,6 +170,8 @@ onMounted(() => {
         <TransactionTable
             :transactions="filteredTransactions"
             :lastMonthTransactions="lastMonthTransactions"
+            :showLastMonthStatistics="showLastMonthStatistics"
+            @hideStatistics="changeStateOfLastMonthStatistics"
             @edit="editTransaction"
         >
         </TransactionTable>
