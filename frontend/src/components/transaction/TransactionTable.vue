@@ -100,12 +100,6 @@ const truncateDescription = (description) => {
     }
 }
 
-const hideStatisticsState = ref(props.showLastMonthStatistics)
-const hideStatistics = (hideStatisticsState) => {
-    console.log(hideStatisticsState)
-    emit("hideStatistics", hideStatisticsState)
-}
-
 // Assista a alterações em props.transactions
 watchEffect(() => {
     transactionsRef.value = props.transactions

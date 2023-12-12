@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, nextTick } from "vue"
+import { ref, onMounted } from "vue"
 import axios from "axios"
 import TransactionTable from "./TransactionTable.vue"
 import { useUserStore } from "../../stores/user"
@@ -35,6 +35,7 @@ const loadTransactions = (page = 1) => {
             console.log(error)
         })
 }
+
 const loadCategories = async () => {
     categories.value = await categoryStore.loadCategory()
 }
@@ -134,6 +135,7 @@ onMounted(() => {
             <div class="col-md-3">
                 <label for="category" class="form-label">Category:</label>
                 <select v-model="category" class="form-select">
+                    <option value="">All</option>
                     <option v-for="category in categories" :key="category.id" :value="category.id">
                         {{ category.name }}
                     </option>
