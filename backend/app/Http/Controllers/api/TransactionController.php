@@ -68,6 +68,11 @@ class TransactionController extends Controller
             if ($request->value > $vcardOrigin->max_debit) {
                 return response()->json(['message' => 'Value higher than maximum debit allowed'], 401);
             }
+
+            // verify if sender is not sending money to himself
+            if ($request->vcard == $request->payment_reference) {
+                return response()->json(['message' => 'You cannot send money to yourself'], 401);
+            }
         }
 
         // verify if value being sent is at least 0.01€
@@ -86,6 +91,7 @@ class TransactionController extends Controller
                 return response()->json(['message' => 'Destin VCard does not exist'], 404);
             }
 
+            // verify if destination vcard is blocked
             $destinVCardIsBlocked = VCard::where('phone_number', $request->payment_reference)
                 ->where('blocked', 1)
                 ->first();
