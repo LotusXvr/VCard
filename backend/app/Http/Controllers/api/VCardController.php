@@ -18,7 +18,7 @@ use App\Models\Transaction;
 use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateVcardCodeRequest;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Log;
 
 class VCardController extends Controller
 {
@@ -79,6 +79,7 @@ class VCardController extends Controller
             $dataToSave["base64ImagePhoto"] : ($dataToSave["base64ImagePhoto"] ?? null);
         unset($dataToSave["base64ImagePhoto"]);
 
+
         $vcard = new VCard();
         $vcard->phone_number = $dataToSave['phone_number'];
         $vcard->name = $dataToSave['name'];
@@ -95,8 +96,10 @@ class VCardController extends Controller
             $vcard->photo_url = $this->storeBase64AsFile($vcard, $base64ImagePhoto);
         }
 
+
         $vcard->save();
-        //$vcard->phone_number = $dataToSave['phone_number']; acho que esta a mais
+
+        $vcard->phone_number = $dataToSave['phone_number'];
 
         $defaultCategories = Default_Category::all();
 

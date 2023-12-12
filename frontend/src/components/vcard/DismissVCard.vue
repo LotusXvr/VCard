@@ -2,9 +2,8 @@
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user.js"
 import { ref } from "vue"
-import axios from 'axios';
-import router from "../../router";
-
+import axios from "axios"
+import router from "../../router"
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -12,21 +11,24 @@ const userStore = useUserStore()
 const codes = ref({
     confirmation_code: "",
     password: "",
-    phone_number: userStore.userPhoneNumber
+    phone_number: userStore.userPhoneNumber,
 })
 
 const errors = ref(null)
 
 const deleteVcard = async () => {
+    
     axios
         .delete("vcards/" + userStore.userPhoneNumber + "/dismiss", { data: codes.value })
-        .then((response) => {
+        .then(() => {
+            userStore.logout()
             toast.success("Vcard has been deleted successfully!")
-            router.refresh()
-        }).catch((error) => {
+            router.push({ name: "Home" })
+            window.location.reload(); // Refresh the page
+        })
+        .catch((error) => {
             toast.error(error.response.data.message)
         })
-
 }
 </script>
 
@@ -37,15 +39,29 @@ const deleteVcard = async () => {
         <div class="mb-3">
             <div class="mb-3">
                 <label for="inputCode" class="form-label">Code</label>
-                <input type="password" class="form-control" id="confirmation_code" required
-                    v-model="codes.confirmation_code" />
-                <field-error-message :errors="errors" fieldName="confirmation_code"></field-error-message>
+                <input
+                    type="password"
+                    class="form-control"
+                    id="confirmation_code"
+                    required
+                    v-model="codes.confirmation_code"
+                />
+                <field-error-message
+                    :errors="errors"
+                    fieldName="confirmation_code"
+                ></field-error-message>
             </div>
         </div>
         <div class="mb-3">
             <div class="mb-3">
                 <label for="inputPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" required v-model="codes.password" />
+                <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    required
+                    v-model="codes.password"
+                />
                 <field-error-message :errors="errors" fieldName="password"></field-error-message>
             </div>
         </div>

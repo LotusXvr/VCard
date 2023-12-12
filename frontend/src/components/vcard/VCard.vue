@@ -4,7 +4,7 @@ import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user"
 import { ref, watch, onMounted } from "vue"
 import VCardDetail from "./VCardDetail.vue"
-import { useRouter, onBeforeRouteLeave } from "vue-router"
+import { useRouter } from "vue-router"
 
 const toast = useToast()
 const router = useRouter()

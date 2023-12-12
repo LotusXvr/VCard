@@ -30,6 +30,9 @@ class VCard extends Model
         'custom_data',
     ];
 
+    protected $casts = [
+    ];
+
     protected $dates = ['created_at', 'deleted_at', 'updated_at'];
 
     public function categories()

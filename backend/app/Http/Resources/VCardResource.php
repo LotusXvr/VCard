@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 
 class VCardResource extends JsonResource
 {
@@ -14,6 +15,9 @@ class VCardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+        Log::info('phone_number in VCardResource: ' . $this->phone_number);
+
         return [
             'phone_number' => $this->phone_number,
             'name' => $this->name,
