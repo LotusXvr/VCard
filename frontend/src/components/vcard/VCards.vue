@@ -18,7 +18,6 @@ const orderBy = ref('phone_number')
 const orderFormat = ref('asc')
 
 const loadVCards = (page = 1) => {
-  console.log(blocked.value)
   axios
     .get('vcards', {
       params: {

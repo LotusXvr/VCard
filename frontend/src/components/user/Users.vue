@@ -4,18 +4,24 @@ import { ref, onMounted } from 'vue'
 import UserTable from './UserTable.vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { Bootstrap5Pagination } from 'laravel-vue-pagination'
 
 const router = useRouter()
 const toast = useToast()
 
 const users = ref([])
+const paginationData = ref({})
 
-const loadUsers = () => {
-  // Altere mais tarde quando a autenticação for implementada
+const loadUsers = (page = 1) => {
   axios
-    .get('admins')
+    .get('admins', {
+      params: {
+        page: page
+      }
+    })
     .then((response) => {
-      users.value = response.data
+      users.value = response.data.data
+      paginationData.value = response.data
     })
     .catch((error) => {
       toast.error(error.response.data.message)
@@ -66,6 +72,8 @@ onMounted(() => {
   </div>
   <div v-if="users.length > 0">
     <UserTable :users="users" :showUserId="true" @edit="editUser" @delete="deleteUser"></UserTable>
+    <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadUsers" :limit="1"></Bootstrap5Pagination>
+
   </div>
   <div v-else>Loading Users...</div>
 </template>

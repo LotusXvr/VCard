@@ -17,7 +17,10 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return Admin::all();
+        $admins = Admin::paginate(10);
+        // não quero listar-me a mim próprio
+        $admins = $admins->except(auth()->user()->id);
+        return AdminResource::collection($admins);
     }
 
     /**
