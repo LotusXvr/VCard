@@ -67,6 +67,10 @@ class AdminController extends Controller
      */
     public function destroy(Admin $admin)
     {
+        // se eu tentar apagar-me a mim próprio, não deixo
+        if ($admin->id == auth()->user()->id) {
+            return response()->json(['message' => 'Não pode apagar o seu próprio utilizador'], 403);
+        }
         $admin->delete();
         return new AdminResource($admin);
     }
