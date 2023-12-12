@@ -25,6 +25,7 @@ class VCard extends Model
         'confirmation_code',
         'blocked',
         'balance',
+        'savings',
         'max_debit',
         'custom_options',
         'custom_data',

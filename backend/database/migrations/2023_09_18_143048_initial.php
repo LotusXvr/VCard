@@ -44,6 +44,7 @@ return new class extends Migration
 
             // vCard current financial profile:
             $table->decimal('balance', 9, 2)->default(0);
+            $table->decimal('savings', 9, 2)->default(0);
             $table->decimal('max_debit', 9, 2)->default(5000);
 
             // custom options

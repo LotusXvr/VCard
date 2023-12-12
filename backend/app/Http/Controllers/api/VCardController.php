@@ -335,4 +335,41 @@ class VCardController extends Controller
             'vcardCounts' => $vcardCounts,
         ]);
     }
+
+    public function reforcarPoupanca(Request $request, VCard $vcard)
+    {
+        if ($vcard->balance >= $request->valor) {
+            $vcard->balance -= $request->valor;
+            $vcard->savings += $request->valor;
+
+            $vcard->save();
+
+            return new VCardResource($vcard);
+        }
+
+        if($request->valor <=0){
+            return response()->json(['message' => 'Valor inválido.'], 422);
+        }
+        return response()->json(['message' => 'Not enough balance toreinforce Savings.'], 422);
+
+
+    }
+
+
+    public function retirarPoupanca(Request $request, VCard $vcard)
+    {
+        if ($vcard->savings >= $request->valor) {
+            $vcard->balance += $request->valor;
+            $vcard->savings -= $request->valor;
+
+            $vcard->save();
+
+            return new VCardResource($vcard);
+        }
+
+        if($request->valor <=0){
+            return response()->json(['message' => 'Valor inválido.'], 422);
+        }
+        return response()->json(['message' => 'Not enough savings to withdraw from Savings.'], 422);
+    }
 }

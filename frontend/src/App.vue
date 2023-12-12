@@ -177,6 +177,7 @@ onMounted(async () => {
                                 :class="{ active: $route.name === 'Dashboard' }"
                                 :to="{
                                     name: 'Dashboard',
+                                    params: { phone_number: userStore.userPhoneNumber},
                                 }"
                             >
                                 <i class="bi bi-house"></i>
