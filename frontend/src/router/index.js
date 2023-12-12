@@ -170,6 +170,16 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // Rotas públicas que podem ser acessadas por usuários não autenticados
+  if (to.name === 'Login' && userStore.user) {
+    next({ name: 'Home' })
+    return
+  }
+
+  if (to.name === 'NewVCard' && userStore.userType !== 'A') {
+    next({ name: 'Home' })
+    return
+  }
+
   const publicRoutes = ['Login', 'Home', 'NewVCard']
 
   if (publicRoutes.includes(to.name)) {
@@ -200,6 +210,30 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.name === 'Dashboard' && userStore.userType !== 'A') {
+    next({ name: 'Home' })
+    return
+  }
+
+  if (to.name === 'VCards' && userStore.userType !== 'A') {
+    next({ name: 'Home' })
+    return
+  }
+
+  if (
+    to.name === 'VCardUpdate' &&
+    userStore.userType !== 'A' &&
+    userStore.phone_number != parseInt(to.params.phone_number)
+  ) {
+    next({ name: 'Home' })
+    return
+  }
+
+  if (to.name === 'Users' && userStore.userType !== 'A') {
+    next({ name: 'Home' })
+    return
+  }
+
+  if (to.name === 'NewUser' && userStore.userType !== 'A') {
     next({ name: 'Home' })
     return
   }
