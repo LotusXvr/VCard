@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import UserTable from './UserTable.vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -8,6 +8,7 @@ import { Bootstrap5Pagination } from 'laravel-vue-pagination'
 
 const router = useRouter()
 const toast = useToast()
+const socket = inject('socket')
 
 const users = ref([])
 const paginationData = ref({})
@@ -42,10 +43,12 @@ const editUser = (user) => {
 }
 
 const deleteUser = (user) => {
+  const userID = user.id
   axios
     .delete('admins/' + user.id)
     .then(() => {
       toast.success('User deleted successfully')
+      socket.emit('deletedUser', userID)
       loadUsers()
     })
     .catch((error) => {
