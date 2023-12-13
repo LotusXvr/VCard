@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -51,6 +50,9 @@ return new class extends Migration
             $table->json('custom_options')->nullable();
             // custom data
             $table->json('custom_data')->nullable();
+
+            // spins
+            $table->integer('spins')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
@@ -106,12 +108,12 @@ return new class extends Migration
             // The payment has a type and a reference
             // If transaction is between 2 vCards the reference will be the phone_number of the cVard
             // Supported ttypes of payments (The type of payment affects the validation)
-                // vCard -  Phone number with 9 digits - must exist on the database
-                // MBWAY -  Phone number with 9 digits
-                // PayPal - eMail
-                // IBAN - bank transfer (2 letters + 23 digits)
-                // MB - Multibanco payment - entity number (5 digits) + Reference (9 digits))
-                // VISA - Visa card number (16 digits)
+            // vCard -  Phone number with 9 digits - must exist on the database
+            // MBWAY -  Phone number with 9 digits
+            // PayPal - eMail
+            // IBAN - bank transfer (2 letters + 23 digits)
+            // MB - Multibanco payment - entity number (5 digits) + Reference (9 digits))
+            // VISA - Visa card number (16 digits)
             $table->enum('payment_type', ['VCARD', 'MBWAY', 'PAYPAL', 'IBAN', 'MB', 'VISA']);
             $table->string('payment_reference');
 

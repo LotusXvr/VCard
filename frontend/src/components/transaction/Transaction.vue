@@ -80,7 +80,11 @@ const save = async (transactionToSave) => {
             }
             console.log(transactionToSave)
             const response = await axios.post("transactions", transactionToSave)
+            if (transactionToSave.payment_type != "VCARD" && transactionToSave.value > 10) {
+                toast.info("You just received " + response.data.spins + " spins")
+            }
             toast.success(response.data.message)
+            
             router.back()
         } catch (error) {
             errors.value = error.response.data.message

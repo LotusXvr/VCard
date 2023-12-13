@@ -28,6 +28,7 @@ class VCardResource extends JsonResource
             'blocked' => $this->blocked,
             'balance' => $this->balance,
             'savings' => $this->savings,
+            'spins' => $this->spins,
             'max_debit' => $this->max_debit,
         ];
     }

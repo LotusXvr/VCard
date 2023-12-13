@@ -52,6 +52,7 @@ class TransactionController extends Controller
         // credit transactions are only handled by admins so they dont have balance nor do they have confirmation_codes
         // this makes so that only debit transations (the one made by users) validate the confirmation_code
         // and the balance of the user (adminds dont have balance)
+
         if ($request->type != 'C') {
             // verify if confirmation code is the correct one of the user
             $vcardOrigin = VCard::where('phone_number', $request->vcard)->first();
@@ -84,19 +85,12 @@ class TransactionController extends Controller
 
         if ($request->payment_type == 'VCARD') {
             // Verify if destination vcard exists
-            $destinVCardExists = VCard::where('phone_number', $request->payment_reference)
+            $destinVCardExistsOrIsBlocked = VCard::where('phone_number', $request->payment_reference)
                 ->whereNull('deleted_at')
+                ->orWhere('blocked', 1)
                 ->first();
-            if (!$destinVCardExists) {
-                return response()->json(['message' => 'Destin VCard does not exist'], 404);
-            }
-
-            // verify if destination vcard is blocked
-            $destinVCardIsBlocked = VCard::where('phone_number', $request->payment_reference)
-                ->where('blocked', 1)
-                ->first();
-            if ($destinVCardIsBlocked) {
-                return response()->json(['message' => "Destin VCard is currently blocked"], 404);
+            if (!$destinVCardExistsOrIsBlocked) {
+                return response()->json(['message' => 'Destin VCard does not exist or is blocked'], 404);
             }
 
             try {
@@ -194,8 +188,11 @@ class TransactionController extends Controller
                 return response()->json(['message' => $message], $response->status());
             }
 
+
+            $vcard = VCard::where('phone_number', $request->vcard)->first();
+
             try {
-                DB::transaction(function () use ($request) {
+                DB::transaction(function () use ($request, $vcard) {
                     // Money sending transaction
                     $transaction = new Transaction();
 
@@ -204,7 +201,7 @@ class TransactionController extends Controller
                     $transaction->datetime = date('Y-m-d H:i:s');
                     $transaction->type = $request->type;
                     $transaction->value = $request->value;
-                    $vcardBalance = VCard::where('phone_number', $request->vcard)->first()->balance;
+                    $vcardBalance = $vcard->balance;
                     $transaction->old_balance = $vcardBalance;
                     $transaction->new_balance = ($request->type == 'D') ? $vcardBalance - $request->value : $vcardBalance + $request->value;
                     $transaction->payment_type = $request->payment_type;
@@ -216,7 +213,10 @@ class TransactionController extends Controller
 
                     $transaction->save();
 
-                    VCard::where('phone_number', $request->vcard)->update(['balance' => $transaction->new_balance]);
+                    // give the user 1 spin for every 10 euros sent
+                    $vcard->spins += floor($request->value / 10);
+                    VCard::where('phone_number', $request->vcard)->update(['spins' => $vcard->spins, 'balance' => $transaction->new_balance]);
+
                 });
 
 
@@ -232,7 +232,7 @@ class TransactionController extends Controller
             return response()->json(['message' => 'Invalid payment type'], 401);
         }
 
-        return response()->json(['message' => "{$request->value}€ sent to {$request->payment_reference} successfully"], 200);
+        return response()->json(['message' => "{$request->value}€ sent to {$request->payment_reference} successfully", "spins" => floor($request->value / 10)], 200);
 
     }
 

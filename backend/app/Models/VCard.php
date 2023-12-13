@@ -26,6 +26,7 @@ class VCard extends Model
         'blocked',
         'balance',
         'savings',
+        'spins',
         'max_debit',
         'custom_options',
         'custom_data',

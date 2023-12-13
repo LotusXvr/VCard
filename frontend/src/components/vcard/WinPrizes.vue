@@ -1,5 +1,24 @@
 <script setup>
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
+import axios from "axios"
+import { useUserStore } from "../../stores/user"
+
+const userStore = useUserStore()
+
+// get spins number
+const spins = ref(0)
+const loadVCard = async () => {
+    try {
+      const response = await axios.get('vcards/' + userStore.userPhoneNumber)
+      spins.value = response.data.data.spins
+      console.log(response.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+}
+
+
+
 
 const showLoading = ref(false)
 const isAlreadySpinning = ref(false)
@@ -9,13 +28,11 @@ const spinWheel = () => {
     goodPrize.value = false
     badPrize.value = false
 
+    // se já estiver a rodar, sai logo fora
     if (isAlreadySpinning.value == true) {
         return
     }
-    
     isAlreadySpinning.value = true
-
-    
 
     setTimeout(() => {
         generatePrize()
@@ -56,7 +73,12 @@ const generatePrize = () => {
         prizeWon.value = prizes[randomIndex]
         goodPrize.value = true
     }
+
 }
+
+onMounted(() => {
+    loadVCard()
+})
 </script>
 
 <template>
@@ -64,6 +86,10 @@ const generatePrize = () => {
         <div class="card-body">
             For every 10€ spent using our application you get a chance to win a prize!
         </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <h4>You have {{ spins }} spins!</h4>
     </div>
 
     <div class="text-center mt-3">
@@ -76,7 +102,7 @@ const generatePrize = () => {
     </div>
 
     <div class="text-center mt-3" v-if="badPrize">
-        <h4 v-if="badPrize">Sorry, you didn't win anything this time.</h4>
+        <h4>Sorry, you didn't win anything this time.</h4>
     </div>
 
     <div class="text-center mt-3 mb-3" v-if="goodPrize">
