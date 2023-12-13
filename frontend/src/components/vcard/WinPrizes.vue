@@ -2,28 +2,71 @@
 import { onMounted, ref } from "vue"
 import axios from "axios"
 import { useUserStore } from "../../stores/user"
+import { useToast } from "vue-toastification"
 
 const userStore = useUserStore()
+const toast = useToast()
 
-// get spins number
+/*
+ *
+ *   VCard Comunicações com a BD
+ *   Desde carregar, dar update ao numero de spins e efetuar a transaçao
+ */
+
 const spins = ref(0)
-const loadVCard = async () => {
+const loadVCardSpins = async () => {
     try {
-      const response = await axios.get('vcards/' + userStore.userPhoneNumber)
-      spins.value = response.data.data.spins
-      console.log(response.data.data)
+        const response = await axios.get("vcards/" + userStore.userPhoneNumber)
+        spins.value = response.data.data.spins
+        console.log(response.data.data)
     } catch (error) {
-      console.log(error)
+        console.log(error)
     }
 }
 
+const updateVCardSpins = async () => {
+    try {
+        const response = await axios.put("vcard/" + userStore.userPhoneNumber + "/spins", {
+            spins: spins.value,
+        })
+        console.log(response.data.data)
+    } catch (error) {
+        console.log(error)
+    }
+}
 
+const transactionToSave = ref({
+    payment_type: "VCARD",
+    vcard: "VCard Enterprise Prizes",
+    payment_reference: userStore.userPhoneNumber,
+    value: "",
+    type: "C",
+})
 
+const givePrizeTransaction = async () => {
+    try {
+        transactionToSave.value.value = prizeWon.value
+        const response = await axios.post("transactions", transactionToSave.value)
+        toast.success(response.data.message)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+/*
+ *
+ *  SPIN WHEEL
+ *
+ */
 
 const showLoading = ref(false)
 const isAlreadySpinning = ref(false)
 
 const spinWheel = () => {
+    if (spins.value <= 0) {
+        toast.error("You don't have any spins left!")
+        return
+    }
     showLoading.value = true
     goodPrize.value = false
     badPrize.value = false
@@ -34,12 +77,17 @@ const spinWheel = () => {
     }
     isAlreadySpinning.value = true
 
+    // timeout para simular o tempo de espera
     setTimeout(() => {
         generatePrize()
 
         showLoading.value = false
         isAlreadySpinning.value = false
     }, 2000)
+
+    //update spins
+    spins.value -= 1
+    updateVCardSpins()
 }
 
 const prizeWon = ref(null)
@@ -58,26 +106,32 @@ const generatePrize = () => {
         badPrize.value = true
     } else {
         const prizes = [
-            "0.01€",
-            "0.02€",
-            "0.10€",
-            "1€",
-            "Vale no Brasa Rio",
-            "Manicure gratuita",
-            "Viagem a Espanha",
-            "MacBook",
-            "Rolex",
-            "Tesla Model 3",
+            "0.01",
+            "0.02",
+            "0.05",
+            "0.10",
+            "0.20",
+            "0.50",
+            "1",
+            "2",
+            "5",
+            "10",
+            "20",
+            "50",
         ]
         const randomIndex = Math.floor(Math.random() * prizes.length)
         prizeWon.value = prizes[randomIndex]
         goodPrize.value = true
     }
 
+    // if good prize, send the money to the user
+    if (goodPrize.value == true) {
+        givePrizeTransaction()
+    }
 }
 
 onMounted(() => {
-    loadVCard()
+    loadVCardSpins()
 })
 </script>
 
@@ -123,7 +177,7 @@ onMounted(() => {
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
                 "
             >
-                You won {{ prizeWon }}!
+                You won {{ prizeWon }} €!
             </h2>
         </div>
     </div>

@@ -398,4 +398,20 @@ class VCardController extends Controller
         }
         return response()->json(['message' => 'Not enough savings to withdraw from.'], 422);
     }
+
+
+    public function updateSpins(Request $request, $phone_number)
+    {
+        try {
+            $vcard = VCard::where('phone_number', $phone_number)->firstOrFail();
+
+            // Update the spins value
+            $vcard->spins = $request->input('spins');
+            $vcard->save();
+
+            return response()->json(['message' => 'Spins updated successfully', 'data' => $vcard], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error updating spins', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

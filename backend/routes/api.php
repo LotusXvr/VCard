@@ -39,6 +39,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('vcards/{vcard}/reforcarPoupanca', [VCardController::class, 'reforcarPoupanca']);
     Route::post('vcards/{vcard}/retirarPoupanca', [VCardController::class, 'retirarPoupanca']);
 
+    Route::put('vcard/{vcard}/spins', [VCardController::class, 'updateSpins']);
+
     // List transactions of a specific phone number
     Route::get('vcard/{vcard}/transactions', [VCardController::class, 'getTransactionsByPhoneNumber'])->middleware('can:view,vcard');
     Route::get('vcard/{vcard}/category', [VCardController::class, 'getCategoryFromVCard'])->middleware('can:view,vcard');
