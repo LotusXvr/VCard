@@ -2,16 +2,26 @@
 import { ref } from "vue"
 
 const showLoading = ref(false)
+const isAlreadySpinning = ref(false)
 
 const spinWheel = () => {
     showLoading.value = true
     goodPrize.value = false
     badPrize.value = false
 
+    if (isAlreadySpinning.value == true) {
+        return
+    }
+    
+    isAlreadySpinning.value = true
+
+    
+
     setTimeout(() => {
         generatePrize()
 
         showLoading.value = false
+        isAlreadySpinning.value = false
     }, 2000)
 }
 
