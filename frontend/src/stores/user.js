@@ -5,7 +5,7 @@ import avatarNoneUrl from "@/assets/avatar-none.png"
 import { useToast } from "vue-toastification"
 export const useUserStore = defineStore("user", () => {
     const serverBaseUrl = inject("apiDomain")
-
+    const socket = inject("socket")
     const user = ref(null)
     const toast = useToast()
     const userName = computed(() => user.value?.name ?? "Anonymous")
@@ -22,7 +22,6 @@ export const useUserStore = defineStore("user", () => {
         try {
             const response = await axios.get("users/me")
             user.value = response.data.data
-            console.log(user.value)
         } catch (error) {
             clearUser()
             throw error
@@ -41,8 +40,8 @@ export const useUserStore = defineStore("user", () => {
             axios.defaults.headers.common.Authorization = "Bearer " + response.data.access_token
 
             sessionStorage.setItem("token", response.data.access_token)
-
             await loadUser()
+            socket.emit('loggedIn', user.value)
             return true
         } catch (error) {
             clearUser()
@@ -53,6 +52,7 @@ export const useUserStore = defineStore("user", () => {
     async function logout() {
         try {
             await axios.post("logout")
+            socket.emit('loggedOut', user.value)
             clearUser()
             return true
         } catch (error) {
@@ -91,6 +91,24 @@ export const useUserStore = defineStore("user", () => {
         clearUser()
         return false
     }
+
+    socket.on('insertedUser', (insertedUser) => {
+        toast.info(`User #${insertedUser.id} (${insertedUser.name}) has registered successfully!`)
+    })
+
+    socket.on('updatedUser', (updatedUser) => {
+        if (user.value?.id == updatedUser.id) {
+            user.value = updatedUser
+            toast.info('Your user profile has been changed!')
+        } else {
+            toast.info(`User profile #${updatedUser.id} (${updatedUser.name}) has changed!`)
+        }
+    })
+
+    socket.on('deletedUser', (userID) => {
+        toast.info(`User #${userID} profile has been deleted!`)
+    })
+
     return {
         user,
         userId,

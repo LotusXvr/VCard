@@ -2,12 +2,13 @@
 import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user.js"
-import { ref, watch } from "vue"
+import { ref, watch, inject } from "vue"
 import UserDetail from "./UserDetail.vue" // Assuming you have a UserDetail component
 import { useRouter, onBeforeRouteLeave } from "vue-router"
 
 const router = useRouter()
 const toast = useToast()
+const socket = inject("socket")
 const userStore = useUserStore()
 
 const props = defineProps({
@@ -56,6 +57,7 @@ const save = async (userToSave) => {
             user.value = response.data.data
             originalValueStr = JSON.stringify(user.value)
             toast.success("User #" + user.value.name + " was registered successfully.")
+            socket.emit('insertedUser', user.value)
             router.back()
         } catch (error) {
             if (error.response.status == 422) {
@@ -74,6 +76,7 @@ const save = async (userToSave) => {
             if (user.value.id == userStore.userId) {
                 await userStore.loadUser()
             }
+            socket.emit('updatedUser', user.value)
             router.back()
         } catch (error) {
             if (error.response.status == 422) {
@@ -120,19 +123,9 @@ onBeforeRouteLeave((to, from, next) => {
 </script>
 
 <template>
-    <confirmation-dialog
-        ref="confirmationLeaveDialog"
-        confirmationBtn="Discard changes and leave"
-        msg="Do you really want to leave? You have unsaved changes!"
-        @confirmed="leaveConfirmed"
-    >
+    <confirmation-dialog ref="confirmationLeaveDialog" confirmationBtn="Discard changes and leave"
+        msg="Do you really want to leave? You have unsaved changes!" @confirmed="leaveConfirmed">
     </confirmation-dialog>
 
-    <UserDetail
-        :user="user"
-        :errors="errors"
-        :inserting="inserting(id)"
-        @save="save"
-        @cancel="cancel"
-    ></UserDetail>
+    <UserDetail :user="user" :errors="errors" :inserting="inserting(id)" @save="save" @cancel="cancel"></UserDetail>
 </template>

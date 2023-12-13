@@ -52,9 +52,9 @@ const editTransaction = (transaction) => {
 // Reactive filter properties
 const startDate = ref(null)
 const endDate = ref(null)
-const type = ref(null)
-const method = ref(null)
-const category = ref(null)
+const type = ref('')
+const method = ref('')
+const category = ref('')
 const filteredTransactions = ref([])
 
 const filteredCategories = computed(() => {
@@ -170,11 +170,7 @@ onMounted(() => {
     <div v-if="filteredTransactions.length > 0">
         <TransactionTable :transactions="filteredTransactions" @edit="editTransaction">
         </TransactionTable>
-        <Bootstrap5Pagination
-            :data="paginationData"
-            @pagination-change-page="loadTransactions"
-            :limit="3"
-        >
+        <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadTransactions" :limit="3">
         </Bootstrap5Pagination>
     </div>
     <div v-else>No Transactions yet</div>
