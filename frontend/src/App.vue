@@ -47,7 +47,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-md navbar-light bg-dark sticky-top flex-md-nowrap p-0 shadow">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
         <div class="container-fluid">
             <router-link
                 v-if="userStore.user?.user_type == 'A'"
@@ -108,9 +108,9 @@ onMounted(async () => {
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <p>isDark: {{ isDark }}</p>
-
-                        <button @click="toggleDark()" class="">Toggle Dark</button>
+                        <button @click="toggleDark()" class="m-2 btn btn-sm btn-outline-primary" :class="{'btn-light': isDark, 'btn-dark': !isDark}">
+                            {{ isDark ? "Light Mode" : "Dark Mode" }}
+                        </button>
                     </li>
                     <li class="nav-item dropdown">
                         <a
