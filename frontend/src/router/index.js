@@ -16,6 +16,7 @@ import User from '../components/user/User.vue'
 import ChangePassword from '../components/auth/ChangePassword.vue'
 import ConfirmationCode from '../components/vcard/ConfirmationCode.vue'
 import DismissVCard from '../components/vcard/DismissVCard.vue'
+import WinPrizes from '../components/vcard/WinPrizes.vue'
 
 let handlingFirstRoute = true
 
@@ -157,7 +158,12 @@ const router = createRouter({
       name: 'NewUser',
       component: User,
       props: { id: -1 }
-    }
+    },
+    {
+        path: '/vcard/play',
+        name: 'WinPrizes',
+        component: WinPrizes
+    },
   ]
 })
 

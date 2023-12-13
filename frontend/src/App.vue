@@ -302,6 +302,19 @@ onMounted(async () => {
                 Categories
               </router-link>
             </li>
+            <li class="nav-item">
+              <router-link
+                class="nav-link w-100 me-3"
+                :class="{ active: $route.name === 'WinPrizes' }"
+                :to="{
+                  name: 'WinPrizes'
+                }"
+              >
+                <i class="bi bi-joystick"></i>
+                Play!
+              </router-link>
+            </li>
+
           </ul>
 
           <div class="collapse navbar-collapse justify-content-end">
