@@ -29,14 +29,14 @@ class CategoryController extends Controller
      */
     public function store(StoreUpdateCategoryRequest $request)
     {
-        $category = Category::where('name', $request->name)->first();
+        $category = Category::where('name', $request->name)->where('vcard', $request->vcard)->first();
 
         if ($category) {
             return response()->json([
                 'message' => 'Category name already exists',
             ], 422);
         }
-        $category = Category::onlyTrashed()->where('name', $request->name)->first();
+        $category = Category::onlyTrashed()->where('name', $request->name)->where('vcard', $request->vcard)->first();
         if($category) {
             $category->restore();
             return $category;
