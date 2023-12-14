@@ -79,20 +79,21 @@ const save = async (transactionToSave) => {
       if (transactionToSave.type == 'D') {
         transactionToSave.vcard = userStore.userPhoneNumber
       }
-      console.log(transactionToSave)
+
       const response = await axios.post('transactions', transactionToSave)
       if (transactionToSave.payment_type != 'VCARD' && transactionToSave.value > 10) {
         toast.info('You just received ' + response.data.spins + ' spins')
       }
       toast.success(response.data.message)
 
-      // No lado do cliente
-      socket.emit('moneySent', {
-        receiver: transactionToSave.payment_reference,
-        sender: userStore.userPhoneNumber,
-        amount: transactionToSave.value
-      })
-      console.log('moneySent event emitted:', transactionToSave.payment_reference)
+      if (transactionToSave.payment_type == 'VCARD') {
+        // No lado do cliente
+        socket.emit('moneySent', {
+          receiver: transactionToSave.payment_reference,
+          sender: userStore.userPhoneNumber,
+          amount: transactionToSave.value
+        })
+      }
 
       router.back()
     } catch (error) {
