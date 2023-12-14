@@ -1,3 +1,5 @@
+const { SocketAddress } = require("net");
+
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -49,8 +51,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("blocked", function ({ user }) {
-    console.log("socket");
     socket.in(user).emit("blockedNotification", { user });
+  });
+
+  socket.on("changedStatus", function ({ user, status }) {
+    socket.in("administrator").emit("changedStatusNotification", { user, status });
   });
 });
 

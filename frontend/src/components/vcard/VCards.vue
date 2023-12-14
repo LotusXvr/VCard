@@ -40,6 +40,9 @@ const loadVCards = (page = 1) => {
       console.log(error)
     })
 }
+socket.on('changedStatusNotification', () => {
+    loadVCards()
+})
 
 const addVCard = () => {
   router.push({ name: 'newVCard' })
@@ -65,6 +68,8 @@ const handleStatusChange = (vcard) => {
   axios
     .patch('vcards/' + vcard.phone_number + '/change-status')
     .then(() => {
+      socket.emit('changedStatus',{ user: vcard.phone_number.toString(), status: !(vcard.blocked)})
+
       toast.success('VCard status changed successfully')
       if(!vcard.blocked){
         socket.emit('blocked',{ user: vcard.phone_number.toString() })
@@ -75,6 +80,7 @@ const handleStatusChange = (vcard) => {
       console.log(error)
     })
 }
+
 
 const clearFilters = () => {
   blocked.value = ''
