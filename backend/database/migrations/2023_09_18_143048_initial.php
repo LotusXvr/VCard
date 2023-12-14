@@ -140,6 +140,22 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
+        // Extra functionality -> request money to another user
+        Schema::create('money_requests', function (Blueprint $table) {
+            $table->id();
+            $table->string('from_vcard', 9);
+            $table->foreign('from_vcard')->references('phone_number')->on('vcards');
+            $table->string('to_vcard', 9);
+            $table->foreign('to_vcard')->references('phone_number')->on('vcards');
+            $table->decimal('amount', 9, 2);
+            $table->string('description')->nullable();
+            // For the status, it should have 3 values
+            // by default it should be null because there still hasnt taken any action on that request
+            // and then there should be the values 0 or 1 for rejected or accepted
+            $table->boolean('status')->nullable();
+            $table->timestamps();
+        });
+
         DB::statement("
           CREATE VIEW view_auth_users AS
             SELECT phone_number as id, 'V' as user_type, phone_number as username, password, name, email, blocked, confirmation_code, photo_url, deleted_at from vcards
