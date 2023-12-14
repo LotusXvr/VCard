@@ -105,22 +105,25 @@ const generatePrize = () => {
         prizeWon.value = "Nothing"
         badPrize.value = true
     } else {
-        const prizes = [
-            "0.01",
-            "0.02",
-            "0.05",
-            "0.10",
-            "0.20",
-            "0.50",
-            "1",
-            "2",
-            "5",
-            "10",
-            "20",
-            "50",
-        ]
-        const randomIndex = Math.floor(Math.random() * prizes.length)
-        prizeWon.value = prizes[randomIndex]
+        const highChancePrizes = ["0.01", "0.02", "0.05", "0.10", "0.20", "0.50", "1"]
+        const lowChancePrizes = ["2", "5", "10", "20", "50"]
+        const jackpotPrizes = ["100", "200", "500", "1000"]
+
+        const randomValue = Math.random()
+        let chosenArray, prize
+
+        if (randomValue < 0.7) {
+            chosenArray = highChancePrizes
+        } else if (randomValue < 0.9) {
+            chosenArray = lowChancePrizes
+        } else {
+            chosenArray = jackpotPrizes
+        }
+
+        const randomPrizeIndex = Math.floor(Math.random() * chosenArray.length)
+        prize = chosenArray[randomPrizeIndex]
+
+        prizeWon.value = prize
         goodPrize.value = true
     }
 
