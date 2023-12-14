@@ -16,4 +16,9 @@ class VCardPolicy
     {
         return $user->username == $model->phone_number;
     }
+    public function update(User $user, VCard $model)
+    {
+        return $user->user_type == 'A' || $user->username == $model->phone_number;
+    }
+
 }

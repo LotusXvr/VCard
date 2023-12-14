@@ -11,6 +11,9 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const props = defineProps({
+  id: {
+    type: Number,
+  },
   phone_number: {
     type: Number,
     default: null
@@ -71,8 +74,8 @@ const save = async (vcardToSave) => {
         router.back()
       }
     } catch (error) {
-      console.log(error.response.data.errors)
       if (error.response.status == 422) {
+        errors.value = error.response.data.errors
         toast.error(error.response.data.message)
       } else {
         toast.error(error.response.data.message)
@@ -91,10 +94,6 @@ const save = async (vcardToSave) => {
     } catch (error) {
       if (error.response.status == 422) {
         errors.value = error.response.data.errors
-        // toast.error('VCard #' + props.phone_number + ' was not updated due to validation errors!')
-        // console.log(error.response.data.errors['phone_number'][0])
-
-        // show first error message only ( not only phone_number but all fields)
         for (const [key, value] of Object.entries(error.response.data.errors)) {
           toast.error(value[0])
           break
@@ -147,9 +146,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <confirmation-dialog ref="confirmationLeaveDialog" confirmationBtn="Discard changes and leave"
-        msg="Do you really want to leave? You have unsaved changes!" @confirmed="leaveConfirmed">
-    </confirmation-dialog> -->
   <VCardDetail
     :vcard="vcard"
     :errors="errors"
