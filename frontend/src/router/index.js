@@ -203,6 +203,18 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
+  // se um vcard tentar aceder á rota profile de outro vcard redirecionar para a página profile do vcard logado
+  if (to.name === 'ProfileVCard' && userStore.userType !== 'A' && userStore.userPhoneNumber != parseInt(to.params.phone_number)) {
+    next({ name: 'ProfileVCard', params: { phone_number: userStore.userPhoneNumber }, details: false })
+    return
+  }
+
+  // se um vcard tentar aceder á rota profile de outro vcard redirecionar para a página profile do vcard logado
+  if (to.name === 'VCard' && userStore.userType !== 'A' && userStore.userPhoneNumber != parseInt(to.params.phone_number)) {
+    next({ name: 'VCard', params: { phone_number: userStore.userPhoneNumber }, details: false })
+    return
+  }
+
   if (
     to.name === 'Transactions' &&
     (userStore.userType !== 'V' || userStore.userId === parseInt(to.params.id))
@@ -231,8 +243,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (
     to.name === 'VCardUpdate' &&
-    userStore.userType !== 'A' &&
-    userStore.phone_number != parseInt(to.params.phone_number)
+    userStore.userType !== 'A'
   ) {
     next({ name: 'Home' })
     return
