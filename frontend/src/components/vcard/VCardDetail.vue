@@ -132,7 +132,7 @@ const cleanPhoto = () => {
             :class="{ 'is-invalid': errors ? errors['phone_number'] : false }"
             required
           />
-          <!-- <field-error-message :errors="errors" fieldName="phone_number"></field-error-message> -->
+          <field-error-message :errors="errors" fieldName="phone_number"></field-error-message>
         </div>
         <div class="mb-3">
           <label for="name">Name:</label>
