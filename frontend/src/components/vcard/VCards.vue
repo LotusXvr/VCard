@@ -142,18 +142,17 @@ onMounted(() => {
   </div>
 
   <hr />
-  <div v-if="!onlyCurrentVCards" class="mb-3 d-flex justify-content-between flex-wrap">
-    <div class="mx-2 mt-2 flex-grow-1 filter-div"></div>
-    <div class="mx-2 mt-2">
-      <router-link class="nav-link w-100 me-3" :to="{ name: 'NewVCard' }">
-        <button type="button" class="btn btn-success px-4 btn-addtask" @click="addVCard">
-          <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add VCard
-        </button>
-      </router-link>
-    </div>
-  </div>
-  <VCardTable :vcards="filteredVCards" :showPhoneNumber="true" @edit="editVCard" @delete="deleteVCard"
-    @changeStatus="handleStatusChange"></VCardTable>
+  <VCardTable
+    :vcards="filteredVCards"
+    :showPhoneNumber="true"
+    @edit="editVCard"
+    @delete="deleteVCard"
+    @changeStatus="handleStatusChange"
+  ></VCardTable>
 
-  <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadVCards" :limit="1"></Bootstrap5Pagination>
+  <Bootstrap5Pagination
+    :data="paginationData"
+    @pagination-change-page="loadVCards"
+    :limit="1"
+  ></Bootstrap5Pagination>
 </template>

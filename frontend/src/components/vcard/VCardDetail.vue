@@ -121,20 +121,8 @@ const cleanPhoto = () => {
   <form class="row g-3 needs-validation" novalidate @submit.prevent="save" v-if="!props.details">
     <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
     <hr />
-    <div class="d-flex flex-wrap justify-content-between">
+    <div class="d-flex flex-wrap justify-content-between" v-if="userStore.userType === 'V'">
       <div class="w-75 pe-4">
-        <div class="mb-3">
-          <label for="phone_number">Phone Number:</label>
-          <input
-            v-model.lazy="editingVCard.phone_number"
-            type="text"
-            id="VCardPhoneNumber"
-            :class="{ 'is-invalid': errors ? errors['phone_number'] : false }"
-            required
-          />
-          <!-- <field-error-message :errors="errors" fieldName="phone_number"></field-error-message> -->
-        </div>
-
         <div class="mb-3">
           <label for="name">Name:</label>
           <input
@@ -158,18 +146,6 @@ const cleanPhoto = () => {
           />
           <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
         </div>
-        <div class="form-group" v-if="userStore.userType === 'A'">
-          <label for="email">Max Debit:</label>
-          <input
-            v-model="editingVCard.max_debit"
-            type="text"
-            id="VCardDebit"
-            :class="{ 'is-invalid': errors ? errors['max_debit'] : false }"
-            required
-          />
-          <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
-        </div>
-
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
             <label for="password">Password:</label>
@@ -243,6 +219,17 @@ const cleanPhoto = () => {
           </div>
         </div>
       </div>
+    </div>
+    <div class="d-flex flex-wrap" v-if="userStore.userType === 'A'">
+      <label for="email">Max Debit:</label>
+      <input
+        v-model="editingVCard.max_debit"
+        type="text"
+        id="VCardDebit"
+        :class="{ 'is-invalid': errors ? errors['max_debit'] : false }"
+        required
+      />
+      <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
     </div>
     <hr />
     <div>

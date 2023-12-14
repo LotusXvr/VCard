@@ -123,7 +123,6 @@ watch(
 
 onMounted(() => {
   loadVCard(userStore.userPhoneNumber)
-  console.log('123' + userStore.userPhoneNumber)
 })
 
 // let nextCallBack = null
