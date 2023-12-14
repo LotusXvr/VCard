@@ -98,7 +98,7 @@ const save = async (transactionToSave) => {
       router.back()
     } catch (error) {
       errors.value = error.response.data.message
-      toast.error(errors.value)
+      toast.error(error.response.data.message)
     }
   } else {
     try {
@@ -107,7 +107,7 @@ const save = async (transactionToSave) => {
       router.back()
     } catch (error) {
       errors.value = error.response.data.message
-      toast.error('Transaction #' + props.id + ' - ' + error.value)
+      toast.error('Transaction #' + props.id + ' - ' + error.response.data.message)
     }
   }
 }
