@@ -85,7 +85,7 @@ class TransactionController extends Controller
         // VCARD
 
         if ($request->payment_type == 'VCARD') {
-            // Verify if destination vcard exists
+            // Verify if destination vcard exists or is blocked
             $destinVCardExistsOrIsBlocked = VCard::where('phone_number', $request->payment_reference)
                 ->whereNull('deleted_at')
                 ->orWhere('blocked', 1)

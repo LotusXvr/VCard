@@ -9,6 +9,7 @@ use App\Http\Controllers\api\VCardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\MoneyRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,11 +55,12 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get("statistics/vcards", [VCardController::class, 'getVCardStatistics'])->middleware('can:viewAny,App\Models\User');
     Route::get("statistics/transactions", [TransactionController::class, 'getTransactionStatistics'])->middleware('can:viewAny,App\Models\User');
+
+    // Accept or reject money request
+    Route::post("moneyRequests/{moneyRequest}/update", [MoneyRequestController::class, 'acceptacceptOrRejectMoneyRequest']);
     /*
      * Globais
      */
-
-
     Route::get('vcards', [VCardController::class, 'index'])->middleware('can:viewAny,App\Models\User');
     Route::get('vcards/{vcard}', [VCardController::class, 'show'])->middleware('can:view,vcard');
     Route::put('vcards/{vcard}', [VCardController::class, 'update'])->middleware('can:update,vcard');
@@ -70,6 +72,7 @@ Route::middleware('auth:api')->group(function () {
     //Route::post('users', [UserController::class, 'store'])->middleware('can:create');
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
     Route::apiResource('transactions', TransactionController::class);
+    Route::apiResource('moneyRequests', MoneyRequestController::class);
 
 });
 
