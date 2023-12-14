@@ -84,11 +84,13 @@ export const useUserStore = defineStore('user', () => {
     if (storedToken) {
       axios.defaults.headers.common.Authorization = 'Bearer ' + storedToken
       await loadUser()
+      socket.emit('loggedIn', user.value)
       return true
     }
     clearUser()
     return false
   }
+
 
   socket.on('insertedUser', (insertedUser) => {
     toast.info(`User #${insertedUser.id} (${insertedUser.name}) has registered successfully!`)

@@ -48,3 +48,4 @@ io.on("connection", (socket) => {
     socket.in(receiver).emit("moneySentNotification", { sender, amount });
   });
 });
+

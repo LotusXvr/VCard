@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue"
+import { ref, onMounted, computed, inject } from "vue"
 import axios from "axios"
 import TransactionTable from "./TransactionTable.vue"
 import { useUserStore } from "../../stores/user"
@@ -13,6 +13,11 @@ const router = useRouter()
 const paginationData = ref({})
 const categoryStore = useCategoryStore()
 const categories = ref([])
+const socket = inject('socket')
+
+socket.on('moneySentNotification', () => {
+    loadTransactions()
+})
 
 const loadTransactions = (page = 1) => {
     axios
