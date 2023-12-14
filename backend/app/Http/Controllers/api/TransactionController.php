@@ -58,28 +58,28 @@ class TransactionController extends Controller
             // verify if confirmation code is the correct one of the user
             $vcardOrigin = VCard::where('phone_number', $request->vcard)->first();
             if (!password_verify($request->confirmation_code, $vcardOrigin->confirmation_code)) {
-                return response()->json(['message' => 'Invalid confirmation code'], 401);
+                return response()->json(['message' => 'Invalid confirmation code'], 422);
             }
 
             // verify if sender has enough money on account balance
             if ($vcardOrigin->balance < $request->value) {
-                return response()->json(['message' => 'Insuficient balance'], 401);
+                return response()->json(['message' => 'Insuficient balance'], 422);
             }
 
             // verify if value being sent is higher than max_debit (invalid)
             if ($request->value > $vcardOrigin->max_debit) {
-                return response()->json(['message' => 'Value higher than maximum debit allowed'], 401);
+                return response()->json(['message' => 'Value higher than maximum debit allowed'], 422);
             }
 
             // verify if sender is not sending money to himself
             if ($request->vcard == $request->payment_reference) {
-                return response()->json(['message' => 'You cannot send money to yourself'], 401);
+                return response()->json(['message' => 'You cannot send money to yourself'], 422);
             }
         }
 
         // verify if value being sent is at least 0.01€
         if ($request->value < 0.01) {
-            return response()->json(['message' => 'Minimum transfer amount is 0.01€'], 401);
+            return response()->json(['message' => 'Minimum transfer amount is 0.01€'], 422);
         }
 
         // VCARD
