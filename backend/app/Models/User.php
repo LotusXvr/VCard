@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens as PassportHasApiTokens;
+use Laravel\Passport\Token;
 
 class User extends Authenticatable
 {
@@ -60,4 +61,5 @@ class User extends Authenticatable
     ];
 
     protected $dates = ['created_at', 'updated_at', 'email_verified_at'];
+
 }
