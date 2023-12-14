@@ -57,7 +57,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get("statistics/transactions", [TransactionController::class, 'getTransactionStatistics'])->middleware('can:viewAny,App\Models\User');
 
     // Accept or reject money request
-    Route::post("moneyRequests/{moneyRequest}/update", [MoneyRequestController::class, 'acceptacceptOrRejectMoneyRequest']);
+    Route::post("moneyRequests/{moneyRequest}/update", [MoneyRequestController::class, 'acceptOrRejectMoneyRequest']);
     /*
      * Globais
      */
