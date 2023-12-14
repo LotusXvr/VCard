@@ -66,7 +66,7 @@ const router = createRouter({
       path: '/profile/:phone_number',
       name: 'ProfileVCard',
       component: VCard,
-      props: (route) => ({ phone_number: parseInt(route.params.phone_number) })
+      props: (route) => ({ phone_number: parseInt(route.params.phone_number), details: false })
     },
     {
       path: '/vcard/dismiss_vcard',
