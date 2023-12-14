@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MoneyRequestResource;
 use App\Models\VCard;
-use App\MoneyRequest;
+use App\Models\MoneyRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -80,7 +80,7 @@ class MoneyRequestController extends Controller
 
     }
 
-    public function acceptOrRejectMoneyRequest(Request $request, MoneyRequest $moneyRequest)
+    public function acceptOrRejectMoneyRequest(MoneyRequest $moneyRequest, Request $request)
     {
 
         /*
@@ -90,9 +90,16 @@ class MoneyRequestController extends Controller
          *   he accepted or rejected the request
          */
 
-        if ($request->status == 0) {
+        $confirmationCode = $request->input('confirmation_code');
+        $status = $request->input('status');
+
+        if ($status == null) {
+            return response()->json(['status' => $status, 'confirmation_code' => $request->confirmation_code, 'money request' => $moneyRequest], 200);
+        }
+
+        if ($status == 0) {
             // handle the rejection of the request
-            $this->update($request->status, $moneyRequest);
+            $this->update($status, $moneyRequest);
 
             // as the request was rejected, we dont need to do anything else
             return response()->json(['message' => 'Money request rejected'], 200);
@@ -100,9 +107,9 @@ class MoneyRequestController extends Controller
 
 
         // verify now if the request was accepted
-        if ($request->status == 1) {
+        if ($status == 1) {
             // handle the acceptance of the request
-            $this->update($request->status, $moneyRequest);
+            $this->update($status, $moneyRequest);
 
             // handle the start of the transaction process
             try {
@@ -127,7 +134,7 @@ class MoneyRequestController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(bool $status, MoneyRequest $moneyRequest)
+    public function update(int $status, MoneyRequest $moneyRequest)
     {
         try {
             $moneyRequest->status = $status;

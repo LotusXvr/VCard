@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Models\VCard;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
