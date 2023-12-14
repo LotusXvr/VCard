@@ -105,6 +105,11 @@ export const useUserStore = defineStore('user', () => {
     }
   })
 
+  socket.on('blockedNotification', ({ user }) => {
+    toast.info(`Your vcard (${user}) has been blocked`);
+    logout();
+  });
+  
   socket.on('deletedUser', (userID) => {
     toast.info(`User #${userID} profile has been deleted!`)
   })
