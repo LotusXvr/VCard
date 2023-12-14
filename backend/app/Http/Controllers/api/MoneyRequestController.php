@@ -80,34 +80,59 @@ class MoneyRequestController extends Controller
 
     }
 
-    public function acceptOrRejectMoneyRequest(Request $request){
+    public function acceptOrRejectMoneyRequest(Request $request, MoneyRequest $moneyRequest)
+    {
+
+        /*
+        *   This function will receive the MoneyRequest in question
+        *   And in the $request variable it will receive the confirmation code of the
+        *   accepter's or rejecter's vcard and also the status to verify if
+        *   he accepted or rejected the request
+        */
+
         // here we need to check if the sender has accepted or not the request
         // but first we need to validate if he has enough money and etc
+        if ($request->status == 0) {
+            // handle the rejection of the request
+            $this->update($request->status, $moneyRequest);
 
-        $sendersVCard = VCard::where('phone_number', $request->vcard)->first();
-
-        // verify if confirmation code is the correct one of the user
-        if (!password_verify($request->confirmation_code, $sendersVCard->confirmation_code)) {
-            return response()->json(['message' => 'Invalid confirmation code'], 422);
+            // as the request was rejected, we dont need to do anything else
+            return response()->json(['message' => 'Money request rejected'], 200);
         }
 
-        // verify if sender has enough money on account balance
-        if ($sendersVCard->balance < $request->value) {
-            return response()->json(['message' => 'Insuficient balance'], 422);
+
+        // verify now if the request was accepted
+        if ($request->status == 1) {
+            // handle the acceptance of the request
+            $this->update($request->status, $moneyRequest);
+
+            // handle the start of the transaction process
+            $requestForTransaction = Request::create('transactions', 'POST', [
+                // Your request data here, e.g., input parameters
+                'vcard' => $moneyRequest->to_vcard,
+                'payment_reference' => $moneyRequest->from_vcard,
+                'value' => $moneyRequest->amount,
+                'confirmation_code' => $request->confirmation_code,
+                'description' => $moneyRequest->description,
+            ]);
         }
 
-        // verify if value being sent is higher than max_debit (invalid)
-        if ($request->value > $sendersVCard->max_debit) {
-            return response()->json(['message' => 'Value higher than maximum debit allowed'], 422);
-        }
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(bool $status, MoneyRequest $moneyRequest)
     {
+        try {
+            $moneyRequest->status = $status;
+            $moneyRequest->save();
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error updating money request', 'error' => $e->getMessage()], 500);
+        }
 
+        return response()->json(['message' => 'Money request updated successfully'], 200);
     }
 
     /**
