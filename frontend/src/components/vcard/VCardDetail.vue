@@ -146,17 +146,6 @@ const cleanPhoto = () => {
           />
           <field-error-message :errors="errors" fieldName="email"></field-error-message>
         </div>
-        <div class="form-group" v-if="userStore.userType === 'A'">
-          <label for="email">Max Debit:</label>
-          <input
-            v-model="editingVCard.max_debit"
-            type="text"
-            id="VCardDebit"
-            :class="{ 'is-invalid': errors ? errors['max_debit'] : false }"
-            required
-          />
-          <field-error-message :errors="errors" fieldName="email"></field-error-message>
-        </div>
 
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
@@ -238,7 +227,7 @@ const cleanPhoto = () => {
       </div>
     </div>
     <div class="d-flex flex-wrap" v-if="userStore.userType === 'A'">
-      <label for="email">Max Debit:</label>
+      <label for="max_debit">Max Debit:</label>
       <input
         v-model="editingVCard.max_debit"
         type="text"
@@ -246,7 +235,7 @@ const cleanPhoto = () => {
         :class="{ 'is-invalid': errors ? errors['max_debit'] : false }"
         required
       />
-      <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
+      <field-error-message :errors="errors" fieldName="max_debit"></field-error-message>
     </div>
     <hr />
     <div>
