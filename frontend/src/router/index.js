@@ -160,10 +160,10 @@ const router = createRouter({
       props: { id: -1 }
     },
     {
-        path: '/vcard/play',
-        name: 'WinPrizes',
-        component: WinPrizes
-    },
+      path: '/vcard/play',
+      name: 'WinPrizes',
+      component: WinPrizes
+    }
   ]
 })
 
@@ -185,7 +185,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  if (to.name === 'NewVCard' && userStore.userType !== 'A') {
+  if (userStore.user && to.name === 'NewVCard' && userStore.userType !== 'A') {
     next({ name: 'Home' })
     return
   }
