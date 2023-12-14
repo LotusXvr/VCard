@@ -84,14 +84,12 @@ class MoneyRequestController extends Controller
     {
 
         /*
-        *   This function will receive the MoneyRequest in question
-        *   And in the $request variable it will receive the confirmation code of the
-        *   accepter's or rejecter's vcard and also the status to verify if
-        *   he accepted or rejected the request
-        */
+         *   This function will receive the MoneyRequest in question
+         *   And in the $request variable it will receive the confirmation code of the
+         *   accepter's or rejecter's vcard and also the status to verify if
+         *   he accepted or rejected the request
+         */
 
-        // here we need to check if the sender has accepted or not the request
-        // but first we need to validate if he has enough money and etc
         if ($request->status == 0) {
             // handle the rejection of the request
             $this->update($request->status, $moneyRequest);
@@ -107,16 +105,22 @@ class MoneyRequestController extends Controller
             $this->update($request->status, $moneyRequest);
 
             // handle the start of the transaction process
-            $requestForTransaction = Request::create('transactions', 'POST', [
-                // Your request data here, e.g., input parameters
-                'vcard' => $moneyRequest->to_vcard,
-                'payment_reference' => $moneyRequest->from_vcard,
-                'value' => $moneyRequest->amount,
-                'confirmation_code' => $request->confirmation_code,
-                'description' => $moneyRequest->description,
-            ]);
+            try {
+                Request::create('transactions', 'POST', [
+                    // Your request data here, e.g., input parameters
+                    'vcard' => $moneyRequest->to_vcard,
+                    'payment_reference' => $moneyRequest->from_vcard,
+                    'value' => $moneyRequest->amount,
+                    'confirmation_code' => $request->confirmation_code,
+                    'description' => $moneyRequest->description,
+                ]);
+            } catch (Exception $e) {
+                return response()->json(['message' => 'Error creating the money request acceptance transaction', 'error' => $e->getMessage()], 500);
+            }
+
         }
 
+        return response()->json(['message' => 'Money request handled correctly'], 200);
 
     }
 
