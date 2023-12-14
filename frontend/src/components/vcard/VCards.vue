@@ -1,10 +1,11 @@
 <script setup>
 import axios from 'axios'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import VCardTable from './VCardTable.vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { Bootstrap5Pagination } from 'laravel-vue-pagination'
+
 
 const router = useRouter()
 const toast = useToast()
@@ -16,6 +17,7 @@ const blocked = ref('')
 const name = ref('')
 const orderBy = ref('phone_number')
 const orderFormat = ref('asc')
+const socket = inject('socket')
 
 const loadVCards = (page = 1) => {
   axios
@@ -64,6 +66,9 @@ const handleStatusChange = (vcard) => {
     .patch('vcards/' + vcard.phone_number + '/change-status')
     .then(() => {
       toast.success('VCard status changed successfully')
+      if(!vcard.blocked){
+        socket.emit('blocked',{ user: vcard.phone_number.toString() })
+      }
       loadVCards()
     })
     .catch((error) => {

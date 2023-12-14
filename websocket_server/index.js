@@ -47,4 +47,10 @@ io.on("connection", (socket) => {
   socket.on("moneySent", function ({ receiver, sender, amount }) {
     socket.in(receiver).emit("moneySentNotification", { sender, amount });
   });
+
+  socket.on("blocked", function ({ user }) {
+    console.log("socket");
+    socket.in(user).emit("blockedNotification", { user });
+  });
 });
+
