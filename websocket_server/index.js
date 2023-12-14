@@ -7,32 +7,44 @@ const io = require("socket.io")(httpServer, {
   },
 });
 httpServer.listen(8080, () => {
-  console.log('listening on *:8080')
-})
-io.on('connection', (socket) => {
-  console.log(`client ${socket.id} has connected`)
+  console.log("listening on *:8080");
+});
+io.on("connection", (socket) => {
+  console.log(`client ${socket.id} has connected`);
 
-  socket.on('loggedIn', function (user) {
-    socket.join(user.id)
-    if (user.user_type == 'A') {
-      socket.join('administrator')
-      console.log('administrator joined id: ' + user.id + ' name: ' + user.name)
+  socket.on("loggedIn", function (user) {
+    console.log(`client ${user.username} has logged in`);
+    socket.join(user.username);
+    if (user.user_type == "A") {
+      socket.join("administrator");
+    } else {
+      socket.join("vcard");
     }
-  })
-  socket.on('loggedOut', function (user) {
-    socket.leave(user.id)
-    socket.leave('administrator')
-  })
+  });
+  socket.on("loggedOut", function (user) {
+    socket.leave(user.username);
+    if (user.user_type == "A") {
+      socket.leave("administrator");
+    } else {
+      socket.leave("vcard");
+    }
+  });
 
-  socket.on('insertedUser', function (user) {
-    socket.in('administrator').emit('insertedUser', user)
-  })
-  socket.on('updatedUser', function (user) {
-    socket.in('administrator').except(user.id).emit('updatedUser', user)
-    socket.in(user.id).emit('updatedUser', user)
-  })
-  socket.on('deletedUser', function (userID) {
-    socket.in('administrator').emit('deletedUser', userID)
-  })
+  // Admin Events
+  socket.on("insertedUser", function (user) {
+    socket.in("administrator").emit("insertedUser", user);
+  });
+  socket.on("updatedUser", function (user) {
+    socket.in("administrator").except(user.username).emit("updatedUser", user);
+    socket.in(user.username).emit("updatedUser", user);
+  });
+  socket.on("deletedUser", function (userID) {
+    socket.in("administrator").emit("deletedUser", userID);
+  });
 
-})
+  // VCard Events
+  // No lado do servidor
+  socket.on("moneySent", function ({ receiver, sender, amount }) {
+    socket.in(receiver).emit("moneySentNotification", { sender, amount });
+  });
+});
