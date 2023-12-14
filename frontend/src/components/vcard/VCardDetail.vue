@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, inject } from 'vue'
+import { ref, computed, watch, inject, onMounted } from 'vue'
 import avatarNoneUrl from '@/assets/avatar-none.png'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '../../stores/user'
@@ -115,6 +115,7 @@ const resetToOriginalPhoto = () => {
 const cleanPhoto = () => {
   deletePhotoOnTheServer.value = true
 }
+
 </script>
 
 <template>
@@ -129,10 +130,10 @@ const cleanPhoto = () => {
             v-model.lazy="editingVCard.phone_number"
             type="text"
             id="VCardPhoneNumber"
-            :class="{ 'is-invalid': errors ? errors['phone_number'] : false }"
+            :class="{ 'is-invalid':errors ? errors['phone_number'] : false }"
             required
           />
-          <!-- <field-error-message :errors="errors" fieldName="phone_number"></field-error-message> -->
+          <field-error-message :errors="errors" fieldName="phone_number"></field-error-message>
         </div>
 
         <div class="mb-3">
@@ -144,7 +145,7 @@ const cleanPhoto = () => {
             :class="{ 'is-invalid': errors ? errors['name'] : false }"
             required
           />
-          <!-- <field-error-message :errors="errors" fieldName="name"></field-error-message> -->
+          <field-error-message :errors="errors" fieldName="name"></field-error-message>
         </div>
 
         <div class="form-group">
@@ -156,7 +157,7 @@ const cleanPhoto = () => {
             :class="{ 'is-invalid': errors ? errors['email'] : false }"
             required
           />
-          <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
+          <field-error-message :errors="errors" fieldName="email"></field-error-message>
         </div>
         <div class="form-group" v-if="userStore.userType === 'A'">
           <label for="email">Max Debit:</label>
@@ -167,7 +168,7 @@ const cleanPhoto = () => {
             :class="{ 'is-invalid': errors ? errors['max_debit'] : false }"
             required
           />
-          <!-- <field-error-message :errors="errors" fieldName="email"></field-error-message> -->
+          <field-error-message :errors="errors" fieldName="email"></field-error-message>
         </div>
 
         <div class="mb-3" v-if="inserting">
@@ -180,6 +181,7 @@ const cleanPhoto = () => {
               class="form-control"
               required
             />
+            <field-error-message :errors="errors" fieldName="password"></field-error-message>
           </div>
           <br />
           <div class="form-group">
@@ -208,6 +210,7 @@ const cleanPhoto = () => {
               class="form-control"
               required
             />
+            <field-error-message :errors="errors" fieldName="confirmation_code"></field-error-message>
           </div>
         </div>
       </div>
@@ -236,10 +239,10 @@ const cleanPhoto = () => {
             </button>
           </div>
           <div>
-            <!-- <field-error-message
+            <field-error-message
               :errors="errors"
               fieldName="base64ImagePhoto"
-            ></field-error-message> -->
+            ></field-error-message>
           </div>
         </div>
       </div>

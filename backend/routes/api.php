@@ -58,7 +58,11 @@ Route::middleware('auth:api')->group(function () {
      * Globais
      */
 
-    Route::apiResource('vcards', VCardController::class);
+
+    Route::get('vcards', [VCardController::class, 'index'])->middleware('can:viewAny,App\Models\User');
+    Route::get('vcards/{vcard}', [VCardController::class, 'show'])->middleware('can:view,vcard');
+    Route::put('vcards/{vcard}', [VCardController::class, 'update'])->middleware('can:update,vcard');
+    Route::delete('vcards/{vcard}', [VCardController::class, 'destroy'])->middleware('can:viewAny,App\Models\User');
     Route::apiResource('category', CategoryController::class);
     Route::apiResource('default-category', DefaultCategoryController::class);
     Route::get('users', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
