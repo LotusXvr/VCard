@@ -121,46 +121,55 @@ const cleanPhoto = () => {
   <form class="row g-3 needs-validation" novalidate @submit.prevent="save" v-if="!props.details">
     <h3 class="mt-5 mb-3">{{ vcardTitle }}</h3>
     <hr />
+
     <div class="d-flex flex-wrap justify-content-between" v-if="userStore.userType !== 'A'">
-      <div class="w-75 pe-4">
+      <div class="col-md-6 mx-5">
+        <!-- Phone Number -->
         <div class="mb-3" v-if="userStore.userType !== 'V'">
-          <label for="phone_number">Phone Number:</label>
+          <label for="phone_number" class="form-label">Phone Number:</label>
           <input
             v-model.lazy="editingVCard.phone_number"
             type="text"
             id="VCardPhoneNumber"
+            class="form-control"
             :class="{ 'is-invalid': errors ? errors['phone_number'] : false }"
             required
           />
           <field-error-message :errors="errors" fieldName="phone_number"></field-error-message>
         </div>
+
+        <!-- Name -->
         <div class="mb-3">
-          <label for="name">Name:</label>
+          <label for="name" class="form-label">Name:</label>
           <input
             v-model="editingVCard.name"
             type="text"
             id="VCardName"
+            class="form-control"
             :class="{ 'is-invalid': errors ? errors['name'] : false }"
             required
           />
           <field-error-message :errors="errors" fieldName="name"></field-error-message>
         </div>
 
-        <div class="form-group">
-          <label for="email">Email:</label>
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">Email:</label>
           <input
             v-model="editingVCard.email"
             type="email"
             id="VCardEmail"
+            class="form-control"
             :class="{ 'is-invalid': errors ? errors['email'] : false }"
             required
           />
           <field-error-message :errors="errors" fieldName="email"></field-error-message>
         </div>
 
+        <!-- Password and Confirm Password -->
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
-            <label for="password">Password:</label>
+            <label for="password" class="form-label">Password:</label>
             <input
               v-model="editingVCard.password"
               type="password"
@@ -170,26 +179,25 @@ const cleanPhoto = () => {
             />
             <field-error-message :errors="errors" fieldName="password"></field-error-message>
           </div>
-          <br />
-          <div class="form-group">
-            <label for="confirmPassword">Confirm Password:</label>
+
+          <div class="form-group mt-3">
+            <label for="confirmPassword" class="form-label">Confirm Password:</label>
             <input
               v-model="editingVCard.password_confirmation"
               type="password"
               id="VCardConfirmPassword"
               class="form-control"
-              :class="{
-                'is-invalid': errors ? errors['password_confirmation'] : false
-              }"
+              :class="{ 'is-invalid': errors ? errors['password_confirmation'] : false }"
               required
             />
             <div class="invalid-feedback">Passwords do not match.</div>
           </div>
         </div>
 
+        <!-- Confirmation Code -->
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
-            <label for="confirmation_code">Confirmation Code:</label>
+            <label for="confirmation_code" class="form-label">Confirmation Code:</label>
             <input
               v-model="editingVCard.confirmation_code"
               type="text"
@@ -205,8 +213,9 @@ const cleanPhoto = () => {
         </div>
       </div>
 
-      <div class="w-25">
-        <div class="d-flex flex-column">
+      <!-- Photo Section -->
+      <div class="col-md-4 mx-5">
+        <div class="d-flex flex-column align-items-center">
           <label class="form-label">Photo</label>
           <div class="form-control text-center">
             <img :src="photoFullUrl" class="w-50" />
@@ -237,46 +246,49 @@ const cleanPhoto = () => {
         </div>
       </div>
     </div>
-    <div class="d-flex flex-wrap" v-if="userStore.userType === 'A'">
-      <label for="max_debit">Max Debit:</label>
+
+    <!-- Max Debit Section -->
+    <div class="mb-3" v-if="userStore.userType === 'A'">
+      <label for="max_debit" class="form-label">Max Debit:</label>
       <input
         v-model="editingVCard.max_debit"
         type="text"
         id="VCardDebit"
+        class="form-control"
         :class="{ 'is-invalid': errors ? errors['max_debit'] : false }"
         required
       />
       <field-error-message :errors="errors" fieldName="max_debit"></field-error-message>
     </div>
+
     <hr />
-    <div>
-      <div class="d-flex justify-content-between">
-        <div
-          class="mt-2"
-          v-if="!inserting && userStore.userPhoneNumber == editingVCard.phone_number"
+
+    <div class="d-flex justify-content-between">
+      <div class="mt-2" v-if="!inserting && userStore.userPhoneNumber == editingVCard.phone_number">
+        <RouterLink
+          :to="{ name: 'ConfirmationCode', params: { phone_number: editingVCard.phone_number } }"
+          class="btn btn-success px-5 mx-2"
         >
-          <RouterLink
-            :to="{
-              name: 'ConfirmationCode',
-              params: { phone_number: editingVCard.phone_number }
-            }"
-            class="btn btn-success px-5 mx-2"
-            >Change confirmation code</RouterLink
-          >
-        </div>
-        <div class="mt-2">
-          <button type="button" class="btn btn-primary px-5 mx-2" @click="save">Save</button>
-          <button type="button" class="btn btn-light px-5 mx-2" @click="cancel">Cancel</button>
-        </div>
+          Change confirmation code
+        </RouterLink>
       </div>
-      <RouterLink
-        v-if="!inserting && userStore.userPhoneNumber == editingVCard.phone_number"
-        :to="{ name: 'DismissVCard' }"
-        class="btn btn-danger px-5 mx-2 mt-2"
-        >Dismiss VCard</RouterLink
-      >
+
+      <div class="mt-2">
+        <button type="button" class="btn btn-primary px-5 mx-2" @click="save">Save</button>
+        <button type="button" class="btn btn-light px-5 mx-2" @click="cancel">Cancel</button>
+      </div>
     </div>
+
+    <RouterLink
+      v-if="!inserting && userStore.userPhoneNumber == editingVCard.phone_number"
+      :to="{ name: 'DismissVCard' }"
+      class="btn btn-danger px-5 mx-2 mt-2"
+    >
+      Dismiss VCard
+    </RouterLink>
   </form>
+
+  <!-- Input Photo -->
   <input
     type="file"
     style="visibility: hidden"
