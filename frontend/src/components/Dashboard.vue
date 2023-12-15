@@ -96,6 +96,7 @@ const getTransactionsStatistics = () => {
         .get("statistics/transactions")
         .then((response) => {
             console.log(response.data)
+            transactionsSum.value = response.data.transactionsSum
             transactionsCount.value = response.data.transactionsCount
             transactionsSumByMonth.value = response.data.transactionsSumByMonth
             transactionsQuantityByMonth.value = response.data.transactionsCountByMonth
@@ -346,14 +347,14 @@ onMounted(() => {
                     <div class="card mt-4">
                         <div class="card-body">
                             <h4>Total Balance of All VCards</h4>
-                            <p>{{ vcardBalanceSum }}</p>
+                            <p>{{ vcardBalanceSum }} €</p>
                         </div>
                     </div>
 
                     <div class="card mt-4">
                         <div class="card-body">
                             <h4>Total Balance of All Active VCards</h4>
-                            <p>{{ vcardBalanceSumActive }}</p>
+                            <p>{{ vcardBalanceSumActive }} €</p>
                         </div>
                     </div>
 
@@ -367,7 +368,7 @@ onMounted(() => {
                     <div class="card mt-4">
                         <div class="card-body">
                             <h4>Current Sum of Transactions</h4>
-                            <p>{{ transactionsSum }}</p>
+                            <p>{{ transactionsSum }} €</p>
                         </div>
                     </div>
                 </div>
