@@ -168,8 +168,8 @@ onMounted(() => {
     <h3 class="mt-5 mb-3">{{ transactionTitle }}</h3>
     <div>
         <div v-if="userStore.userType === 'V'">
-            <p><b>Account Balance:</b> {{ props.vcard.balance }}</p>
-            <p><b>Max Debit:</b> {{ props.vcard.max_debit }}</p>
+            <p><b>Account Balance:</b> {{ props.vcard.balance }}€</p>
+            <p><b>Max Debit:</b> {{ props.vcard.max_debit }}€</p>
         </div>
         <hr />
         <form @submit.prevent="save">

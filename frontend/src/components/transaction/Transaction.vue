@@ -34,17 +34,15 @@ const newVCard = () => {
 const vcard = ref(newVCard())
 
 const loadVCard = async () => {
-    originalValueStr
-    errors.value = null
-    try {
-        const response = await axios.get("vcards/" + userStore.userPhoneNumber)
-        vcard.value = response.data.data
-        console.log(response.data.data)
-        console.log(vcard.value.balance)
-        originalValueStr = JSON.stringify(vcard.value)
-    } catch (error) {
-        console.log(error)
-    }
+  originalValueStr
+  errors.value = null
+  try {
+    const response = await axios.get("vcards/" + userStore.userPhoneNumber)
+    vcard.value = response.data.data
+    originalValueStr = JSON.stringify(vcard.value)
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const props = defineProps({
@@ -97,7 +95,7 @@ const save = async (transactionToSave) => {
     try {
       if (transactionToSave.type == 'C') {
         if (transactionToSave.payment_type != 'VCARD') {
-    
+
           const paymentReferenceToVCard = transactionToSave.payment_reference
           transactionToSave.payment_reference = transactionToSave.vcard
           transactionToSave.vcard = paymentReferenceToVCard
@@ -168,7 +166,7 @@ const loadCategories = async () => {
 
 onMounted(() => {
   loadCategories()
-  if(userStore.userType == 'V'){
+  if (userStore.userType == 'V') {
     loadVCard()
   }
   categoriesRef.value = categoryStore.categories
@@ -176,12 +174,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <transaction-detail
-    :transaction="transaction"
-    :errors="errors"
-    :vcard="vcard"
-    :inserting="inserting(id)"
-    @save="save"
-    @cancel="cancel"
-  ></transaction-detail>
+  <transaction-detail :transaction="transaction" :errors="errors" :vcard="vcard" :inserting="inserting(id)" @save="save"
+    @cancel="cancel"></transaction-detail>
 </template>

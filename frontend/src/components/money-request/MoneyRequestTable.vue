@@ -9,6 +9,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    vcard: {
+        type: Object,
+        required: false,
+    }
 })
 
 const emit = defineEmits(["acceptRequest", "rejectRequest"])
@@ -43,6 +47,7 @@ const rejectRequest = (moneyRequest) => {
 
 <template>
     <div>
+        <p><b>Account Balance:</b> {{ props.vcard.balance }}€</p>
         <table class="table table-hover">
             <thead>
                 <tr>

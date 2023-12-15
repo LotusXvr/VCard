@@ -56,7 +56,32 @@ const rejectRequest = (moneyRequest) => {
         })
 }
 
+const newVCard = () => {
+    return {
+        phone_number: null,
+        name: '',
+        balance: '',
+        email: '',
+        photo_url: null,
+        password: '',
+        password_confirmation: '',
+        confirmation_code: ''
+    }
+}
+
+const vcard = ref(newVCard())
+
+const loadVCard = async () => {
+    try {
+        const response = await axios.get("vcards/" + userStore.userPhoneNumber)
+        vcard.value = response.data.data
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+}
+
 onMounted(() => {
+    loadVCard()
     loadMoneyRequests()
 })
 </script>
@@ -67,11 +92,8 @@ onMounted(() => {
     <hr />
 
     <div v-if="moneyRequests.length > 0">
-        <MoneyRequestTable
-            :moneyRequests="moneyRequests"
-            @acceptRequest="acceptRequest"
-            @rejectRequest="rejectRequest"
-        >
+        <MoneyRequestTable :moneyRequests="moneyRequests" :vcard="vcard" @acceptRequest="acceptRequest"
+            @rejectRequest="rejectRequest">
         </MoneyRequestTable>
     </div>
     <div v-else>You have no money requests yet</div>
