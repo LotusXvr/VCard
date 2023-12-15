@@ -54,7 +54,7 @@ class MoneyRequestController extends Controller
 
         // verify if sender is not sending money to himself
         if ($request->from_vcard == $request->to_vcard) {
-            return response()->json(['message' => 'You cannot send money to yourself'], 422);
+            return response()->json(['message' => 'You cannot request money to yourself'], 422);
         }
 
         // Verify if destination vcard exists or is blocked

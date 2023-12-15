@@ -32,7 +32,6 @@ const props = defineProps({
 })
 
 const editingTransaction = ref(props.transaction)
-let originalValueStr = ""
 
 const emit = defineEmits(["save", "cancel"])
 
