@@ -88,9 +88,9 @@ const applyFilters = () => {
 const clearFilters = () => {
   startDate.value = null
   endDate.value = null
-  type.value = null
-  method.value = null
-  category.value = null
+  type.value = ''
+  method.value = ''
+  category.value = ''
   orderBy.value = 'desc'
   loadTransactions()
 }
