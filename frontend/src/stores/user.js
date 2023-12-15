@@ -110,22 +110,26 @@ export const useUserStore = defineStore('user', () => {
     logout();
   });
 
-  socket.on('changedStatusNotification', ({user, status}) => {
+  socket.on('changedStatusNotification', ({ user, status }) => {
     console.log(status)
-    if(status == 1){
+    if (status == 1) {
       toast.info(`User #${user} has changed status to blocked successfully!`)
     }
-    else{
+    else {
       toast.info(`User #${user} has changed status to unblocked successfully!`)
     }
   });
-  
+
   socket.on('deletedUser', (userID) => {
     toast.info(`User #${userID} profile has been deleted!`)
   })
 
   socket.on('moneySentNotification', ({ sender, amount }) => {
-    toast.info(`You have received ${amount} from ${sender}!`)
+    toast.info(`You have received ${amount}€ from ${sender}!`)
+  })
+
+  socket.on('requestMoneyNotification', ({ receiver, amount }) => {
+    toast.info(`${receiver} has requested ${amount}€ from you!`)
   })
 
   return {

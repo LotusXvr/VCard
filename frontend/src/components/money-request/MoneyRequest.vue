@@ -23,10 +23,15 @@ const newMoneyRequest = () => {
 }
 const moneyRequest = ref(newMoneyRequest())
 
-const save = async () => {
+const save = async (editingMoneyRequest) => {
     try {
         await axios.post("moneyRequests", moneyRequest.value)
         toast.success('Money request saved successfully')
+        socket.emit('requestMoney', {
+            receiver: editingMoneyRequest.from_vcard,
+            sender: editingMoneyRequest.to_vcard,
+            amount: editingMoneyRequest.value
+        })
         router.back()
     } catch (error) {
         toast.error(error.response.data.message)
