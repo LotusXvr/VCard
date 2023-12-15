@@ -19,8 +19,9 @@ const statusName = (requestStatus) => {
     return requestStatus == 1 ? "Accepted" : "Rejected"
 }
 
-// TODO: ACEITAR E REJEITAR REQUISIÇÕES DE DINHEIRO
-// TODO: PEDIR CODIGO DE CONFIRMAÇAO
+// TODO: PEDIR CODIGO DE CONFIRMAÇAO AO CLICAR NO BOTAO DE ACEITAR!! REJEITAR NAO É PRECISO
+// TODO: ATUALIZAR A LISTA QUANDO SE CLICA NO BOTAO DE ACEITAR OU REJEITAR
+// TODO: VER OS MEUS PEDIDOS PENDENTES! TALVEZ TENHA DE SER NOUTRA TABELA OU WTV
 
 const acceptRequest = (moneyRequest) => {
     emit("acceptRequest", moneyRequest)
