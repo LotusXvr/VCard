@@ -106,7 +106,8 @@ const save = async (transactionToSave) => {
     }
   } else {
     try {
-      await axios.put('transactions/' + props.id, transactionToSave)
+      const response = await axios.put('transactions/' + props.id, transactionToSave)
+      console.log(response.data)
       toast.success('Transaction # ' + transactionToSave.id + ' updated successfully')
       router.back()
     } catch (error) {
