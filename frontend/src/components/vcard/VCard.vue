@@ -10,10 +10,9 @@ const toast = useToast()
 const router = useRouter()
 const userStore = useUserStore()
 
-
 const props = defineProps({
   id: {
-    type: Number,
+    type: Number
   },
   phone_number: {
     type: Number,
@@ -65,15 +64,11 @@ const save = async (vcardToSave) => {
       vcard.value = response.data.data
       originalValueStr = JSON.stringify(vcard.value)
       toast.success('VCard #' + vcard.value.phone_number + ' was registered successfully.')
-      if (userStore.login != true) {
-        await userStore.login({
-          username: vcard.value.phone_number.toString(),
-          password: vcardToSave.password
-        })
-        router.push({ name: 'Home' })
-      } else {
-        router.back()
-      }
+      await userStore.login({
+        username: vcard.value.phone_number.toString(),
+        password: vcardToSave.password
+      })
+      router.push({ name: 'Home' })
     } catch (error) {
       if (error.response.status == 422) {
         errors.value = error.response.data.errors
