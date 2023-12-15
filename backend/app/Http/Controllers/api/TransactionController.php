@@ -252,15 +252,6 @@ class TransactionController extends Controller
         return new TransactionResource($transaction);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transaction $transaction)
-    {
-        //
-    }
-
-
     public function getTransactionsSumBetweenDates(Request $request)
     {
         $startDate = $request->input('startDate');

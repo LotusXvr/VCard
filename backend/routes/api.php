@@ -71,7 +71,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('users/{user}', [UserController::class, 'show'])->middleware('can:view,user');
     //Route::post('users', [UserController::class, 'store'])->middleware('can:create');
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
-    Route::apiResource('transactions', TransactionController::class);
+    Route::get('transactions', [TransactionController::class , 'index'])->middleware('can:viewAny,App\Models\User');
+    Route::post('transactions', [TransactionController::class , 'store']);
+    Route::get('transactions/{transaction}', [TransactionController::class , 'show']);
+    Route::put('transactions/{transaction}', [TransactionController::class , 'update']);
     Route::apiResource('moneyRequests', MoneyRequestController::class);
 
 });
