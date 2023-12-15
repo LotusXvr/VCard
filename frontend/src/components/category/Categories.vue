@@ -4,10 +4,12 @@ import axios from "axios"
 import { useRouter } from 'vue-router'
 import CategoryTable from "./CategoryTable.vue"
 import { useCategoryStore } from "../../stores/category"
+import { useToast } from "vue-toastification"
 
 const categoryStore = useCategoryStore()
 const router = useRouter()
 const categories = ref([])
+const toast = useToast()
 
 const loadCategories = async () => {
     categories.value = await categoryStore.loadCategory()
@@ -26,6 +28,7 @@ const deleteCategory = (category) => {
         .delete("category/" + category.id)
         .then(() => {
             loadCategories()
+            toast.success("Category #" + category.id + " was deleted successfully.")
         })
         .catch((error) => {
             console.log(error)

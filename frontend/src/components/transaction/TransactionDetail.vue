@@ -223,6 +223,7 @@ onMounted(() => {
                             type="text"
                             id="transactionValue"
                             class="form-control"
+                            autocomplete="off"
                             required
                         />
                     </div>
@@ -250,6 +251,7 @@ onMounted(() => {
                             type="text"
                             id="transaction_confirmation_code"
                             class="form-control"
+                            autocomplete="off"
                             required
                         />
                     </div>
@@ -264,7 +266,7 @@ onMounted(() => {
                             class="form-select"
                             required
                         >
-                            <option :value="null">-- Sem Categoria --</option>
+                            <option :value="undefined">-- Sem Categoria --</option>
                             <option
                                 v-for="category in categoryStore.categories"
                                 :key="category.id"
