@@ -109,35 +109,116 @@ class MoneyRequestController extends Controller
         }
 
 
-        // verify now if the request was accepted
-        if ($request->status == 1) {
+        // If the money request is different than null and is not 0, than it should be 1, no need to validate anything
+        // More. From now on, lets handle the acceptance of the request
 
 
-            // handle the start of the transaction process
-            try {
-
-
-                // Create a transaction
-                $this->createTransaction(
-                    $moneyRequest->to_vcard,
-                    $moneyRequest->from_vcard,
-                    'C', 
-                    'VCARD',
-                    $moneyRequest->amount,
-                    $moneyRequest->description
-                );
-
-
-                // handle the acceptance of the request
-                $this->update($request->status, $moneyRequest);
-
-                return response()->json(['message' => 'Money request handled correctly'], 200);
-
-            } catch (Exception $e) {
-                return response()->json(['message' => 'Error creating the money request acceptance transaction', 'error' => $e->getMessage()], 500);
-            }
-
+        // verify if confirmation code is the correct one of the user
+        $vcardAccepter = VCard::where('phone_number', $moneyRequest->to_vcard)->first();
+        if (!password_verify($request->confirmation_code, $vcardAccepter->confirmation_code)) {
+            return response()->json(['message' => 'Invalid confirmation code'], 422);
         }
+
+        // verify if sender has enough money on account balance
+        if ($vcardAccepter->balance < $request->value) {
+            return response()->json(['message' => 'Insuficient balance'], 422);
+        }
+
+        // verify if value being sent is higher than max_debit (invalid)
+        if ($request->value > $vcardAccepter->max_debit) {
+            return response()->json(['message' => 'Value higher than maximum debit allowed'], 422);
+        }
+
+        // In between the time of the request and the acceptance, the sender could have blocked his account
+        $destinVCardExistsOrIsBlocked = VCard::where('phone_number', $moneyRequest->from_vcard)
+            ->whereNull('deleted_at')
+            ->orWhere('blocked', 1)
+            ->first();
+        if (!$destinVCardExistsOrIsBlocked) {
+            return response()->json(['message' => 'Destin VCard does not exist or is blocked'], 404);
+        }
+
+        // handle the start of the transaction process
+        try {
+
+            $requestTransaction = [
+                'vcard' => $moneyRequest->to_vcard,
+                'payment_reference' => $moneyRequest->from_vcard,
+                'type' => 'D',
+                'payment_type' => 'VCARD',
+                'value' => $moneyRequest->amount,
+                'description' => $moneyRequest->description,
+            ];
+
+            // Create a transaction
+            DB::transaction(function () use ($requestTransaction) {
+
+                $date = date('Y-m-d');
+                $datetime = date('Y-m-d H:i:s');
+
+                // Money sending transaction
+                $transaction1 = new Transaction();
+                $transaction1->vcard = $requestTransaction['payment_reference'];
+                $transaction1->date = $date;
+                $transaction1->datetime = $datetime;
+                $transaction1->type = 'D';
+                $transaction1->value = $requestTransaction['value'];
+                $vcardBalance = VCard::where('phone_number', $requestTransaction['payment_reference'])->first()->balance;
+                $transaction1->old_balance = $vcardBalance;
+                $transaction1->new_balance = $vcardBalance - $requestTransaction['value'];
+                $transaction1->payment_type = $requestTransaction['payment_type'];
+                $transaction1->payment_reference = $requestTransaction['payment_reference'];
+                $transaction1->pair_vcard = $requestTransaction['vcard'];
+                $transaction1->category_id = null;
+                $transaction1->description = $requestTransaction['description'];
+
+                // Money reception transaction
+                $transaction2 = new Transaction();
+                $transaction2->vcard = $requestTransaction['vcard'];
+                $transaction2->date = $date;
+                $transaction2->datetime = $datetime;
+                $transaction2->type = 'C';
+                $transaction2->value = $requestTransaction['value'];
+                $payment_referenceBalance = VCard::where('phone_number', $requestTransaction['vcard'])->first()->balance;
+                $transaction2->old_balance = $payment_referenceBalance;
+                $transaction2->new_balance = $payment_referenceBalance + $requestTransaction['value'];
+                $transaction2->payment_type = $requestTransaction['payment_type'];
+                $transaction2->payment_reference = $requestTransaction['vcard'];
+                $transaction2->pair_vcard = $requestTransaction['payment_reference'];
+                $transaction2->category_id = null;
+                $transaction2->description = $requestTransaction['description'];
+
+                // Save transactions to get their id's
+                $transaction1->save();
+                $transaction2->save();
+
+                // Update pair_transaction properties
+                $transaction1->pair_transaction = $transaction2->id;
+                $transaction2->pair_transaction = $transaction1->id;
+
+                // Save transactions again to update pair_transaction values
+                $transaction1->save();
+                $transaction2->save();
+
+
+
+                // Update both individual's balances
+                VCard::where('phone_number', $requestTransaction['vcard'])->update(['balance' => $transaction1->new_balance]);
+                VCard::where('phone_number', $requestTransaction['payment_reference'])->update(['balance' => $transaction2->new_balance]);
+            });
+
+
+
+            // handle the acceptance of the request
+            $this->update($request->status, $moneyRequest);
+
+            return response()->json(['message' => 'Money request handled correctly'], 200);
+
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error creating the money request acceptance transaction', 'error' => $e->getMessage()], 500);
+        }
+
+
 
     }
 
@@ -156,85 +237,6 @@ class MoneyRequestController extends Controller
         return response()->json(['message' => 'Money request updated successfully'], 200);
     }
 
-    private function createTransaction($vcard, $paymentReference, $type, $payment_type, $value, $description = null)
-    {
-
-        $request = [
-            'vcard' => $vcard,
-            'payment_reference' => $paymentReference,
-            'type' => $type,
-            'payment_type' => $payment_type,
-            'value' => $value,
-            'description' => $description,
-        ];
-
-        return response()->json($request);
-
-        try {
-
-            DB::transaction(function () use ($request) {
-
-                $date = date('Y-m-d');
-                $datetime = date('Y-m-d H:i:s');
-
-                // Money sending transaction
-                $transaction1 = new Transaction();
-                $transaction1->vcard = $request['vcard'];
-                $transaction1->date = $date;
-                $transaction1->datetime = $datetime;
-                $transaction1->type = 'D';
-                $transaction1->value = $request['value'];
-                $vcardBalance = VCard::where('phone_number', $request['vcard'])->first()->balance;
-                $transaction1->old_balance = $vcardBalance;
-                $transaction1->new_balance = $vcardBalance - $request['value'];
-                $transaction1->payment_type = $request['payment_type'];
-                $transaction1->payment_reference = $request['payment_reference'];
-                $transaction1->pair_vcard = $request['payment_reference'];
-                $transaction1->category_id = $request['category_id'];
-                $transaction1->description = $request['description'];
-
-                // Money reception transaction
-                $transaction2 = new Transaction();
-                $transaction2->vcard = $request['payment_reference'];
-                $transaction2->date = $date;
-                $transaction2->datetime = $datetime;
-                $transaction2->type = 'C';
-                $transaction2->value = $request['value'];
-                $payment_referenceBalance = VCard::where('phone_number', $request['payment_reference'])->first()->balance;
-                $transaction2->old_balance = $payment_referenceBalance;
-                $transaction2->new_balance = $payment_referenceBalance + $request['value'];
-                $transaction2->payment_type = $request['payment_type'];
-                $transaction2->payment_reference = $request['vcard'];
-                $transaction2->pair_vcard = $request['vcard'];
-                $transaction2->category_id = null;
-                $transaction2->description = null;
-
-
-                // Save transactions to get their id's
-                $transaction1->save();
-                $transaction2->save();
-
-                // Update pair_transaction properties
-                $transaction1->pair_transaction = $transaction2->id;
-                $transaction2->pair_transaction = $transaction1->id;
-
-                // Save transactions again to update pair_transaction values
-                $transaction1->save();
-                $transaction2->save();
-
-
-
-                // Update both individual's balances
-                VCard::where('phone_number', $request['vcard'])->update(['balance' => $transaction1->new_balance]);
-                VCard::where('phone_number', $request['payment_reference'])->update(['balance' => $transaction2->new_balance]);
-
-            });
-
-        } catch (Exception $e) {
-            // Handle the exception
-            return response()->json(['message' => 'Error creating transaction', 'error' => $e->getMessage()], 500);
-        }
-    }
 
     /**
      * Remove the specified resource from storage.
