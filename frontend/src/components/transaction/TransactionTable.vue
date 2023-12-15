@@ -19,7 +19,7 @@ const props = defineProps({
     },
 })
 
-const emit = defineEmits(["edit", "hideStatistics"])
+const emit = defineEmits(["edit"])
 
 const loadCategories = async () => {
     categories.value = await categoryStore.loadCategoryWithTrashed()

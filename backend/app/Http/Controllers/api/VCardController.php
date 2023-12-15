@@ -17,6 +17,7 @@ use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateVcardCodeRequest;
+use App\Models\MoneyRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
@@ -293,6 +294,13 @@ class VCardController extends Controller
         $transactions = $query->orderBy('datetime', $orderBy)->paginate(20);  // Utiliza paginate em vez de get
 
         return response()->json($transactions);
+    }
+
+    public function getMoneyRequestsByPhoneNumber(VCard $vcard)
+    {
+        $moneyRequests = MoneyRequest::where('to_vcard', $vcard->phone_number)->orderBy('created_at', 'DESC')->get();
+
+        return response()->json($moneyRequests);
     }
 
     public function getLastMonthTransactionsByPhoneNumber(VCard $vcard)

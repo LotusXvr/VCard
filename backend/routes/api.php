@@ -48,6 +48,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get("vcard/{vcard}/category/all", [VCardController::class, 'getCategoryFromVCardWithTrashed'])->middleware('can:view,vcard');
     Route::get('vcard/{vcard}/transactions/lastmonth', [VCardController::class, 'getLastMonthTransactionsByPhoneNumber'])->middleware('can:view,vcard');
 
+    // List of money requests by phone number
+    Route::get('vcard/{vcard}/moneyRequests', [VCardController::class, 'getMoneyRequestsByPhoneNumber'])->middleware('can:view,vcard');
+
     // Statistics
     Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates'])->middleware('can:viewAny,App\Models\User');
     Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction'])->middleware('can:viewAny,App\Models\User');

@@ -52,5 +52,10 @@ class VCard extends Model
         return $this->hasMany(Category::class, 'pair_vcard');
     }
 
+    public function moneyRequests()
+    {
+        return $this->hasMany(MoneyRequest::class, 'to_vcard', 'phone_number');
+    }
+
 }
 
