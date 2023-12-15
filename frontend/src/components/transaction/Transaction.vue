@@ -97,8 +97,7 @@ const save = async (transactionToSave) => {
     try {
       if (transactionToSave.type == 'C') {
         if (transactionToSave.payment_type != 'VCARD') {
-          // isto é necessario visto a logica do crédito é oposta á de debito portanto existe esta troca
-          // para facilitar a execuçao do codigo por parte da api
+    
           const paymentReferenceToVCard = transactionToSave.payment_reference
           transactionToSave.payment_reference = transactionToSave.vcard
           transactionToSave.vcard = paymentReferenceToVCard
@@ -114,14 +113,13 @@ const save = async (transactionToSave) => {
       if (
         userStore.userType !== 'A' &&
         transactionToSave.payment_type != 'VCARD' &&
-        transactionToSave.value > 10
+        transactionToSave.value >= 10
       ) {
         toast.info('You just received ' + response.data.spins + ' spins')
       }
       toast.success(response.data.message)
 
       if (transactionToSave.payment_type == 'VCARD') {
-        // No lado do cliente
         socket.emit('moneySent', {
           receiver: transactionToSave.payment_reference,
           sender: userStore.userPhoneNumber,

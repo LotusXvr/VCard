@@ -10,7 +10,6 @@ const props = defineProps({
 
 const emit = defineEmits(["edit", "delete"])
 
-// Separate categories into debit (D) and credit (C)
 const categoriesD = computed(() => props.categories.filter(category => category.type === 'D').sort((a, b) => a.name.localeCompare(b.name)))
 const categoriesC = computed(() => props.categories.filter(category => category.type === 'C').sort((a, b) => a.name.localeCompare(b.name)))
 

@@ -8,10 +8,10 @@ import { useRouter } from "vue-router"
 import { useDark, useToggle } from "@vueuse/core"
 
 const isDark = useDark({
-    selector: "body", //element to add attribute to
-    attribute: "theme", // attribute name
-    valueDark: "custom-dark", // attribute value for dark mode
-    valueLight: "custom-light", // attribute value for light mode
+    selector: "body", 
+    attribute: "theme",
+    valueDark: "custom-dark", 
+    valueLight: "custom-light",
 })
 const toggleDark = useToggle(isDark)
 
@@ -37,7 +37,7 @@ const formatUserName = (fullName) => {
     if (names.length >= 2) {
         return `${names[0]} ${names[names.length - 1]}`
     } else {
-        return fullName // In case there's only one name
+        return fullName
     }
 }
 
@@ -108,9 +108,9 @@ onMounted(async () => {
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <button
+                        <button class="m-2 sm dark-button"
                             @click="toggleDark()"
-                            class="m-2 btn btn-sm btn-outline-primary"
+                            
                             :class="{ 'btn-light': isDark, 'btn-dark': !isDark }"
                         >
                             {{ isDark ? "Light Mode" : "Dark Mode" }}
@@ -519,6 +519,21 @@ onMounted(async () => {
 
 #sidebarMenu.collapse li.nav-item a {
     color: #0bbad6;
+}
+
+.dark-button {
+    background-color: #212529;
+    color: #0bbad6;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dark-button:hover {
+background-color: #0bbad6;
+color: #fff;
 }
 
 [theme="custom-dark"] {

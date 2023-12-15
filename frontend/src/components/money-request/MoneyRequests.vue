@@ -22,11 +22,11 @@ const loadMoneyRequests = () => {
         })
 }
 
-const acceptRequest = (moneyRequest) => {
+const acceptRequest = (moneyRequest, confirmationCode) => {
     axios
         .post("moneyRequests/" + moneyRequest.id + "/update", {
             status: 1,
-            confirmation_code: 123,
+            confirmation_code: confirmationCode,
         })
         .then((response) => {
             console.log(response.data)

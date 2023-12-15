@@ -91,7 +91,6 @@ const changePhotoFile = () => {
       reader.addEventListener(
         'load',
         () => {
-          // convert image file to base64 string
           editingImageAsBase64.value = reader.result
           deletePhotoOnTheServer.value = false
         },
@@ -124,7 +123,6 @@ const cleanPhoto = () => {
 
     <div class="d-flex flex-wrap justify-content-between" v-if="userStore.userType !== 'A'">
       <div class="col-md-6 mx-5">
-        <!-- Phone Number -->
         <div class="mb-3" v-if="userStore.userType !== 'V'">
           <label for="phone_number" class="form-label">Phone Number:</label>
           <input
@@ -138,7 +136,6 @@ const cleanPhoto = () => {
           <field-error-message :errors="errors" fieldName="phone_number"></field-error-message>
         </div>
 
-        <!-- Name -->
         <div class="mb-3">
           <label for="name" class="form-label">Name:</label>
           <input
@@ -152,7 +149,6 @@ const cleanPhoto = () => {
           <field-error-message :errors="errors" fieldName="name"></field-error-message>
         </div>
 
-        <!-- Email -->
         <div class="mb-3">
           <label for="email" class="form-label">Email:</label>
           <input
@@ -166,7 +162,6 @@ const cleanPhoto = () => {
           <field-error-message :errors="errors" fieldName="email"></field-error-message>
         </div>
 
-        <!-- Password and Confirm Password -->
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
             <label for="password" class="form-label">Password:</label>
@@ -194,7 +189,6 @@ const cleanPhoto = () => {
           </div>
         </div>
 
-        <!-- Confirmation Code -->
         <div class="mb-3" v-if="inserting">
           <div class="form-group">
             <label for="confirmation_code" class="form-label">Confirmation Code:</label>
@@ -213,7 +207,6 @@ const cleanPhoto = () => {
         </div>
       </div>
 
-      <!-- Photo Section -->
       <div class="col-md-4 mx-5">
         <div class="d-flex flex-column align-items-center">
           <label class="form-label">Photo</label>
@@ -247,7 +240,6 @@ const cleanPhoto = () => {
       </div>
     </div>
 
-    <!-- Max Debit Section -->
     <div class="mb-3" v-if="userStore.userType === 'A'">
       <label for="max_debit" class="form-label">Max Debit:</label>
       <input

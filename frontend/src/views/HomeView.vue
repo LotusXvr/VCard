@@ -43,14 +43,6 @@ const loadVCard = async (phone_number) => {
   }
 }
 
-// watch(
-//     () => props.phone_number,
-//     (newValue) => {
-//         loadVCard(newValue)
-//     },
-//     { immediate: true },
-// )
-
 const reforcarPoupanca = async () => {
   if (transferAmount.value <= 0) {
     toast.error('Transfer amount must be greater than 0.')
@@ -182,12 +174,10 @@ let balanceChart = null
 
 const loadChart = () => {
   if (!balanceChartEl.value) {
-    // O elemento do gráfico ainda não está disponível
     return
   }
 
   if (balanceChart) {
-    // Destruir o gráfico anterior para evitar problemas de duplicação
     balanceChart.destroy()
   }
 
@@ -249,13 +239,11 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <!-- Input for transfer amount -->
       <div class="mb-3" style="margin: 0px 40%">
         <label for="transferAmount" class="form-label">Transfer Amount:</label>
         <input v-model="transferAmount" type="number" class="form-control" id="transferAmount" />
       </div>
 
-      <!-- Buttons to initiate transfer -->
       <div class="mb-3">
         <button @click.prevent="reforcarPoupanca" class="btn btn-success me-2">
           Reinforce Savings
