@@ -243,10 +243,13 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        $data = $request->all();
+        $transaction = Transaction::where('id', $request->id)->first();
 
-        // Update the transaction with the extracted data
-        $transaction->update($data);
+        $transaction->description = $request->description;
+
+        $transaction->category_id = $request->category_id;
+
+        $transaction->save();
 
         // Return the updated transaction
         return new TransactionResource($transaction);
