@@ -121,19 +121,21 @@ class MoneyRequestController extends Controller
 
         // verify if confirmation code is the correct one of the user
         $vcardAccepter = VCard::where('phone_number', $moneyRequest->to_vcard)->first();
+
         if (!password_verify($request->confirmation_code, $vcardAccepter->confirmation_code)) {
             return response()->json(['message' => 'Invalid confirmation code'], 422);
         }
 
         // verify if sender has enough money on account balance
-        if ($vcardAccepter->balance < $request->value) {
+        if ($vcardAccepter->balance < $moneyRequest->amount) {
             return response()->json(['message' => 'Insuficient balance'], 422);
         }
 
         // verify if value being sent is higher than max_debit (invalid)
-        if ($request->value > $vcardAccepter->max_debit) {
+        if ($moneyRequest->amount > $vcardAccepter->max_debit) {
             return response()->json(['message' => 'Value higher than maximum debit allowed'], 422);
         }
+
 
         // In between the time of the request and the acceptance, the sender could have blocked his account
         $destinVCardExistsOrIsBlocked = VCard::where('phone_number', $moneyRequest->from_vcard)
@@ -176,7 +178,7 @@ class MoneyRequestController extends Controller
                 $transaction1->payment_reference = $requestTransaction['payment_reference'];
                 $transaction1->pair_vcard = $requestTransaction['payment_reference'];
                 $transaction1->category_id = null;
-                $transaction1->description = $requestTransaction['description'];
+                $transaction1->description = null;
 
                 // Money reception transaction
                 $transaction2 = new Transaction();
@@ -192,7 +194,7 @@ class MoneyRequestController extends Controller
                 $transaction2->payment_reference = $requestTransaction['vcard'];
                 $transaction2->pair_vcard = $requestTransaction['vcard'];
                 $transaction2->category_id = null;
-                $transaction2->description = $requestTransaction['description'];
+                $transaction2->description = null;
 
                 // Save transactions to get their id's
                 $transaction1->save();
