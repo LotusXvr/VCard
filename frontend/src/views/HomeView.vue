@@ -2,12 +2,13 @@
 import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../stores/user"
-import { ref, onMounted, computed } from "vue"
+import { ref, onMounted, computed, inject } from "vue"
 
 import Chart from "chart.js/auto"
 
 const toast = useToast()
 const userStore = useUserStore()
+const socket = inject('socket')
 
 const newVCard = () => {
     return {
@@ -20,6 +21,9 @@ const newVCard = () => {
         confirmation_code: "",
     }
 }
+socket.on('moneySentNotification', () => {
+    loadVCard(userStore.userPhoneNumber)
+})
 
 const vcard = ref(newVCard())
 const errors = ref(null)
