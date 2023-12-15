@@ -120,25 +120,6 @@ onMounted(() => {
   loadVCard(userStore.userPhoneNumber)
 })
 
-// let nextCallBack = null
-// const leaveConfirmed = () => {
-//     if (nextCallBack) {
-//         nextCallBack()
-//     }
-// }
-
-// onBeforeRouteLeave((to, from, next) => {
-//     nextCallBack = null
-//     let newValueStr = JSON.stringify(vcard.value)
-//     if (originalValueStr != newValueStr) {
-//         // Some value has changed - only leave after confirmation
-//         nextCallBack = next
-//         confirmationLeaveDialog.value.show()
-//     } else {
-//         // No value has changed, so we can leave the component without confirming
-//         next()
-//     }
-// })
 </script>
 
 <template>

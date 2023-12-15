@@ -99,14 +99,12 @@ onMounted(() => {
   <div class="container mt-4">
     <div class="row">
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="type" class="form-label">Name:</label>
           <input type="text" class="form-control" v-model="name" />
         </div>
       </div>
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="orderBy" class="form-label">Order by:</label>
           <select class="form-select" v-model="orderBy">
@@ -124,7 +122,6 @@ onMounted(() => {
         </div>
       </div>
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="blocked" class="form-label">Block status:</label>
           <select class="form-select" v-model="blocked">
@@ -137,14 +134,12 @@ onMounted(() => {
     </div>
     <div class="row">
       <div class="col-md-3">
-        <!-- Button to apply filters -->
         <div class="mb-3">
           <button @click="loadVCards" class="btn btn-primary">Apply Filters</button>
         </div>
       </div>
 
       <div class="col-md-3">
-        <!-- Button to clear filters and show all transactions -->
         <div class="mb-3">
           <button @click="clearFilters" class="btn btn-secondary">Clear Filters</button>
         </div>

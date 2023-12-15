@@ -3,7 +3,7 @@ import axios from "axios"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "../../stores/user.js"
 import { ref, watch, inject } from "vue"
-import UserDetail from "./UserDetail.vue" // Assuming you have a UserDetail component
+import UserDetail from "./UserDetail.vue"
 import { useRouter, onBeforeRouteLeave } from "vue-router"
 
 const router = useRouter()
@@ -112,11 +112,8 @@ onBeforeRouteLeave((to, from, next) => {
     nextCallBack = null
     let newValueStr = JSON.stringify(user.value)
     if (originalValueStr != newValueStr) {
-        // Some value has changed - only leave after confirmation
         nextCallBack = next
-        //confirmationLeaveDialog.value.show()
     } else {
-        // No value has changed, so we can leave the component without confirming
         next()
     }
 })

@@ -22,8 +22,6 @@ const wsConnection = import.meta.env.VITE_WS_CONNECTION
 
 const userAgent = navigator.userAgent
 
-// app.provide('serverBaseUrl', serverBaseUrl)
-// app.provide('socket', io('http://localhost:8080'))
 app.provide("apiDomain", apiDomain)
 app.provide("serverUrl", `${apiDomain}/api`)
 app.provide("socket", io(wsConnection))
