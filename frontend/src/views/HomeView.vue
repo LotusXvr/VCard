@@ -59,8 +59,7 @@ const reforcarPoupanca = async () => {
 
     toast.success('Savings reinforced sucessfully!')
     vcard.value.balance = parseFloat(vcard.value.balance - transferAmount.value).toFixed(2)
-    const savings = parseFloat(vcard.value.savings)
-    vcard.value.savings = parseFloat(savings + transferAmount.value).toFixed(2)
+    vcard.value.savings = (parseFloat(vcard.value.savings) + parseFloat(transferAmount.value)).toFixed(2)
   } catch (error) {
     toast.error(error.response.data.message || 'An error occurred.')
   }
@@ -79,12 +78,9 @@ const retirarPoupanca = async () => {
       vcard: userStore.userPhoneNumber,
       valor: transferAmount.value
     })
-
     toast.success('Savings Withdrawn sucessfully!')
-    const balance = parseFloat(vcard.value.balance)
-    vcard.value.balance = parseFloat((balance + transferAmount.value).toFixed(2))
-    const savings = parseFloat(vcard.value.savings)
-    vcard.value.savings = parseFloat((savings - transferAmount.value).toFixed(2))
+    vcard.value.balance = (parseFloat(vcard.value.balance) + parseFloat(transferAmount.value)).toFixed(2)
+    vcard.value.savings = parseFloat(vcard.value.savings - transferAmount.value).toFixed(2)
   } catch (error) {
     toast.error(error.response.data.message || 'An error occurred.')
   }
@@ -231,7 +227,7 @@ onMounted(() => {
         </div>
 
         <div class="col-md-3">
-          <div class="card text-white mb-3" style="background-color: #ba1515; max-width: 18rem">
+          <div class="card text-white mb-3 bg-danger" style=" max-width: 18rem">
             <div class="card-header text-center">Max Debit</div>
             <div class="card-body text-center">
               <h2 class="card-title">{{ vcard.max_debit }}€</h2>
