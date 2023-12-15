@@ -28,6 +28,7 @@ const loadUsers = (page = 1) => {
     .then((response) => {
       users.value = response.data.data
       paginationData.value = response.data
+      console.log(response.data)
     })
     .catch((error) => {
       toast.error(error.response.data.message)
@@ -133,8 +134,11 @@ const clearFilters = () => {
   </div>
   <div v-if="users.length > 0">
     <UserTable :users="users" :showUserId="true" @edit="editUser" @delete="deleteUser"></UserTable>
-    <Bootstrap5Pagination :data="paginationData" @pagination-change-page="loadUsers" :limit="1"></Bootstrap5Pagination>
-
+    <Bootstrap5Pagination
+      :data="paginationData"
+      @pagination-change-page="loadUsers"
+      :limit="2"
+    ></Bootstrap5Pagination>
   </div>
   <div v-else>Loading Users...</div>
 </template>

@@ -28,11 +28,10 @@ class AdminController extends Controller
 
         $query->orderBy($orderBy, $orderFormat);
 
-        $admins = $query->paginate(10);
         // não quero listar-me a mim próprio
-        $admins = $admins->except(auth()->user()->id);
+        $admins = $query->where('id', '!=', auth()->user()->id)->paginate(10);
 
-        return AdminResource::collection($admins);
+        return response()->json($admins);
     }
 
     /**
