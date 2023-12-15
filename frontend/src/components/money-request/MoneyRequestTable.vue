@@ -1,5 +1,8 @@
 <script setup>
 import { ref } from "vue"
+import { useToast } from "vue-toastification"
+
+const toast = useToast()
 
 const props = defineProps({
     moneyRequests: {
@@ -23,8 +26,13 @@ const statusName = (requestStatus) => {
 // TODO: ATUALIZAR A LISTA QUANDO SE CLICA NO BOTAO DE ACEITAR OU REJEITAR
 // TODO: VER OS MEUS PEDIDOS PENDENTES! TALVEZ TENHA DE SER NOUTRA TABELA OU WTV
 
+const confirmationCode = ref("")
 const acceptRequest = (moneyRequest) => {
-    emit("acceptRequest", moneyRequest)
+    if (confirmationCode.value == "") {
+        toast.error("Please enter the confirmation code")
+        return
+    }
+    emit("acceptRequest",  moneyRequest, confirmationCode.value )
 }
 
 const rejectRequest = (moneyRequest) => {
@@ -61,6 +69,7 @@ const rejectRequest = (moneyRequest) => {
                         {{ statusName(moneyRequest.status) }}
                     </td>
                     <td v-if="statusName(moneyRequest.status) == 'Pending'">
+                        <input v-model="confirmationCode" placeholder="Confirmation Code" />
                         <button class="btn btn-success" @click="acceptRequest(moneyRequest)">
                             Accept
                         </button>
