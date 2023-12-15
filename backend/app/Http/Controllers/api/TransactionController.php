@@ -86,12 +86,9 @@ class TransactionController extends Controller
 
         if ($request->payment_type == 'VCARD') {
             // Verify if destination vcard exists or is blocked
-            $destinVCardExistsOrIsBlocked = VCard::where('phone_number', $request->payment_reference)
-                ->whereNull('deleted_at')
-                ->orWhere('blocked', 1)
-                ->first();
-            if (!$destinVCardExistsOrIsBlocked) {
-                return response()->json(['message' => 'Destin VCard does not exist or is blocked'], 404);
+            $destinVCard = VCard::where('phone_number', $request->payment_reference)->first();
+            if (!$destinVCard || $destinVCard->blocked == 1) {
+                return response()->json(['message' => $request->payment_reference . ' does not exist or is blocked'], 404);
             }
 
             try {
@@ -237,7 +234,7 @@ class TransactionController extends Controller
 
     }
 
-    
+
 
 
 
