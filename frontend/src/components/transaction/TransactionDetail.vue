@@ -165,7 +165,7 @@ const creditShowFromFieldWhenNotVCard = computed(() => {
 
 onMounted(() => {
     loadCategories()
-    })
+})
 </script>
 
 <template>
@@ -173,7 +173,7 @@ onMounted(() => {
     <div>
         <div v-if="userStore.userType === 'V'">
             <p><b>Account Balance:</b> {{ props.vcard.balance }}</p>
-            <p><b>Max Debit:</b>  {{ props.vcard.max_debit }}</p>
+            <p><b>Max Debit:</b> {{ props.vcard.max_debit }}</p>
         </div>
         <hr />
         <form @submit.prevent="save">
@@ -181,12 +181,8 @@ onMounted(() => {
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="payment_type">Payment Type:</label>
-                        <select
-                            v-model="editingTransaction.payment_type"
-                            class="form-select"
-                            required
-                        >
-                            <option value="VCARD">VCARD</option>
+                        <select v-model="editingTransaction.payment_type" class="form-select" required>
+                            <option value="VCARD" v-if="userStore.userType !== 'A'">VCARD</option>
                             <option value="MBWAY">MBWAY</option>
                             <option value="IBAN">IBAN</option>
                             <option value="MB">MB</option>
@@ -198,25 +194,15 @@ onMounted(() => {
                 <div v-if="inserting === 'debit'" class="col-md-6">
                     <div class="form-group">
                         <label for="payment_reference">Send money to...</label>
-                        <input
-                            v-model="editingTransaction.payment_reference"
-                            type="text"
-                            id="transactionPaymentReference"
-                            class="form-control"
-                            required
-                        />
+                        <input v-model="editingTransaction.payment_reference" type="text" id="transactionPaymentReference"
+                            class="form-control" required />
                     </div>
                 </div>
                 <div v-if="inserting === 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="vcard">Send money to...</label>
-                        <input
-                            v-model="editingTransaction.payment_reference"
-                            type="text"
-                            id="transactionPaymentReference"
-                            class="form-control"
-                            required
-                        />
+                        <input v-model="editingTransaction.payment_reference" type="text" id="transactionPaymentReference"
+                            class="form-control" required />
                     </div>
                 </div>
             </div>
@@ -225,42 +211,22 @@ onMounted(() => {
                 <div v-if="inserting === 'debit' || inserting === 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="value">Amount:</label>
-                        <input
-                            v-model="editingTransaction.value"
-                            type="text"
-                            id="transactionValue"
-                            class="form-control"
-                            autocomplete="off"
-                            required
-                        />
+                        <input v-model="editingTransaction.value" type="text" id="transactionValue" class="form-control"
+                            autocomplete="off" required />
                     </div>
                 </div>
-                <div
-                    v-if="inserting === 'credit' && creditShowFromFieldWhenNotVCard"
-                    class="col-md-6"
-                >
+                <div v-if="inserting === 'credit' && creditShowFromFieldWhenNotVCard" class="col-md-6">
                     <div class="form-group">
                         <label for="payment_reference">From...</label>
-                        <input
-                            v-model="editingTransaction.vcard"
-                            type="text"
-                            id="transactionPaymentReference"
-                            class="form-control"
-                            required
-                        />
+                        <input v-model="editingTransaction.vcard" type="text" id="transactionPaymentReference"
+                            class="form-control" required />
                     </div>
                 </div>
                 <div v-if="inserting === 'debit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Confirmation Code:</label>
-                        <input
-                            v-model="editingTransaction.confirmation_code"
-                            type="text"
-                            id="transaction_confirmation_code"
-                            class="form-control"
-                            autocomplete="off"
-                            required
-                        />
+                        <input v-model="editingTransaction.confirmation_code" type="text" id="transaction_confirmation_code"
+                            class="form-control" autocomplete="off" required />
                     </div>
                 </div>
 
@@ -268,17 +234,9 @@ onMounted(() => {
                 <div v-if="inserting != 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Category:</label>
-                        <select
-                            v-model="editingTransaction.category_id"
-                            class="form-select"
-                            required
-                        >
+                        <select v-model="editingTransaction.category_id" class="form-select" required>
                             <option :value="undefined">-- Sem Categoria --</option>
-                            <option
-                                v-for="category in categoryStore.categories"
-                                :key="category.id"
-                                :value="category.id"
-                            >
+                            <option v-for="category in categoryStore.categories" :key="category.id" :value="category.id">
                                 {{ category.name }}
                             </option>
                         </select>
@@ -287,16 +245,12 @@ onMounted(() => {
                 <div v-if="inserting != 'credit'" class="col-md-6">
                     <div class="form-group">
                         <label for="confirmation_code">Description:</label>
-                        <input
-                            v-model="editingTransaction.description"
-                            type="text"
-                            id="transaction_description"
-                            class="form-control"
-                        />
+                        <input v-model="editingTransaction.description" type="text" id="transaction_description"
+                            class="form-control" />
                     </div>
                 </div>
             </div>
-            <div v-if=" inserting !== 'credit' " class="mx-2 mt-2">
+            <div v-if="inserting !== 'credit'" class="mx-2 mt-2">
                 <router-link class="nav-link w-100 me-3" :to="{ name: 'NewCategory' }">
                     <button type="button" class="btn btn-success px-4 btn-addtask" @click="addCategory">
                         <i class="bi bi-xs bi-plus-circle"></i>&nbsp; Add Category
