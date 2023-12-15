@@ -36,11 +36,11 @@ const loadUsers = (page = 1) => {
 }
 
 const addUser = () => {
-  router.push({ name: 'NewUser' }) // Certifique-se de ter uma rota chamada 'newUser'
+  router.push({ name: 'NewUser' })
 }
 
 const editUser = (user) => {
-  router.push({ name: 'User', params: { id: user.id } }) // Certifique-se de ter uma rota chamada 'User'
+  router.push({ name: 'User', params: { id: user.id } }) 
 }
 
 const deleteUser = (user) => {
@@ -78,14 +78,12 @@ const clearFilters = () => {
   <div class="container mt-4">
     <div class="row">
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="type" class="form-label">Name:</label>
           <input type="text" class="form-control" v-model="name" />
         </div>
       </div>
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="orderBy" class="form-label">Order by:</label>
           <select class="form-select" v-model="orderBy">
@@ -107,14 +105,12 @@ const clearFilters = () => {
     </div>
     <div class="row">
       <div class="col-md-3">
-        <!-- Button to apply filters -->
         <div class="mb-3">
           <button @click="loadUsers" class="btn btn-primary">Apply Filters</button>
         </div>
       </div>
 
       <div class="col-md-3">
-        <!-- Button to clear filters and show all transactions -->
         <div class="mb-3">
           <button @click="clearFilters" class="btn btn-secondary">Clear Filters</button>
         </div>

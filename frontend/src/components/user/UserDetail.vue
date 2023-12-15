@@ -41,7 +41,6 @@ const userTitle = computed(() => {
 const save = () => {
     const userToSave = editingUser.value
 
-    // Adicionando a validação de senha
     if (props.inserting && editingUser.value.password !== editingUser.value.password_confirmation) {
         toast.error("Passwords do not match")
     } else {

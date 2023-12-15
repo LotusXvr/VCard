@@ -3,13 +3,12 @@ import { onMounted, ref, shallowRef } from "vue"
 import axios from "axios"
 import Chart from "chart.js/auto"
 
-// AUXILIARES
 const startDate = ref("")
 const endDate = ref("")
 const transactionsSumBetweenDates = ref(0)
 const today = new Date()
 const year = today.getFullYear()
-const month = String(today.getMonth() + 1).padStart(2, "0") // Months are zero-based
+const month = String(today.getMonth() + 1).padStart(2, "0") 
 const day = String(today.getDate()).padStart(2, "0")
 const todayDateString = `${year}-${month}-${day}`
 const monthNames = [
@@ -183,24 +182,19 @@ const getTransactionsStatistics = () => {
             const paymentMethods = response.data.paymentMethods
             const transactionCounts = response.data.transactionCounts
 
-            // Combine payment methods and counts into an array of objects
             const data = paymentMethods.map((method, index) => ({
                 method,
                 count: transactionCounts[index],
             }))
 
-            // Find the index of VCard dynamically
             const vcardIndex = data.findIndex((item) => item.method === "VCARD")
 
-            // If VCard is found, divide its transaction count by 2
             if (vcardIndex !== -1) {
                 data[vcardIndex].count /= 2
             }
 
-            // Sort the array based on transaction count in descending order
             data.sort((a, b) => b.count - a.count)
 
-            // Extract sorted payment methods and transaction counts
             const sortedPaymentMethods = data.map((item) => item.method)
             const sortedTransactionCounts = data.map((item) => item.count)
 
@@ -299,27 +293,6 @@ onMounted(() => {
 
 <template>
     <div class="container mt-4">
-        <!-- <div class="row">
-            <div class="col-lg-12 mb-4">
-                <h1 class="text-center mb-4">Admin Dashboard</h1>
-                <div class="card text-center">
-                    <div class="card-header">
-                        <h4 class="card-title">User Information</h4>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <strong>Name:</strong> {{ userStore.userName }}
-                            </li>
-                            <li class="list-group-item">
-                                <strong>Email:</strong> {{ userStore.userPhoneNumber }}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <h1 class="text-center mb-4">Charts</h1>
 
         <div class="container mt-4">

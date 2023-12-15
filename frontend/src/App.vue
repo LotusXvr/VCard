@@ -8,10 +8,10 @@ import { useRouter } from "vue-router"
 import { useDark, useToggle } from "@vueuse/core"
 
 const isDark = useDark({
-    selector: "body", //element to add attribute to
-    attribute: "theme", // attribute name
-    valueDark: "custom-dark", // attribute value for dark mode
-    valueLight: "custom-light", // attribute value for light mode
+    selector: "body", 
+    attribute: "theme",
+    valueDark: "custom-dark", 
+    valueLight: "custom-light",
 })
 const toggleDark = useToggle(isDark)
 
@@ -37,7 +37,7 @@ const formatUserName = (fullName) => {
     if (names.length >= 2) {
         return `${names[0]} ${names[names.length - 1]}`
     } else {
-        return fullName // In case there's only one name
+        return fullName
     }
 }
 

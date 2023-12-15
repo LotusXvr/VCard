@@ -54,7 +54,6 @@ const editTransaction = (transaction) => {
   router.push({ name: 'Transaction', params: { id: transaction.id } })
 }
 
-// Reactive filter properties
 const startDate = ref(null)
 const endDate = ref(null)
 const type = ref('')
@@ -74,17 +73,14 @@ const updateType = () => {
   if (selectedCategory) {
     type.value = selectedCategory.type
   } else {
-    // Handle the case when no category is selected
     type.value = null
   }
 }
 
-// Method to apply filters
 const applyFilters = () => {
   loadTransactions()
 }
 
-// Method to clear filters
 const clearFilters = () => {
   startDate.value = null
   endDate.value = null
@@ -105,7 +101,6 @@ onMounted(() => {
   <div class="container mt-4">
     <div class="row">
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="startDate" class="form-label">Start Date:</label>
           <input type="date" class="form-control" v-model="startDate" />
@@ -113,14 +108,12 @@ onMounted(() => {
       </div>
 
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="endDate" class="form-label">End Date:</label>
           <input type="date" class="form-control" v-model="endDate" />
         </div>
       </div>
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="type" class="form-label">Type:</label>
           <select class="form-select" v-model="type">
@@ -131,7 +124,6 @@ onMounted(() => {
         </div>
       </div>
       <div class="col-md-3">
-        <!-- Filter inputs -->
         <div class="mb-3">
           <label for="method" class="form-label">Method:</label>
           <select class="form-select" v-model="method">
@@ -164,14 +156,12 @@ onMounted(() => {
         </select>
       </div>
       <div class="col-md-3">
-        <!-- Button to apply filters -->
         <div class="mb-3">
           <button @click="applyFilters" class="btn btn-primary">Apply Filters</button>
         </div>
       </div>
 
       <div class="col-md-3">
-        <!-- Button to clear filters and show all transactions -->
         <div class="mb-3">
           <button @click="clearFilters" class="btn btn-secondary">Clear Filters</button>
         </div>

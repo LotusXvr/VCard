@@ -100,7 +100,6 @@ const truncateDescription = (description) => {
     }
 }
 
-// Assista a alterações em props.transactions
 watchEffect(() => {
     transactionsRef.value = props.transactions
 })

@@ -71,13 +71,11 @@ const spinWheel = () => {
     goodPrize.value = false
     badPrize.value = false
 
-    // se já estiver a rodar, sai logo fora
     if (isAlreadySpinning.value == true) {
         return
     }
     isAlreadySpinning.value = true
 
-    // timeout para simular o tempo de espera
     setTimeout(() => {
         generatePrize()
 
@@ -85,7 +83,6 @@ const spinWheel = () => {
         isAlreadySpinning.value = false
     }, 2000)
 
-    //update spins
     spins.value -= 1
     updateVCardSpins()
 }
@@ -95,10 +92,8 @@ const goodPrize = ref(false)
 const badPrize = ref(false)
 
 const generatePrize = () => {
-    // Define the probability distribution (80% chance of nothing, 20% chance of winning)
     const nothingProbability = 0.8
 
-    // Generate a random number to determine the outcome
     const randomNumber = Math.random()
 
     if (randomNumber < nothingProbability) {
@@ -127,7 +122,6 @@ const generatePrize = () => {
         goodPrize.value = true
     }
 
-    // if good prize, send the money to the user
     if (goodPrize.value == true) {
         givePrizeTransaction()
     }
@@ -154,7 +148,6 @@ onMounted(() => {
     </div>
 
     <div class="text-center mt-3" v-if="showLoading">
-        <!-- Add a loading image or spinner -->
         <img src="/loading.gif" alt="Loading..." />
     </div>
 
@@ -163,7 +156,6 @@ onMounted(() => {
     </div>
 
     <div class="text-center mt-3 mb-3" v-if="goodPrize">
-        <!-- Display for good prizes with text on top of the smaller image -->
         <div style="position: relative">
             <img
                 src="/congratulations.jpg"

@@ -66,8 +66,6 @@ const save = async () => {
 
     editingTransaction.value.value = parseFloat(editingTransaction.value.value).toFixed(2)
 
-    // isto faz um deepcopy da variavel edittingTransaction para que se possa fazer
-    // mutações á variavel newTransaction sem alterar os valores do form
     const newTransaction = { ...editingTransaction.value }
 
     if (props.inserting === "debit") {
@@ -117,7 +115,6 @@ const validateValue = () => {
         return "Invalid value"
     }
 
-    // Check the maximum value based on payment type
     const paymentType = editingTransaction.value.payment_type
     switch (paymentType) {
         case "MBWAY":
@@ -141,7 +138,7 @@ const validateValue = () => {
             return "Invalid payment type"
     }
 
-    return true // Indicates a valid transaction value
+    return true
 }
 
 
