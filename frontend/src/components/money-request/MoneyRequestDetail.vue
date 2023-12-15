@@ -1,11 +1,5 @@
 <script setup>
-import { ref, watch, computed, onMounted } from "vue"
-import { useToast } from "vue-toastification"
-import { useUserStore } from "../../stores/user"
-import axios from "axios"
-
-const toast = useToast()
-const userStore = useUserStore()
+import { ref, watch } from "vue"
 
 const props = defineProps({
     moneyRequest: {
