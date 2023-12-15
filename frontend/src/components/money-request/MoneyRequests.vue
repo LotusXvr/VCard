@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, } from "vue"
+import { ref, onMounted } from "vue"
 import axios from "axios"
 import MoneyRequestTable from "./MoneyRequestTable.vue"
 import { useUserStore } from "../../stores/user"
@@ -9,13 +9,31 @@ const toast = useToast()
 const userStore = useUserStore()
 
 const moneyRequests = ref([])
-
+const loadedMoneyRequests = ref(false)
 const loadMoneyRequests = () => {
+    loadedMoneyRequests.value = false
     axios
         .get("vcard/" + userStore.userPhoneNumber + "/moneyRequests")
         .then((response) => {
             moneyRequests.value = response.data
-            console.log(response.data)
+            console.log("mine: " + response.data)
+            loadedMoneyRequests.value = true
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+}
+
+const pendingRequests = ref([])
+const loadedPendingRequests = ref(false)
+const loadPendingRequests = () => {
+    loadedPendingRequests.value = false
+    axios
+        .get("vcard/" + userStore.userPhoneNumber + "/moneyRequests/pending")
+        .then((response) => {
+            pendingRequests.value = response.data
+            console.log("pending: " + response.data)
+            loadedPendingRequests.value = true
         })
         .catch((error) => {
             console.log(error)
@@ -59,13 +77,13 @@ const rejectRequest = (moneyRequest) => {
 const newVCard = () => {
     return {
         phone_number: null,
-        name: '',
-        balance: '',
-        email: '',
+        name: "",
+        balance: "",
+        email: "",
         photo_url: null,
-        password: '',
-        password_confirmation: '',
-        confirmation_code: ''
+        password: "",
+        password_confirmation: "",
+        confirmation_code: "",
     }
 }
 
@@ -83,6 +101,7 @@ const loadVCard = async () => {
 onMounted(() => {
     loadVCard()
     loadMoneyRequests()
+    loadPendingRequests()
 })
 </script>
 
@@ -91,9 +110,14 @@ onMounted(() => {
 
     <hr />
 
-    <div v-if="moneyRequests.length > 0">
-        <MoneyRequestTable :moneyRequests="moneyRequests" :vcard="vcard" @acceptRequest="acceptRequest"
-            @rejectRequest="rejectRequest">
+    <div v-if="loadedMoneyRequests && loadedPendingRequests">
+        <MoneyRequestTable
+            :pendingRequests="pendingRequests"
+            :moneyRequests="moneyRequests"
+            :vcard="vcard"
+            @acceptRequest="acceptRequest"
+            @rejectRequest="rejectRequest"
+        >
         </MoneyRequestTable>
     </div>
     <div v-else>You have no money requests yet</div>

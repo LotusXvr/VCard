@@ -60,6 +60,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post("moneyRequests/{moneyRequest}/update", [MoneyRequestController::class, 'acceptOrRejectMoneyRequest']);
     // List of money requests by phone number
     Route::get('vcard/{vcard}/moneyRequests', [VCardController::class, 'getMoneyRequestsByPhoneNumber'])->middleware('can:view,vcard');
+    Route::get('vcard/{vcard}/moneyRequests/pending', [VCardController::class, 'getPendingMoneyRequestsByPhoneNumber'])->middleware('can:view,vcard');
 
 
     /*

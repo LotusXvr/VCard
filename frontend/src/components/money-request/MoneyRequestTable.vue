@@ -9,15 +9,20 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    pendingRequests: {
+        type: Array,
+        default: () => [],
+    },
     vcard: {
         type: Object,
         required: false,
-    }
+    },
 })
 
 const emit = defineEmits(["acceptRequest", "rejectRequest"])
 
 const moneyRequests = ref(props.moneyRequests)
+const pendingRequests = ref(props.pendingRequests)
 
 const statusName = (requestStatus) => {
     if (requestStatus === null) {
@@ -48,28 +53,65 @@ const rejectRequest = (moneyRequest) => {
 <template>
     <div>
         <p><b>Account Balance:</b> {{ props.vcard.balance }}€</p>
+        <h3>Your pending Requests</h3>
+        <table class="table table-stripped">
+            <thead>
+                <tr>
+                    <th scope="col">To</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="moneyRequest in pendingRequests" :key="moneyRequest.id">
+                    <th scope="row">{{ moneyRequest.to_vcard }}</th>
+                    <td>{{ moneyRequest.amount }}€</td>
+                    <td>{{ moneyRequest.description }}</td>
+                    <td
+                        :class="{
+                            'text-success': statusName(moneyRequest.status) === 'Accepted',
+                            'text-danger': statusName(moneyRequest.status) === 'Rejected',
+                            'font-weight-bold': statusName(moneyRequest.status) === 'Pending',
+                        }"
+                    >
+                        {{ statusName(moneyRequest.status) }}
+                    </td>
+                    <td v-if="statusName(moneyRequest.status) == 'Pending'">
+                        <button class="btn btn-danger" @click="rejectRequest(moneyRequest)">
+                            Cancel
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr />
+
+        <h2>Your requests</h2>
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>id</th>
                     <th scope="col">From</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Description</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Ações</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="moneyRequest in moneyRequests" :key="moneyRequest.id">
-                    <th scope="row">{{ moneyRequest.id }}</th>
                     <th scope="row">{{ moneyRequest.from_vcard }}</th>
-                    <td>{{ moneyRequest.amount }}</td>
+                    <td>{{ moneyRequest.amount }}€</td>
                     <td>{{ moneyRequest.description }}</td>
-                    <td :class="{
-                        'text-success': statusName(moneyRequest.status) === 'Accepted',
-                        'text-danger': statusName(moneyRequest.status) === 'Rejected',
-                        'font-weight-bold': statusName(moneyRequest.status) === 'Pending',
-                    }">
+                    <td
+                        :class="{
+                            'text-success': statusName(moneyRequest.status) === 'Accepted',
+                            'text-danger': statusName(moneyRequest.status) === 'Rejected',
+                            'font-weight-bold': statusName(moneyRequest.status) === 'Pending',
+                        }"
+                    >
                         {{ statusName(moneyRequest.status) }}
                     </td>
                     <td v-if="statusName(moneyRequest.status) == 'Pending'">

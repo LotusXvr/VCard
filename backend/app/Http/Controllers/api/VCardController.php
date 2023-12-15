@@ -303,6 +303,13 @@ class VCardController extends Controller
         return response()->json($moneyRequests);
     }
 
+    public function getPendingMoneyRequestsByPhoneNumber(VCard $vcard)
+    {
+        $moneyRequests = MoneyRequest::where('from_vcard', $vcard->phone_number)->where('status', null)->orderBy('created_at', 'DESC')->get();
+
+        return response()->json($moneyRequests);
+    }
+
     public function getLastMonthTransactionsByPhoneNumber(VCard $vcard)
     {
         $phoneNumber = $vcard->phone_number;
