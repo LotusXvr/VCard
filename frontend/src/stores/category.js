@@ -29,11 +29,24 @@ export const useCategoryStore = defineStore('categories', () => {
             throw error
         }
     }
+
+    async function loadCategoryWithTrashed() {
+        if (userStore.userType == "A") return
+        try {
+            const response = await axios.get("vcard/" + userStore.userPhoneNumber + "/category/all")
+            categories.value = response.data
+            return categories.value
+        } catch (error) {
+            clearCategories()
+            throw error
+        }
+    }
     
     return {
         categories,
         totalCategories,
         loadCategory,
-        clearCategories
+        clearCategories,
+        loadCategoryWithTrashed
     }
 })

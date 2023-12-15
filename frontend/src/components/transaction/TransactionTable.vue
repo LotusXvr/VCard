@@ -22,7 +22,7 @@ const props = defineProps({
 const emit = defineEmits(["edit", "hideStatistics"])
 
 const loadCategories = async () => {
-    categories.value = await categoryStore.loadCategory()
+    categories.value = await categoryStore.loadCategoryWithTrashed()
 }
 
 const editClick = (transaction) => {
