@@ -213,7 +213,7 @@ onMounted(async () => {
             <li class="nav-item" v-show="userStore.user?.user_type == 'A'">
               <router-link
                 class="nav-link w-100 me-3"
-                :class="{ active: $route.name === 'NewTransaction' }"
+                :class="{ active: $route.name === 'NewCreditTransaction' }"
                 :to="{
                   name: 'NewCreditTransaction'
                 }"
