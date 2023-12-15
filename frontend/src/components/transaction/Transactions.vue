@@ -42,7 +42,7 @@ const loadTransactions = (page = 1) => {
 }
 
 const loadCategories = async () => {
-    categories.value = await categoryStore.loadCategory();
+    categories.value = await categoryStore.loadCategoryWithTrashed();
     categories.value.sort((a, b) => {
         const typeComparison = a.type.localeCompare(b.type);
         return typeComparison === 0 ? a.name.localeCompare(b.name) : typeComparison;
