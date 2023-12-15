@@ -22,17 +22,18 @@ const statusName = (requestStatus) => {
     return requestStatus == 1 ? "Accepted" : "Rejected"
 }
 
-// TODO: PEDIR CODIGO DE CONFIRMAÇAO AO CLICAR NO BOTAO DE ACEITAR!! REJEITAR NAO É PRECISO
+// TODO: PEDIR CODIGO DE CONFIRMAÇAO AO CLICAR NO BOTAO DE ACEITAR!! REJEITAR NAO É PRECISO (como está neste momento está 🤢🤮)
 // TODO: ATUALIZAR A LISTA QUANDO SE CLICA NO BOTAO DE ACEITAR OU REJEITAR
 // TODO: VER OS MEUS PEDIDOS PENDENTES! TALVEZ TENHA DE SER NOUTRA TABELA OU WTV
 
 const confirmationCode = ref("")
+
 const acceptRequest = (moneyRequest) => {
     if (confirmationCode.value == "") {
         toast.error("Please enter the confirmation code")
         return
     }
-    emit("acceptRequest",  moneyRequest, confirmationCode.value )
+    emit("acceptRequest", moneyRequest, confirmationCode.value)
 }
 
 const rejectRequest = (moneyRequest) => {
