@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MoneyRequestController extends Controller
 {
@@ -94,9 +95,10 @@ class MoneyRequestController extends Controller
          *   he accepted or rejected the request
          */
 
+         Log::info('Money request being handled: ' . $moneyRequest);
+
         // check if money request being handled has already been canceled or accepted
-        $moneyRequest = MoneyRequest::where('id', $moneyRequest->id)->first();
-        if ($moneyRequest->status != null) {
+        if ($moneyRequest->status !== null) {
             return response()->json(['message' => 'Money request has already been canceled or accepted'], 422);
         }
 

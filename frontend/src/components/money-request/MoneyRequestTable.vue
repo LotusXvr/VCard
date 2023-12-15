@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref } from "vue"
 
 const props = defineProps({
     moneyRequests: {
@@ -8,16 +8,27 @@ const props = defineProps({
     },
 })
 
+const emit = defineEmits(["acceptRequest", "rejectRequest"])
+
 const moneyRequests = ref(props.moneyRequests)
 
 const statusName = (requestStatus) => {
-    console.log(requestStatus)
     if (requestStatus === null) {
         return "Pending"
     }
     return requestStatus == 1 ? "Accepted" : "Rejected"
 }
 
+// TODO: ACEITAR E REJEITAR REQUISIÇÕES DE DINHEIRO
+// TODO: PEDIR CODIGO DE CONFIRMAÇAO
+
+const acceptRequest = (moneyRequest) => {
+    emit("acceptRequest", moneyRequest)
+}
+
+const rejectRequest = (moneyRequest) => {
+    emit("rejectRequest", moneyRequest)
+}
 </script>
 
 <template>
@@ -25,6 +36,7 @@ const statusName = (requestStatus) => {
         <table class="table table-hover">
             <thead>
                 <tr>
+                    <th>id</th>
                     <th scope="col">From</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Description</th>
@@ -34,6 +46,7 @@ const statusName = (requestStatus) => {
             </thead>
             <tbody>
                 <tr v-for="moneyRequest in moneyRequests" :key="moneyRequest.id">
+                    <th scope="row">{{ moneyRequest.id }}</th>
                     <th scope="row">{{ moneyRequest.from_vcard }}</th>
                     <td>{{ moneyRequest.amount }}</td>
                     <td>{{ moneyRequest.description }}</td>
@@ -47,8 +60,12 @@ const statusName = (requestStatus) => {
                         {{ statusName(moneyRequest.status) }}
                     </td>
                     <td v-if="statusName(moneyRequest.status) == 'Pending'">
-                        <button class="btn btn-success">Accept</button>
-                        <button class="btn btn-danger">Reject</button>
+                        <button class="btn btn-success" @click="acceptRequest(moneyRequest)">
+                            Accept
+                        </button>
+                        <button class="btn btn-danger" @click="rejectRequest(moneyRequest)">
+                            Reject
+                        </button>
                     </td>
                 </tr>
             </tbody>

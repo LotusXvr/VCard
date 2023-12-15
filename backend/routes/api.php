@@ -48,9 +48,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get("vcard/{vcard}/category/all", [VCardController::class, 'getCategoryFromVCardWithTrashed'])->middleware('can:view,vcard');
     Route::get('vcard/{vcard}/transactions/lastmonth', [VCardController::class, 'getLastMonthTransactionsByPhoneNumber'])->middleware('can:view,vcard');
 
-    // List of money requests by phone number
-    Route::get('vcard/{vcard}/moneyRequests', [VCardController::class, 'getMoneyRequestsByPhoneNumber'])->middleware('can:view,vcard');
-
     // Statistics
     Route::get('statistics/transactions/sum-between-dates', [TransactionController::class, 'getTransactionsSumBetweenDates'])->middleware('can:viewAny,App\Models\User');
     Route::get('statistics/transactions/older', [TransactionController::class, 'getOlderTransaction'])->middleware('can:viewAny,App\Models\User');
@@ -61,6 +58,10 @@ Route::middleware('auth:api')->group(function () {
 
     // Accept or reject money request
     Route::post("moneyRequests/{moneyRequest}/update", [MoneyRequestController::class, 'acceptOrRejectMoneyRequest']);
+    // List of money requests by phone number
+    Route::get('vcard/{vcard}/moneyRequests', [VCardController::class, 'getMoneyRequestsByPhoneNumber'])->middleware('can:view,vcard');
+
+
     /*
      * Globais
      */
@@ -77,10 +78,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('users', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
     Route::get('users/{user}', [UserController::class, 'show'])->middleware('can:view,user');
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
-    Route::get('transactions', [TransactionController::class , 'index'])->middleware('can:viewAny,App\Models\User');
-    Route::post('transactions', [TransactionController::class , 'store']);
-    Route::get('transactions/{transaction}', [TransactionController::class , 'show']);
-    Route::put('transactions/{transaction}', [TransactionController::class , 'update']);
+    Route::get('transactions', [TransactionController::class, 'index'])->middleware('can:viewAny,App\Models\User');
+    Route::post('transactions', [TransactionController::class, 'store']);
+    Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
+    Route::put('transactions/{transaction}', [TransactionController::class, 'update']);
     Route::apiResource('moneyRequests', MoneyRequestController::class);
 
 });
