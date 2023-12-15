@@ -108,9 +108,9 @@ onMounted(async () => {
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <button
+                        <button class="m-2 sm dark-button"
                             @click="toggleDark()"
-                            class="m-2 btn btn-sm btn-outline-primary"
+                            
                             :class="{ 'btn-light': isDark, 'btn-dark': !isDark }"
                         >
                             {{ isDark ? "Light Mode" : "Dark Mode" }}
@@ -519,6 +519,21 @@ onMounted(async () => {
 
 #sidebarMenu.collapse li.nav-item a {
     color: #0bbad6;
+}
+
+.dark-button {
+    background-color: #212529;
+    color: #0bbad6;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dark-button:hover {
+background-color: #0bbad6;
+color: #fff;
 }
 
 [theme="custom-dark"] {

@@ -114,7 +114,7 @@ const save = async (transactionToSave) => {
       if (
         userStore.userType !== 'A' &&
         transactionToSave.payment_type != 'VCARD' &&
-        transactionToSave.value > 10
+        transactionToSave.value >= 10
       ) {
         toast.info('You just received ' + response.data.spins + ' spins')
       }
