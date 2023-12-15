@@ -45,6 +45,12 @@ class MoneyRequestController extends Controller
          *   The request will be sent to the receiver, and the receiver will be able to accept or reject it
          *   If the receiver accepts the request, the value will be transfered from the requesters' vcard to the receivers' vcard
          *   Adding that the only possible payment type is VCARD
+         *
+         *    @param string $from_vcard (userStore phone_number)
+         *    @param string $to_vcard
+         *    @param float $value
+         *    @param string $description (optional)
+         *    @return \Illuminate\Http\JsonResponse
          */
 
         // verify if value being sent is at least 0.01€
