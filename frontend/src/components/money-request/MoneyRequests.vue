@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watchEffect } from "vue"
+import { ref, onMounted, } from "vue"
 import axios from "axios"
 import MoneyRequestTable from "./MoneyRequestTable.vue"
 import { useUserStore } from "../../stores/user"
@@ -9,8 +9,6 @@ const toast = useToast()
 const userStore = useUserStore()
 
 const moneyRequests = ref([])
-
-const reloadTableTrigger = ref(false) // Create a reactive trigger
 
 const loadMoneyRequests = () => {
     axios

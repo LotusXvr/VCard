@@ -95,8 +95,6 @@ class MoneyRequestController extends Controller
          *   he accepted or rejected the request
          */
 
-         Log::info('Money request being handled: ' . $moneyRequest);
-
         // check if money request being handled has already been canceled or accepted
         if ($moneyRequest->status !== null) {
             return response()->json(['message' => 'Money request has already been canceled or accepted'], 422);
