@@ -8,9 +8,9 @@ import { useRouter } from "vue-router"
 import { useDark, useToggle } from "@vueuse/core"
 
 const isDark = useDark({
-    selector: "body", 
+    selector: "body",
     attribute: "theme",
-    valueDark: "custom-dark", 
+    valueDark: "custom-dark",
     valueLight: "custom-light",
 })
 const toggleDark = useToggle(isDark)
@@ -107,12 +107,9 @@ onMounted(async () => {
                             Login
                         </router-link>
                     </li>
-                    <li class="nav-item">
-                        <button class="m-2 sm dark-button"
-                            @click="toggleDark()"
-                            
-                            :class="{ 'btn-light': isDark, 'btn-dark': !isDark }"
-                        >
+                    <li class=" nav-item mt-2">
+                        <i class="bi" :class="{ 'bi-sun': !isDark, 'bi-moon': isDark }"></i>
+                        <button class="sm dark-button" @click="toggleDark()">
                             {{ isDark ? "Light Mode" : "Dark Mode" }}
                         </button>
                     </li>
@@ -528,12 +525,14 @@ onMounted(async () => {
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+    transition:
+        background-color 0.3s,
+        color 0.3s;
 }
 
 .dark-button:hover {
-background-color: #0bbad6;
-color: #fff;
+    background-color: #0bbad6;
+    color: #fff;
 }
 
 [theme="custom-dark"] {
