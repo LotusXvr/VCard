@@ -57,5 +57,10 @@ io.on("connection", (socket) => {
   socket.on("changedStatus", function ({ user, status }) {
     socket.in("administrator").emit("changedStatusNotification", { user, status });
   });
+
+  socket.on("requestMoney", function ({ receiver, sender, amount }) {
+    console.log("Boas mano: " + receiver, sender, amount);
+    socket.to(sender).emit("requestMoneyNotification", { receiver, amount });
+  });
 });
 
