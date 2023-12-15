@@ -30,15 +30,15 @@ Route::post('vcard', [VCardController::class, 'store']);
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users/me', [UserController::class, 'show_me']);
-    Route::patch('admins/{admin}/password', [AdminController::class, 'update_password']);
+    Route::patch('admins/{admin}/password', [AdminController::class, 'update_password'])->middleware('can:updatePassword,App\Models\User');
     Route::patch('vcards/{vcard}/password', [VCardController::class, 'update_password'])->middleware('can:updatePassword,vcard');
-    Route::patch('vcards/{vcard}/change-status', [VCardController::class, 'changeStatus']);
+    Route::patch('vcards/{vcard}/change-status', [VCardController::class, 'changeStatus'])->middleware('can:changeStatus,App\Models\User');
     Route::patch('vcards/{vcard}/change-confirmation-code', [VCardController::class, 'update_confirmation_code'])->middleware('can:updatePassword,vcard');
-    Route::delete('vcards/{vcard}/dismiss', [VCardController::class, 'dismissVCard']);
+    Route::delete('vcards/{vcard}/dismiss', [VCardController::class, 'dismissVCard'])->middleware('can:delete,vcard');
 
     Route::post('vcards/confirm', [VCardController::class, 'isPhoneNumberAlreadyUsed']);
-    Route::post('vcards/{vcard}/reforcarPoupanca', [VCardController::class, 'reforcarPoupanca']);
-    Route::post('vcards/{vcard}/retirarPoupanca', [VCardController::class, 'retirarPoupanca']);
+    Route::post('vcards/{vcard}/reforcarPoupanca', [VCardController::class, 'reforcarPoupanca'])->middleware('can:updateSavings,vcard');
+    Route::post('vcards/{vcard}/retirarPoupanca', [VCardController::class, 'retirarPoupanca'])->middleware('can:updateSavings,vcard');
 
     Route::put('vcard/{vcard}/spins', [VCardController::class, 'updateSpins']);
 
@@ -66,10 +66,13 @@ Route::middleware('auth:api')->group(function () {
     Route::put('vcards/{vcard}', [VCardController::class, 'update'])->middleware('can:update,vcard');
     Route::delete('vcards/{vcard}', [VCardController::class, 'destroy'])->middleware('can:viewAny,App\Models\User');
     Route::apiResource('category', CategoryController::class);
-    Route::apiResource('default-category', DefaultCategoryController::class);
+    Route::get('default-category', [DefaultCategoryController::class, 'index']);
+    Route::get('default-category/{default_category}', [DefaultCategoryController::class, 'show']);
+    Route::post('default-category', [DefaultCategoryController::class, 'store'])->middleware('can:create,App\Models\User');
+    Route::put('default-category/{default_category}', [DefaultCategoryController::class, 'update']);
+    Route::delete('default-category/{default_category}', [DefaultCategoryController::class, 'destroy'])->middleware('can:deleteDefaultCategory,App\Models\User');
     Route::get('users', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
     Route::get('users/{user}', [UserController::class, 'show'])->middleware('can:view,user');
-    //Route::post('users', [UserController::class, 'store'])->middleware('can:create');
     Route::apiResource('admins', AdminController::class)->middleware('can:viewAny,App\Models\User');
     Route::get('transactions', [TransactionController::class , 'index'])->middleware('can:viewAny,App\Models\User');
     Route::post('transactions', [TransactionController::class , 'store']);

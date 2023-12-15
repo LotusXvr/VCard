@@ -21,4 +21,13 @@ class VCardPolicy
         return $user->user_type == 'A' || $user->username == $model->phone_number;
     }
 
+    public function updateSavings(User $user, VCard $model)
+    {
+        return $user->username == $model->phone_number;
+    }
+
+    public function delete(User $user, VCard $model)
+    {
+        return $user->user_type == 'A' || $user->username == $model->phone_number;
+    }
 }
