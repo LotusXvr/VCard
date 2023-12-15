@@ -17,6 +17,36 @@ const errors = ref(null)
 const categoriesRef = ref([])
 let originalValueStr = ''
 
+
+const newVCard = () => {
+  return {
+    phone_number: null,
+    name: '',
+    balance: '',
+    email: '',
+    photo_url: null,
+    password: '',
+    password_confirmation: '',
+    confirmation_code: ''
+  }
+}
+
+const vcard = ref(newVCard())
+
+const loadVCard = async () => {
+    originalValueStr
+    errors.value = null
+    try {
+        const response = await axios.get("vcards/" + userStore.userPhoneNumber)
+        vcard.value = response.data.data
+        console.log(response.data.data)
+        console.log(vcard.value.balance)
+        originalValueStr = JSON.stringify(vcard.value)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 const props = defineProps({
   id: {
     type: Number,
@@ -81,7 +111,11 @@ const save = async (transactionToSave) => {
       }
 
       const response = await axios.post('transactions', transactionToSave)
-      if (transactionToSave.payment_type != 'VCARD' && transactionToSave.value > 10) {
+      if (
+        userStore.userType !== 'A' &&
+        transactionToSave.payment_type != 'VCARD' &&
+        transactionToSave.value > 10
+      ) {
         toast.info('You just received ' + response.data.spins + ' spins')
       }
       toast.success(response.data.message)
@@ -102,7 +136,8 @@ const save = async (transactionToSave) => {
     }
   } else {
     try {
-      await axios.put('transactions/' + props.id, transactionToSave)
+      const response = await axios.put('transactions/' + props.id, transactionToSave)
+      console.log(response.data)
       toast.success('Transaction # ' + transactionToSave.id + ' updated successfully')
       router.back()
     } catch (error) {
@@ -135,6 +170,9 @@ const loadCategories = async () => {
 
 onMounted(() => {
   loadCategories()
+  if(userStore.userType == 'V'){
+    loadVCard()
+  }
   categoriesRef.value = categoryStore.categories
 })
 </script>
@@ -143,6 +181,7 @@ onMounted(() => {
   <transaction-detail
     :transaction="transaction"
     :errors="errors"
+    :vcard="vcard"
     :inserting="inserting(id)"
     @save="save"
     @cancel="cancel"

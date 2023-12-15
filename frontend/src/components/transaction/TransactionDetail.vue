@@ -2,15 +2,20 @@
 import { ref, watch, computed, onMounted } from "vue"
 import { useToast } from "vue-toastification"
 import { useCategoryStore } from "../../stores/category"
+import { useUserStore } from "../../stores/user"
 
 const toast = useToast()
-const accountBalance = ref(null)
 const categoryStore = useCategoryStore()
+const userStore = useUserStore()
 
 const props = defineProps({
     transaction: {
         type: Object,
         required: true,
+    },
+    vcard: {
+        type: Object,
+        required: false,
     },
     inserting: {
         type: String,
@@ -27,6 +32,7 @@ const props = defineProps({
 })
 
 const editingTransaction = ref(props.transaction)
+let originalValueStr = ""
 
 const emit = defineEmits(["save", "cancel"])
 
@@ -165,8 +171,9 @@ onMounted(() => {
 <template>
     <h3 class="mt-5 mb-3">{{ transactionTitle }}</h3>
     <div>
-        <div v-if="accountBalance !== null">
-            <p>Account Balance: {{ accountBalance }}</p>
+        <div v-if="userStore.userType === 'V'">
+            <p><b>Account Balance:</b> {{ props.vcard.balance }}</p>
+            <p><b>Max Debit:</b>  {{ props.vcard.max_debit }}</p>
         </div>
         <hr />
         <form @submit.prevent="save">
