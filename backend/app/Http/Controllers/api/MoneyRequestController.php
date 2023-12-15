@@ -105,7 +105,7 @@ class MoneyRequestController extends Controller
             $this->update($request->status, $moneyRequest);
 
             // as the request was rejected, we dont need to do anything else
-            return response()->json(['message' => 'Money request rejected'], 200);
+            return response()->json(['message' => 'Money request rejected successfully'], 200);
         }
 
 
@@ -151,40 +151,40 @@ class MoneyRequestController extends Controller
             ];
 
             // Create a transaction
-            DB::transaction(function () use ($requestTransaction) {
+            DB::transaction(function () use ($requestTransaction, $vcardAccepter) {
 
                 $date = date('Y-m-d');
                 $datetime = date('Y-m-d H:i:s');
 
                 // Money sending transaction
                 $transaction1 = new Transaction();
-                $transaction1->vcard = $requestTransaction['payment_reference'];
+                $transaction1->vcard = $requestTransaction['vcard'];
                 $transaction1->date = $date;
                 $transaction1->datetime = $datetime;
                 $transaction1->type = 'D';
                 $transaction1->value = $requestTransaction['value'];
-                $vcardBalance = VCard::where('phone_number', $requestTransaction['payment_reference'])->first()->balance;
+                $vcardBalance = $vcardAccepter->balance;
                 $transaction1->old_balance = $vcardBalance;
                 $transaction1->new_balance = $vcardBalance - $requestTransaction['value'];
                 $transaction1->payment_type = $requestTransaction['payment_type'];
                 $transaction1->payment_reference = $requestTransaction['payment_reference'];
-                $transaction1->pair_vcard = $requestTransaction['vcard'];
+                $transaction1->pair_vcard = $requestTransaction['payment_reference'];
                 $transaction1->category_id = null;
                 $transaction1->description = $requestTransaction['description'];
 
                 // Money reception transaction
                 $transaction2 = new Transaction();
-                $transaction2->vcard = $requestTransaction['vcard'];
+                $transaction2->vcard = $requestTransaction['payment_reference'];
                 $transaction2->date = $date;
                 $transaction2->datetime = $datetime;
                 $transaction2->type = 'C';
                 $transaction2->value = $requestTransaction['value'];
-                $payment_referenceBalance = VCard::where('phone_number', $requestTransaction['vcard'])->first()->balance;
+                $payment_referenceBalance = VCard::where('phone_number', $requestTransaction['payment_reference'])->first()->balance;
                 $transaction2->old_balance = $payment_referenceBalance;
                 $transaction2->new_balance = $payment_referenceBalance + $requestTransaction['value'];
                 $transaction2->payment_type = $requestTransaction['payment_type'];
                 $transaction2->payment_reference = $requestTransaction['vcard'];
-                $transaction2->pair_vcard = $requestTransaction['payment_reference'];
+                $transaction2->pair_vcard = $requestTransaction['vcard'];
                 $transaction2->category_id = null;
                 $transaction2->description = $requestTransaction['description'];
 
@@ -200,8 +200,6 @@ class MoneyRequestController extends Controller
                 $transaction1->save();
                 $transaction2->save();
 
-
-
                 // Update both individual's balances
                 VCard::where('phone_number', $requestTransaction['vcard'])->update(['balance' => $transaction1->new_balance]);
                 VCard::where('phone_number', $requestTransaction['payment_reference'])->update(['balance' => $transaction2->new_balance]);
@@ -212,7 +210,7 @@ class MoneyRequestController extends Controller
             // handle the acceptance of the request
             $this->update($request->status, $moneyRequest);
 
-            return response()->json(['message' => 'Money request handled correctly'], 200);
+            return response()->json(['message' => 'Money request accepted and transaction created successfully'], 200);
 
         } catch (Exception $e) {
             return response()->json(['message' => 'Error creating the money request acceptance transaction', 'error' => $e->getMessage()], 500);
