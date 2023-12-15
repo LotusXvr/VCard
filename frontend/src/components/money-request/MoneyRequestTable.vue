@@ -60,17 +60,15 @@ const rejectRequest = (moneyRequest) => {
                     <th scope="row">{{ moneyRequest.from_vcard }}</th>
                     <td>{{ moneyRequest.amount }}</td>
                     <td>{{ moneyRequest.description }}</td>
-                    <td
-                        :class="{
-                            'text-success': statusName(moneyRequest.status) === 'Accepted',
-                            'text-danger': statusName(moneyRequest.status) === 'Rejected',
-                            'font-weight-bold': statusName(moneyRequest.status) === 'Pending',
-                        }"
-                    >
+                    <td :class="{
+                        'text-success': statusName(moneyRequest.status) === 'Accepted',
+                        'text-danger': statusName(moneyRequest.status) === 'Rejected',
+                        'font-weight-bold': statusName(moneyRequest.status) === 'Pending',
+                    }">
                         {{ statusName(moneyRequest.status) }}
                     </td>
                     <td v-if="statusName(moneyRequest.status) == 'Pending'">
-                        <input v-model="confirmationCode" placeholder="Confirmation Code" />
+                        <input v-model.lazy="confirmationCode" placeholder="Confirmation Code" />
                         <button class="btn btn-success" @click="acceptRequest(moneyRequest)">
                             Accept
                         </button>
