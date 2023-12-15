@@ -267,6 +267,7 @@ class VCardController extends Controller
         $type = $request->type;
         $method = $request->method;
         $category = $request->category;
+        $orderBy = $request->orderBy;
 
         $query = Transaction::where('vcard', $phoneNumber);
 
@@ -289,7 +290,7 @@ class VCardController extends Controller
             return $query->where('category_id', $category);
         });
 
-        $transactions = $query->orderBy('datetime', 'desc')->paginate(20);  // Utiliza paginate em vez de get
+        $transactions = $query->orderBy('datetime', $orderBy)->paginate(20);  // Utiliza paginate em vez de get
 
         return response()->json($transactions);
     }

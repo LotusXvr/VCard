@@ -30,4 +30,19 @@ class UserPolicy
     {
         return $user->user_type == 'A' || $user->id === $model->id;
     }
+
+    public function changeStatus(User $user)
+    {
+        return $user->user_type == 'A';
+    }
+
+    public function updatePassword(User $user)
+    {
+        return $user->user_type == 'A';
+    }
+
+    public function deleteDefaultCategory(User $user)
+    {
+        return $user->user_type == 'A';
+    }
 }

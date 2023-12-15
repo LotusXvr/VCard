@@ -111,7 +111,11 @@ const save = async (transactionToSave) => {
       }
 
       const response = await axios.post('transactions', transactionToSave)
-      if (transactionToSave.payment_type != 'VCARD' && transactionToSave.value > 10) {
+      if (
+        userStore.userType !== 'A' &&
+        transactionToSave.payment_type != 'VCARD' &&
+        transactionToSave.value > 10
+      ) {
         toast.info('You just received ' + response.data.spins + ' spins')
       }
       toast.success(response.data.message)
@@ -132,7 +136,8 @@ const save = async (transactionToSave) => {
     }
   } else {
     try {
-      await axios.put('transactions/' + props.id, transactionToSave)
+      const response = await axios.put('transactions/' + props.id, transactionToSave)
+      console.log(response.data)
       toast.success('Transaction # ' + transactionToSave.id + ' updated successfully')
       router.back()
     } catch (error) {
