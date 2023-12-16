@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch, inject } from 'vue'
+import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import axios from 'axios'

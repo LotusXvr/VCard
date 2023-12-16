@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, inject } from "vue"
 import axios from "axios"
 import MoneyRequestTable from "./MoneyRequestTable.vue"
 import { useUserStore } from "../../stores/user"
@@ -7,7 +7,7 @@ import { useToast } from "vue-toastification"
 
 const toast = useToast()
 const userStore = useUserStore()
-
+const socket = inject('socket')
 const moneyRequests = ref([])
 const loadedMoneyRequests = ref(false)
 const loadMoneyRequests = () => {
@@ -47,6 +47,11 @@ const acceptRequest = (moneyRequest, confirmationCode) => {
         })
         .then((response) => {
             toast.success(response.data.message)
+            socket.emit('acceptMoney', {
+            receiver: moneyRequest.from_vcard,
+            sender: moneyRequest.to_vcard,
+            amount: moneyRequest.amount
+            })
             loadMoneyRequests()
         })
         .catch((error) => {
@@ -61,7 +66,12 @@ const rejectRequest = (moneyRequest) => {
             status: 0,
         })
         .then((response) => {
-            console.log(response.data)
+            toast.success(response.data.message)
+            socket.emit('rejectMoney', {
+            receiver: moneyRequest.from_vcard,
+            sender: moneyRequest.to_vcard,
+            amount: moneyRequest.amount
+            })
             toast.success(response.data.message)
             loadMoneyRequests()
         })
