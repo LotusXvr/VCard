@@ -187,12 +187,19 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore()
-
+    console.log(userStore.user)
+    console.log(userStore.userId)
+    console.log(to.name)
     if (handlingFirstRoute) {
         handlingFirstRoute = false
         await userStore.restoreToken()
     }
-
+    
+    // Redirecionar para a página de login se o usuário não estiver autenticado
+    if (to.name === "Home" && userStore.userId === -1) {
+        next({ name: "Login" })
+        return
+    }
     // Rotas públicas que podem ser acessadas por usuários não autenticados
     if (to.name === "Login" && userStore.user) {
         if (userStore.userType === "A") {
@@ -212,12 +219,6 @@ router.beforeEach(async (to, from, next) => {
 
     if (publicRoutes.includes(to.name)) {
         next()
-        return
-    }
-
-    // Redirecionar para a página de login se o usuário não estiver autenticado
-    if (!userStore.user) {
-        next({ name: "Login" })
         return
     }
 
@@ -285,7 +286,6 @@ router.beforeEach(async (to, from, next) => {
         next({ name: "Home" })
         return
     }
-
     if (
         to.name === "User" &&
         (userStore.userType === "A" || userStore.userId === parseInt(to.params.id))

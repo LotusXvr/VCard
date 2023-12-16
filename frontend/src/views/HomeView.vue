@@ -195,6 +195,7 @@ const loadChart = () => {
 }
 
 onMounted(() => {
+  console.log("Home")
   loadVCard(userStore.userPhoneNumber)
   loadLastMonthTransactions()
 })
