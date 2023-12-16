@@ -211,9 +211,14 @@ class TransactionController extends Controller
 
                     $transaction->save();
 
-                    // give the user 1 spin for every 10 euros sent
-                    $vcard->spins += floor($request->value / 10);
-                    VCard::where('phone_number', $request->vcard)->update(['spins' => $vcard->spins, 'balance' => $transaction->new_balance]);
+                    // give the user 1 spin for every 10 euros sent if it wasn't a credit transaction made by the admin
+                    if ($request->type != 'C') {
+                        $vcard->spins += floor($request->value / 10);
+                        VCard::where('phone_number', $request->vcard)->update(['spins' => $vcard->spins, 'balance' => $transaction->new_balance]);
+                    }
+
+                    VCard::where('phone_number', $request->vcard)->update(['balance' => $transaction->new_balance]);
+
 
                 });
 

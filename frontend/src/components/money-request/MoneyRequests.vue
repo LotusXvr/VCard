@@ -32,7 +32,6 @@ const loadPendingRequests = () => {
         .get("vcard/" + userStore.userPhoneNumber + "/moneyRequests/pending")
         .then((response) => {
             pendingRequests.value = response.data
-            console.log("pending: " + response.data)
             loadedPendingRequests.value = true
         })
         .catch((error) => {
@@ -47,7 +46,6 @@ const acceptRequest = (moneyRequest, confirmationCode) => {
             confirmation_code: confirmationCode,
         })
         .then((response) => {
-            console.log(response.data)
             toast.success(response.data.message)
             loadMoneyRequests()
         })
@@ -61,7 +59,6 @@ const rejectRequest = (moneyRequest) => {
     axios
         .post("moneyRequests/" + moneyRequest.id + "/update", {
             status: 0,
-            confirmation_code: 123,
         })
         .then((response) => {
             console.log(response.data)

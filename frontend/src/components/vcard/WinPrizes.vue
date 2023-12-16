@@ -135,7 +135,8 @@ onMounted(() => {
 <template>
     <div class="card text-center mt-3">
         <div class="card-body">
-            For every 10€ spent using our application you get a chance to win a prize!
+            For every 10€ spent paying for services using our application you get a chance to win a
+            prize!
         </div>
     </div>
 
