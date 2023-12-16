@@ -59,7 +59,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("requestMoney", function ({ receiver, sender, amount }) {
-    console.log("Boas mano: " + receiver, sender, amount);
     socket.to(sender).emit("requestMoneyNotification", { receiver, amount });
   });
 });

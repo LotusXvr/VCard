@@ -125,6 +125,14 @@ const save = async (transactionToSave) => {
         })
       }
 
+      if (userStore.userType == 'A') {
+        socket.emit('moneySent', {
+          receiver: transactionToSave.vcard,
+          sender: userStore.userName,
+          amount: transactionToSave.value
+        })
+      }
+
       router.back()
     } catch (error) {
       errors.value = error.response.data.message
