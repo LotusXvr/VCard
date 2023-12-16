@@ -28,6 +28,8 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('vcard', [VCardController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
+    Route::get('vcards/name/{vcard}', [VCardController::class, 'getVCardName']);
+
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users/me', [UserController::class, 'show_me']);
     Route::patch('admins/{admin}/password', [AdminController::class, 'update_password'])->middleware('can:updatePassword,App\Models\User');

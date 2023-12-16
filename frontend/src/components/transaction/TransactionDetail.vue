@@ -3,10 +3,14 @@ import { ref, watch, computed, onMounted } from "vue"
 import { useToast } from "vue-toastification"
 import { useCategoryStore } from "../../stores/category"
 import { useUserStore } from "../../stores/user"
+import Swal from 'sweetalert2'
+import axios from "axios"
+
 
 const toast = useToast()
 const categoryStore = useCategoryStore()
 const userStore = useUserStore()
+
 
 const props = defineProps({
     transaction: {
@@ -62,29 +66,66 @@ const save = async () => {
         toast.error(validateValue())
         return
     }
+    console.log(editingTransaction.value.payment_reference)
+    const response = await axios.get("vcards/name/" + editingTransaction.value.payment_reference)
+    let nomeDaPessoa = response.data.name
 
-    editingTransaction.value.value = parseFloat(editingTransaction.value.value).toFixed(2)
-
-    const newTransaction = { ...editingTransaction.value }
-
-    if (props.inserting === "debit") {
-        newTransaction.type = "D"
-        if (!validateReference(newTransaction.payment_reference)) {
-            toast.error("Invalid payment reference")
-            return
-        }
+    const names = nomeDaPessoa.split(" ")
+    if (names.length >= 2) {
+        nomeDaPessoa = `${names[0]} ${names[names.length - 1]}`
     }
 
-    if (props.inserting === "credit") {
-        newTransaction.type = "C"
-        if (!validateReference(newTransaction.vcard)) {
-            toast.error("Invalid payment reference")
-            return
+    // Use SweetAlert2 para exibir uma confirmação
+    const result = await Swal.fire({
+        title: "Tem a certeza que quer enviar dinheiro a " + nomeDaPessoa + "?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sim, enviar!",
+        cancelButtonText: "Não, cancelar",
+        reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+
+        editingTransaction.value.value = parseFloat(editingTransaction.value.value).toFixed(2)
+
+        const newTransaction = { ...editingTransaction.value }
+
+        if (props.inserting === "debit") {
+            newTransaction.type = "D"
+            if (!validateReference(newTransaction.payment_reference)) {
+                toast.error("Invalid payment reference")
+                return
+            }
         }
+
+        if (props.inserting === "credit") {
+            newTransaction.type = "C"
+            if (!validateReference(newTransaction.vcard)) {
+                toast.error("Invalid payment reference")
+                return
+            }
+        }
+
+        emit("save", newTransaction)
+
+        // Ação quando o usuário confirma
+        await Swal.fire({
+            title: "Enviado!",
+            text: "O dinheiro foi enviado com sucesso.",
+            icon: "success"
+        });
+
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Ação quando o usuário cancela
+        await Swal.fire({
+            title: "Cancelado",
+            text: "O envio de dinheiro foi cancelado.",
+            icon: "error"
+        });
     }
 
-    console.log(newTransaction)
-    emit("save", newTransaction)
+
 }
 
 const validateReference = (reference) => {

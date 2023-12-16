@@ -155,6 +155,11 @@ class VCardController extends Controller
         return response()->json(['message' => 'VCard dismissed successfully']);
     }
 
+    public function getVCardName(VCard $vcard)
+    {
+        Log::info('VCARD: ' . $vcard);
+        return response()->json(['name' => $vcard->name]);
+    }
 
     public function changeStatus(VCard $vcard)
     {
