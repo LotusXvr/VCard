@@ -88,7 +88,7 @@ const save = async () => {
     }
 
     // Use SweetAlert2 para exibir uma confirmação
-    if (editingTransaction.value.payment_type === "VCARD") {
+    if (editingTransaction.value.payment_type === "VCARD" && (props.inserting === 'debit' || props.inserting === 'credit')) {
         const response = await axios.get("vcards/name/" + editingTransaction.value.payment_reference)
         let nomeDaPessoa = response.data.name
 
@@ -123,7 +123,6 @@ const save = async () => {
             return
         }
     }
-
 
     emit("save", newTransaction)
 

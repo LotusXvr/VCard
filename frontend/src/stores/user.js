@@ -136,8 +136,12 @@ export const useUserStore = defineStore('user', () => {
     toast.info(`${sender} has accepted your request for ${amount}€ !`)
   })
 
-  socket.on('rejectMoneyNotification', ({ sender, amount }) => {
-    toast.info(`${sender} has rejected your request for ${amount}€ !`)
+  socket.on('rejectMoneyNotification', ({ sender, receiver, amount, whoRejected}) => {
+    if(whoRejected == 'S'){
+      toast.info(`${sender} has rejected your request for ${amount}€ !`)
+    }else{
+      toast.info(`${receiver} has rejected his request for ${amount}€ !`)
+    }
   })
 
   return {

@@ -9,6 +9,7 @@ const toast = useToast()
 const userStore = useUserStore()
 const socket = inject('socket')
 const moneyRequests = ref([])
+let rejectedBy = 'S'
 const loadedMoneyRequests = ref(false)
 const loadMoneyRequests = () => {
     loadedMoneyRequests.value = false
@@ -23,6 +24,19 @@ const loadMoneyRequests = () => {
             console.log(error)
         })
 }
+
+socket.on('acceptMoneyNotification', () => {
+    loadPendingRequests()
+})
+
+socket.on('requestMoneyNotification', () => {
+    loadMoneyRequests()
+})
+
+socket.on('rejectMoneyNotification', () => {
+    loadPendingRequests()
+    loadMoneyRequests()
+})
 
 const pendingRequests = ref([])
 const loadedPendingRequests = ref(false)
@@ -61,6 +75,10 @@ const acceptRequest = (moneyRequest, confirmationCode) => {
 }
 
 const rejectRequest = (moneyRequest) => {
+    if(userStore.userPhoneNumber == moneyRequest.from_vcard){
+        rejectedBy = 'R'
+    }
+    
     axios
         .post("moneyRequests/" + moneyRequest.id + "/update", {
             status: 0,
@@ -70,10 +88,12 @@ const rejectRequest = (moneyRequest) => {
             socket.emit('rejectMoney', {
             receiver: moneyRequest.from_vcard,
             sender: moneyRequest.to_vcard,
-            amount: moneyRequest.amount
+            amount: moneyRequest.amount,
+            whoRejected : rejectedBy
             })
             toast.success(response.data.message)
             loadMoneyRequests()
+            loadPendingRequests()
         })
         .catch((error) => {
             console.log(error)

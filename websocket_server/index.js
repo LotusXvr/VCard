@@ -66,8 +66,13 @@ io.on("connection", (socket) => {
     socket.to(receiver).emit("acceptMoneyNotification", { sender, amount });
   });
 
-  socket.on("rejectMoney", function ({ receiver, sender, amount }) {
-    socket.to(receiver).emit("rejectMoneyNotification", { sender, amount });
+  socket.on("rejectMoney", function ({ receiver, sender, amount, whoRejected }) {
+    if(whoRejected == 'S'){
+      socket.to(receiver).emit("rejectMoneyNotification", { sender, amount, whoRejected });
+    }else{
+      socket.to(sender).emit("rejectMoneyNotification", { receiver, amount, whoRejected });
+    }
   });
+  
 });
 
