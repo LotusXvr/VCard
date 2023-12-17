@@ -198,6 +198,11 @@ router.beforeEach(async (to, from, next) => {
         next({ name: "Login" })
         return
     }
+
+    if (to.name === "ChangePassword" && userStore.userId === -1) {
+        next({ name: "Login" })
+        return
+    }
     
     // Rotas públicas que podem ser acessadas por usuários não autenticados
     if (to.name === "Login" && userStore.user) {
@@ -245,6 +250,11 @@ router.beforeEach(async (to, from, next) => {
         return
     }
 
+    if (to.name === "Transactions" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
     if (
         to.name === "Transactions" &&
         (userStore.userType !== "V" || userStore.userId === parseInt(to.params.id))
@@ -285,6 +295,72 @@ router.beforeEach(async (to, from, next) => {
         next({ name: "Home" })
         return
     }
+
+    if (to.name === "NewDefaultCategory" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "DefaultCategory" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+    if (to.name === "User" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Requests" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewRequest" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "WinPrizes" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "DefaultCategories" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Category" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewCategory" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Categories" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewTransaction" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewCreditTransaction" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Transaction" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+
     if (
         to.name === "User" &&
         (userStore.userType === "A" || userStore.userId === parseInt(to.params.id))
