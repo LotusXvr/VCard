@@ -168,7 +168,7 @@ export const useUserStore = defineStore('user', () => {
 
   socket.on('requestNotLoggedIn', async ({ receiver, sender, amount }) => {
     try {
-      await axios.post('http://localhost/api/notifications', {
+      await axios.post('notifications', {
         vcard: sender,
         message: `${receiver} has request ${amount}€ from you !`
       });
@@ -184,7 +184,7 @@ export const useUserStore = defineStore('user', () => {
 
   socket.on('acceptNotLoggedIn', async ({ receiver, sender, amount }) => {
     try {
-      await axios.post('http://localhost/api/notifications', {
+      await axios.post('notifications', {
         vcard: receiver,
         message: `${sender} has accepted your request for ${amount}€ !`
       });
@@ -206,7 +206,7 @@ export const useUserStore = defineStore('user', () => {
 
     if(whoRejected === 'S'){
       try {
-        await axios.post('http://localhost/api/notifications', {
+        await axios.post('notifications', {
           vcard: receiver,
           message: `${sender} has rejected your request for ${amount}€ !`
         });
@@ -216,7 +216,7 @@ export const useUserStore = defineStore('user', () => {
       }
     }else{
       try {
-        await axios.post('http://localhost/api/notifications', {
+        await axios.post('notifications', {
           vcard: sender,
           message: `${receiver} has rejected his request for ${amount}€ !`
         });
@@ -225,7 +225,6 @@ export const useUserStore = defineStore('user', () => {
         console.error("Error saving notification in the database:", error.message);
       }
     }
-    
   });
 
   return {
