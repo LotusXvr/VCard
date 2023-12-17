@@ -82,20 +82,28 @@ io.on("connection", (socket) => {
   });
 
   async function handleMoneyRequest(socket, receiver, sender, amount) {
-    const receiverSocketId = connectedSockets.get(receiver);
+    const receiverSocketId = connectedSockets.get(sender);
     console.log(receiver)
     if (receiverSocketId) {
-      socket.to(receiver).emit("moneyRequestNotification", { sender, amount });
-      console.log("logged")
+      socket.to(sender).emit("moneyRequestNotification", { sender, amount });
     } else {
       socket.emit('requestNotLoggedIn', { receiver, sender, amount });
-      console.log("notLogged")
     }
   }
 
   socket.on("acceptMoney", function ({ receiver, sender, amount }) {
-    socket.to(receiver).emit("acceptMoneyNotification", { sender, amount });
+    handleMoneyAccept(socket, receiver, sender, amount);
   });
+
+  async function handleMoneyAccept(socket, receiver, sender, amount) {
+
+    const receiverSocketId = connectedSockets.get(receiver);
+    if (receiverSocketId) {
+      socket.to(receiver).emit("acceptMoneyNotification", { sender, amount });
+    } else {
+      socket.emit('acceptNotLoggedIn', { receiver, sender, amount });
+    }
+  }
 
   socket.on("rejectMoney", function ({ receiver, sender, amount, whoRejected }) {
     if(whoRejected == 'S'){
