@@ -135,7 +135,6 @@ export const useUserStore = defineStore('user', () => {
   });
 
   socket.on('changedStatusNotification', ({ user, status }) => {
-    console.log(status)
     if (status == 1) {
       toast.info(`User #${user} has changed status to blocked successfully!`)
     }
@@ -154,11 +153,10 @@ export const useUserStore = defineStore('user', () => {
 
   socket.on('receiverNotLoggedIn', async ({ receiver, sender, amount }) => {
     try {
-      await axios.post('http://localhost/api/notifications', {
+      await axios.post('notifications', {
         vcard: receiver,
         message: `${sender} has sent you ${amount}€ !`
       });
-      console.log("Notification saved in the database.");
     } catch (error) {
       console.error("Error saving notification in the database:", error.message);
     }

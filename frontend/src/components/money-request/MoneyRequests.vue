@@ -17,7 +17,6 @@ const loadMoneyRequests = () => {
         .get("vcard/" + userStore.userPhoneNumber + "/moneyRequests")
         .then((response) => {
             moneyRequests.value = response.data
-            console.log("mine: " + response.data)
             loadedMoneyRequests.value = true
         })
         .catch((error) => {

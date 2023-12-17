@@ -48,7 +48,6 @@ const loadVCard = async (phone_number) => {
     try {
       const response = await axios.get('vcards/' + phone_number)
       vcard.value = response.data.data
-      console.log(response.data.data)
       originalValueStr = JSON.stringify(vcard.value)
     } catch (error) {
       console.log(error)

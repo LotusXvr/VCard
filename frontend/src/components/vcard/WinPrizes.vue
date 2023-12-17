@@ -18,7 +18,6 @@ const loadVCardSpins = async () => {
     try {
         const response = await axios.get("vcards/" + userStore.userPhoneNumber)
         spins.value = response.data.data.spins
-        console.log(response.data.data)
     } catch (error) {
         console.log(error)
     }
@@ -29,7 +28,6 @@ const updateVCardSpins = async () => {
         const response = await axios.put("vcard/" + userStore.userPhoneNumber + "/spins", {
             spins: spins.value,
         })
-        console.log(response.data.data)
     } catch (error) {
         console.log(error)
     }

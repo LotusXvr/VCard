@@ -135,7 +135,6 @@ const validateReference = (reference) => {
         case "PAYPAL":
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reference)
         case "IBAN":
-            console.log(reference)
             return /^[A-Z]{2}\d{23}$/.test(reference)
         case "MB":
             return /^\d{5}-\d{9}$/.test(reference)

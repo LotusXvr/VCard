@@ -28,7 +28,6 @@ const loadUsers = (page = 1) => {
     .then((response) => {
       users.value = response.data.data
       paginationData.value = response.data
-      console.log(response.data)
     })
     .catch((error) => {
       toast.error(error.response.data.message)

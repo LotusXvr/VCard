@@ -188,8 +188,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore()
 
-    console.log(userStore.userId)
-
     if (handlingFirstRoute) {
         handlingFirstRoute = false
         await userStore.restoreToken()
@@ -197,6 +195,11 @@ router.beforeEach(async (to, from, next) => {
     
     // Redirecionar para a página de login se o usuário não estiver autenticado
     if (to.name === "Home" && userStore.userId === -1) {
+        next({ name: "Login" })
+        return
+    }
+
+    if (to.name === "ChangePassword" && userStore.userId === -1) {
         next({ name: "Login" })
         return
     }
@@ -247,6 +250,11 @@ router.beforeEach(async (to, from, next) => {
         return
     }
 
+    if (to.name === "Transactions" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
     if (
         to.name === "Transactions" &&
         (userStore.userType !== "V" || userStore.userId === parseInt(to.params.id))
@@ -257,10 +265,12 @@ router.beforeEach(async (to, from, next) => {
 
     if (to.name === "ConfirmationCode" && userStore.userType !== "V") {
         next({ name: "Home" })
+        return
     }
 
     if (to.name === "DismissVCard" && userStore.userType !== "V") {
         next({ name: "Home" })
+        return
     }
 
     if (to.name === "Dashboard" && userStore.userType !== "A") {
@@ -287,6 +297,72 @@ router.beforeEach(async (to, from, next) => {
         next({ name: "Home" })
         return
     }
+
+    if (to.name === "NewDefaultCategory" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "DefaultCategory" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+    if (to.name === "User" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Requests" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewRequest" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "WinPrizes" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "DefaultCategories" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Category" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewCategory" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Categories" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewTransaction" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "NewCreditTransaction" && userStore.userType !== "A") {
+        next({ name: "Home" })
+        return
+    }
+
+    if (to.name === "Transaction" && userStore.userType !== "V") {
+        next({ name: "Home" })
+        return
+    }
+
+
     if (
         to.name === "User" &&
         (userStore.userType === "A" || userStore.userId === parseInt(to.params.id))

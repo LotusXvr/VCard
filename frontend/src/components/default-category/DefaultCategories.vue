@@ -12,7 +12,6 @@ const loadCategories = () => {
         .get("/default-category")
         .then((response) => {
             categories.value = response.data
-            console.log(response.data)
         })
         .catch((error) => {
             console.log(error)
