@@ -265,10 +265,12 @@ router.beforeEach(async (to, from, next) => {
 
     if (to.name === "ConfirmationCode" && userStore.userType !== "V") {
         next({ name: "Home" })
+        return
     }
 
     if (to.name === "DismissVCard" && userStore.userType !== "V") {
         next({ name: "Home" })
+        return
     }
 
     if (to.name === "Dashboard" && userStore.userType !== "A") {
