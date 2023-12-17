@@ -168,6 +168,18 @@ export const useUserStore = defineStore('user', () => {
     toast.info(`${receiver} has requested ${amount}€ from you!`)
   })
 
+  socket.on('requestNotLoggedIn', async ({ receiver, sender, amount }) => {
+    try {
+      await axios.post('http://localhost/api/notifications', {
+        vcard: sender,
+        message: `${receiver} has request ${amount}€ from you !`
+      });
+      console.log("Notification saved in the database.");
+    } catch (error) {
+      console.error("Error saving notification in the database:", error.message);
+    }
+  });
+
   socket.on('acceptMoneyNotification', ({ sender, amount }) => {
     toast.info(`${sender} has accepted your request for ${amount}€ !`)
   })

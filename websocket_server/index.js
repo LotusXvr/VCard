@@ -78,8 +78,20 @@ io.on("connection", (socket) => {
   });
 
   socket.on("requestMoney", function ({ receiver, sender, amount }) {
-    socket.to(sender).emit("requestMoneyNotification", { receiver, amount });
+    handleMoneyRequest(socket, receiver, sender, amount);
   });
+
+  async function handleMoneyRequest(socket, receiver, sender, amount) {
+    const receiverSocketId = connectedSockets.get(receiver);
+    console.log(receiver)
+    if (receiverSocketId) {
+      socket.to(receiver).emit("moneyRequestNotification", { sender, amount });
+      console.log("logged")
+    } else {
+      socket.emit('requestNotLoggedIn', { receiver, sender, amount });
+      console.log("notLogged")
+    }
+  }
 
   socket.on("acceptMoney", function ({ receiver, sender, amount }) {
     socket.to(receiver).emit("acceptMoneyNotification", { sender, amount });
