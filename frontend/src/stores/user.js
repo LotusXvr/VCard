@@ -202,6 +202,32 @@ export const useUserStore = defineStore('user', () => {
     }
   })
 
+  socket.on('rejectNotLoggedIn', async ({ receiver, sender, amount, whoRejected }) => {
+
+    if(whoRejected === 'S'){
+      try {
+        await axios.post('http://localhost/api/notifications', {
+          vcard: receiver,
+          message: `${sender} has rejected your request for ${amount}€ !`
+        });
+        console.log("Notification saved in the database.");
+      } catch (error) {
+        console.error("Error saving notification in the database:", error.message);
+      }
+    }else{
+      try {
+        await axios.post('http://localhost/api/notifications', {
+          vcard: sender,
+          message: `${receiver} has rejected his request for ${amount}€ !`
+        });
+        console.log("Notification saved in the database.");
+      } catch (error) {
+        console.error("Error saving notification in the database:", error.message);
+      }
+    }
+    
+  });
+
   return {
     user,
     userId,

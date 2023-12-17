@@ -106,12 +106,23 @@ io.on("connection", (socket) => {
   }
 
   socket.on("rejectMoney", function ({ receiver, sender, amount, whoRejected }) {
-    if(whoRejected == 'S'){
-      socket.to(receiver).emit("rejectMoneyNotification", { sender, amount, whoRejected });
-    }else{
-      socket.to(sender).emit("rejectMoneyNotification", { receiver, amount, whoRejected });
-    }
+    handleMoneyReject(socket, receiver, sender, amount, whoRejected);
   });
+  
+  async function handleMoneyReject(socket, receiver, sender, amount, whoRejected) {
+    const otherUserSocketId = whoRejected === 'S' ? connectedSockets.get(receiver) : connectedSockets.get(sender);
+  
+    if (otherUserSocketId) {
+      if (whoRejected === 'S') {
+        socket.to(receiver).emit("rejectMoneyNotification", { sender, amount, whoRejected });
+      } else {
+        socket.to(sender).emit("rejectMoneyNotification", { receiver, amount, whoRejected });
+      }
+    } else {
+      socket.emit('rejectNotLoggedIn', { receiver, sender, amount, whoRejected });
+    }
+  }
+  
 
   socket.on("disconnect", () => {
     console.log(`client ${socket.id} has disconnected`);
