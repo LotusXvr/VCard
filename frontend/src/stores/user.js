@@ -60,7 +60,9 @@ export const useUserStore = defineStore('user', () => {
       sessionStorage.setItem('token', response.data.access_token)
       await loadUser()
       socket.emit('loggedIn', user.value)
-      getNotificationsAndShowToast(user.value.username)
+      if(user.value.user_type === 'V'){
+        getNotificationsAndShowToast(user.value.username)
+      }
       return true
     } catch (error) {
       clearUser()

@@ -1,5 +1,4 @@
 const { SocketAddress } = require("net");
-const axios = require('axios');
 
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
