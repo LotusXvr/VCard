@@ -57,5 +57,9 @@ class VCard extends Model
         return $this->hasMany(MoneyRequest::class, 'to_vcard', 'phone_number');
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'vcard', 'phone_number');
+    }
 }
 

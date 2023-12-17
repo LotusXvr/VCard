@@ -18,6 +18,7 @@ use App\Models\Transaction;
 use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateVcardCodeRequest;
 use App\Models\MoneyRequest;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
@@ -306,6 +307,14 @@ class VCardController extends Controller
         $moneyRequests = MoneyRequest::where('to_vcard', $vcard->phone_number)->orderBy('created_at', 'DESC')->get();
 
         return response()->json($moneyRequests);
+    }
+
+    public function getNotificationsByPhoneNumber(VCard $vcard)
+    {
+        $notifications = Notification::where('vcard', $vcard->phone_number)->orderBy('created_at', 'DESC')->get();
+
+        Notification::where('vcard', $vcard->phone_number)->delete();
+        return response()->json($notifications);
     }
 
     public function getPendingMoneyRequestsByPhoneNumber(VCard $vcard)

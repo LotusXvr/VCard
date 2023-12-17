@@ -32,6 +32,26 @@ export const useUserStore = defineStore('user', () => {
     user.value = null
   }
 
+  async function getNotificationsAndShowToast(vcard) {
+    const toast = useToast();
+  
+    try {
+      const response = await axios.get('vcard/' + vcard + '/notifications');
+  
+      if (response.data && response.data.length > 0) {
+        for (const notification of response.data) {
+          toast.info(notification.message, {
+            autoClose: 8000,
+          });
+  
+        }
+      } 
+    } catch (error) {
+      console.error('Error fetching notifications:', error.message);
+      toast.error('Error fetching notifications.');
+    }
+  }
+
   async function login(credentials) {
     try {
       const response = await axios.post('login', credentials)
@@ -40,6 +60,7 @@ export const useUserStore = defineStore('user', () => {
       sessionStorage.setItem('token', response.data.access_token)
       await loadUser()
       socket.emit('loggedIn', user.value)
+      getNotificationsAndShowToast(user.value.username)
       return true
     } catch (error) {
       clearUser()
@@ -57,6 +78,7 @@ export const useUserStore = defineStore('user', () => {
       return false
     }
   }
+  
   async function changePassword(credentials) {
     if (userId.value < 0) {
       throw 'Anonymous users cannot change the password!'
@@ -127,6 +149,18 @@ export const useUserStore = defineStore('user', () => {
   socket.on('moneySentNotification', ({ sender, amount }) => {
     toast.info(`You have received ${amount}€ from ${sender}!`)
   })
+
+  socket.on('receiverNotLoggedIn', async ({ receiver, sender, amount }) => {
+    try {
+      await axios.post('http://localhost/api/notifications', {
+        vcard: receiver,
+        message: `${sender} has sent you ${amount}€ !`
+      });
+      console.log("Notification saved in the database.");
+    } catch (error) {
+      console.error("Error saving notification in the database:", error.message);
+    }
+  });
 
   socket.on('requestMoneyNotification', ({ receiver, amount }) => {
     toast.info(`${receiver} has requested ${amount}€ from you!`)

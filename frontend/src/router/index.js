@@ -187,9 +187,9 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore()
-    console.log(userStore.user)
+
     console.log(userStore.userId)
-    console.log(to.name)
+
     if (handlingFirstRoute) {
         handlingFirstRoute = false
         await userStore.restoreToken()
@@ -200,6 +200,7 @@ router.beforeEach(async (to, from, next) => {
         next({ name: "Login" })
         return
     }
+    
     // Rotas públicas que podem ser acessadas por usuários não autenticados
     if (to.name === "Login" && userStore.user) {
         if (userStore.userType === "A") {

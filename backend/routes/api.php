@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\MoneyRequestController;
+use App\Http\Controllers\api\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('vcard/{vcard}/moneyRequests', [VCardController::class, 'getMoneyRequestsByPhoneNumber'])->middleware('can:view,vcard');
     Route::get('vcard/{vcard}/moneyRequests/pending', [VCardController::class, 'getPendingMoneyRequestsByPhoneNumber'])->middleware('can:view,vcard');
 
+    Route::get('vcard/{vcard}/notifications', [VCardController::class, 'getNotificationsByPhoneNumber'])->middleware('can:view,vcard');;
 
     /*
      * Globais
@@ -86,7 +88,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
     Route::put('transactions/{transaction}', [TransactionController::class, 'update']);
     Route::apiResource('moneyRequests', MoneyRequestController::class);
-
+    Route::apiResource('notifications', NotificationController::class);
 });
 
 
