@@ -188,8 +188,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore()
 
-    console.log(userStore.userId)
-
     if (handlingFirstRoute) {
         handlingFirstRoute = false
         await userStore.restoreToken()

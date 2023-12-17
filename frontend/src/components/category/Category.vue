@@ -52,7 +52,6 @@ const save = async (categoryToSave) => {
         try {
             const response = await axios.post("category", categoryToSave)
             category.value = response.data
-            console.log("category.value", category.value)
             originalValueStr = JSON.stringify(category.value)
             toast.success("Category #" + category.value.name + " was registered successfully.")
             router.back()

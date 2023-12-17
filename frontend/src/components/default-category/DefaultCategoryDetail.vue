@@ -36,7 +36,6 @@ const categoryTitle = computed(() => {
 })
 
 const save = async () => {
-    console.log("a"+editedCategory.value)
     emit("save", editedCategory.value)
 }
 

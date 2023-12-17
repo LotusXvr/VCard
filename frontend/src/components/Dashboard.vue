@@ -58,7 +58,6 @@ const getVCardStatistics = () => {
     axios
         .get("statistics/vcards")
         .then((response) => {
-            console.log(response.data)
             vcardCount.value = response.data.vcardCount
             vcardCountActive.value = response.data.activeVCardCount
             vcardBalanceSum.value = response.data.vcardBalanceSum
@@ -95,7 +94,6 @@ const getTransactionsStatistics = () => {
     axios
         .get("statistics/transactions")
         .then((response) => {
-            console.log(response.data)
             transactionsSum.value = response.data.transactionsSum
             transactionsCount.value = response.data.transactionsCount
             transactionsSumByMonth.value = response.data.transactionsSumByMonth

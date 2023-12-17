@@ -44,12 +44,10 @@ const loadCategory = async (id) => {
 }
 
 const save = async (categoryToSave) => {
-    console.log("aa", categoryToSave)
     if (inserting(props.id)) {
         try {
             const response = await axios.post("default-category", categoryToSave)
             category.value = response.data
-            console.log("category.value", category.value)
             originalValueStr = JSON.stringify(category.value)
             toast.success("Category #" + category.value.name + " was registered successfully.")
             router.back()

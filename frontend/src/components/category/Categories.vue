@@ -31,7 +31,7 @@ const deleteCategory = (category) => {
             toast.success("Category #" + category.id + " was deleted successfully.")
         })
         .catch((error) => {
-            console.log(error)
+            toast.error(error)
         })
 }
 
